@@ -112,6 +112,17 @@
       gap: 6px;
     }
 
+    .btn-agenda-tec-lista {
+      background: rgba(34, 211, 238, 0.12);
+      border: 1px solid rgba(34, 211, 238, 0.25);
+      color: #22d3ee;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
     .btn-editar-tec-lista {
       background: rgba(96, 165, 250, 0.12);
       border: 1px solid rgba(96, 165, 250, 0.25);
@@ -204,6 +215,18 @@
       cursor: pointer;
     }
 
+    /* Animação em cascata (Surgimento dos Itens de O.S.) */
+    @keyframes entradaCascata {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     .monitor-atividades {
       display: none;
       flex-direction: column;
@@ -213,26 +236,31 @@
       border-top: 1px solid rgba(255, 255, 255, 0.08);
     }
 
-    .monitor-atividades.visivel { display: flex; }
+    .monitor-atividades.visivel { 
+      display: flex; 
+    }
+
+    /* Classe aplicada dinamicamente para animar os itens em cascata */
+    .monitor-atividades.visivel .log-atividade {
+      animation: entradaCascata 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
 
     .log-atividade {
       display: flex;
       flex-direction: column;
       gap: 8px;
       background: rgba(255, 255, 255, 0.02);
-      padding: 12px;
+      padding: 14px;
       border-radius: 14px;
       border: 1px solid rgba(255, 255, 255, 0.04);
       cursor: pointer;
-      transition: background 0.2s ease, transform 0.1s ease;
+      transition: background 0.25s ease, border-color 0.25s ease;
+      overflow: hidden;
     }
 
     .log-atividade:hover {
-      background: rgba(255, 255, 255, 0.06);
-    }
-
-    .log-atividade:active {
-      transform: scale(0.99);
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.1);
     }
 
     .log-topo-linha {
@@ -240,6 +268,38 @@
       justify-content: space-between;
       align-items: center;
       width: 100%;
+    }
+
+    /* Seta indicativa que rotaciona */
+    .seta-indicativa {
+      font-size: 14px;
+      color: #94a3b8;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      margin-left: 8px;
+    }
+
+    .log-atividade.aberto .seta-indicativa {
+      transform: rotate(180deg);
+      color: #22d3ee;
+    }
+
+    /* Acordeão Inline (Dropdown O.S.) */
+    .log-detalhes-inline {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, margin-top 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .log-atividade.aberto .log-detalhes-inline {
+      max-height: 1000px; /* Suficiente para expandir tudo */
+      opacity: 1;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
     }
 
     .log-badge {
@@ -676,8 +736,8 @@
 
   <div class="topo">
     <h1>📡 Monitoramento Técnico</h1>
-    <p id="subtitulo">Toque no painel do técnico para ver a agenda</p>
-    <button class="btn-config" onclick="abrirModalSenha()">⚙️ Gerenciar Técnicos</button>
+    <p id="subtitulo">Toque para expandir as atividades dos técnicos</p>
+    <button class="btn-config" onclick="abrirModalSenha()">⚙️ Painel de Controle (Admin)</button>
   </div>
 
   <!-- Modal Senha -->
@@ -702,16 +762,16 @@
   <div class="modal-overlay" id="modalConfigOverlay">
     <div class="modal">
       <button class="modal-fechar" onclick="fecharModalConfig()">✕</button>
-      <div class="modal-titulo">⚙️ Gerenciar Técnicos</div>
+      <div class="modal-titulo">⚙️ Painel de Controle</div>
       
-      <div class="modal-secao">Cadastrar Novo</div>
+      <div class="modal-secao">Cadastrar Novo Técnico</div>
       <div class="form-add-tecnico">
         <input type="text" class="input-add" id="nomeNovoTecnico" placeholder="Nome..." />
         <button class="btn-add" onclick="adicionarTecnico()">➕</button>
       </div>
       
       <div class="modal-divider"></div>
-      <div class="modal-secao">Técnicos Ativos</div>
+      <div class="modal-secao">Gerenciar Técnicos e Agendas</div>
       <div class="lista-gerenciar" id="listaGerenciarTecnicos"></div>
 
       <div class="modal-divider"></div>
@@ -722,48 +782,49 @@
   <!-- Painel Inicial -->
   <div class="seletor-tecnico" id="seletorTecnico"></div>
 
-  <!-- Painel do Técnico (Agenda Específica) -->
+  <!-- Painel do Técnico Administrativo (Gerenciamento restrito de Agendas) -->
   <div class="painel-tecnico oculto" id="painelTecnico">
-    <button class="btn-trocar" onclick="trocarTecnico()">↩️ Voltar ao Painel Geral</button>
-    <button class="btn-mostrar" id="btnMostrar" onclick="mostrarImportador()">📋 Mostrar campo da agenda</button>
+    <button class="btn-trocar" onclick="trocarTecnico()">↩️ Voltar ao Dashboard Geral</button>
+    <button class="btn-mostrar" id="btnMostrar" onclick="mostrarImportador()">📋 Mostrar campo de edição da agenda</button>
 
     <div class="importador" id="importador">
-      <textarea id="entrada" placeholder="Cole aqui a agenda completa..."></textarea>
-      <button class="btn-gerar" onclick="gerarAgenda()">🚀 Gerar Agenda Inteligente</button>
+      <div class="modal-secao" style="margin-bottom: 8px;">Agenda Completa (Texto Bruto)</div>
+      <textarea id="entrada" placeholder="Cole aqui a agenda completa do sistema..."></textarea>
+      <button class="btn-gerar" onclick="gerarAgenda()">🚀 Salvar e Gerar Agenda Inteligente</button>
     </div>
 
     <div class="cards" id="cards"></div>
   </div>
 
-  <!-- Modal Editar OS -->
+  <!-- Modal Editar OS (EXCLUSIVO ADMIN) -->
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
       <button class="modal-fechar" onclick="fecharModal()">✕</button>
-      <div class="modal-titulo">✏️ Editar OS</div>
+      <div class="modal-titulo">✏️ Editar Ordem de Serviço (Admin)</div>
 
-      <div class="modal-secao">Dados Principais</div>
+      <div class="modal-secao">Dados do Atendimento</div>
       <div class="campo-grupo"><label>Horário</label><input class="campo-input" id="edit-horario" type="text" /></div>
       <div class="campo-grupo"><label>Cliente</label><input class="campo-input" id="edit-cliente" type="text" /></div>
       <div class="campo-grupo"><label>Assunto</label><input class="campo-input" id="edit-assunto" type="text" /></div>
-      <div class="campo-grupo"><label>Endereço</label><input class="campo-input" id="edit-endereco" type="text" /></div>
-      <div class="campo-grupo"><label>Contato</label><input class="campo-input" id="edit-contato" type="text" /></div>
+      <div class="campo-grupo"><label>Endereço Completo</label><input class="campo-input" id="edit-endereco" type="text" /></div>
+      <div class="campo-grupo"><label>Contato Telefônico</label><input class="campo-input" id="edit-contato" type="text" /></div>
 
       <hr class="modal-divider" />
-      <div class="modal-secao">Credenciais</div>
+      <div class="modal-secao">Acesso PPPoE</div>
       <div class="campo-grupo"><label>Login</label><input class="campo-input" id="edit-login" type="text" /></div>
-      <div class="campo-grupo"><label>Senha PPPoE</label><input class="campo-input" id="edit-senha" type="text" /></div>
+      <div class="campo-grupo"><label>Senha</label><input class="campo-input" id="edit-senha" type="text" /></div>
 
       <hr class="modal-divider" />
-      <div class="modal-secao">Migrar / Transferir OS</div>
+      <div class="modal-secao">Migrar O.S. de Técnico</div>
       <div class="campo-grupo">
-        <label style="color: #67e8f9; font-size: 13.5px;">Técnico Responsável</label>
+        <label style="color: #67e8f9; font-size: 13.5px;">Responsável Técnico</label>
         <div class="select-wrapper">
           <select class="campo-select" id="edit-tecnico-resp"></select>
         </div>
       </div>
 
       <hr class="modal-divider" />
-      <div class="modal-secao">Status da OS</div>
+      <div class="modal-secao">Forçar Status da OS</div>
       <div class="campo-grupo">
         <div class="select-wrapper">
           <select class="campo-select" id="edit-status">
@@ -776,25 +837,11 @@
       </div>
 
       <div class="campo-grupo">
-        <label style="color: #cbd5e1; font-size: 13.5px;">📝 Observações / Motivo</label>
-        <textarea class="campo-textarea-modal" id="edit-observacao" placeholder="Digite as observações ou o motivo do encerramento aqui..."></textarea>
+        <label style="color: #cbd5e1; font-size: 13.5px;">📝 Observação do Administrador</label>
+        <textarea class="campo-textarea-modal" id="edit-observacao" placeholder="Motivos de alteração de rota ou encerramento manual..."></textarea>
       </div>
 
-      <button class="btn-salvar-modal" id="btnSalvarModal" onclick="salvarEdicaoOS()">💾 Salvar alterações</button>
-    </div>
-  </div>
-
-  <!-- Modal Observação Expressa -->
-  <div class="modal-overlay" id="modalObsExpressaOverlay">
-    <div class="modal">
-      <button class="modal-fechar" onclick="fecharModalObsExpressa()">✕</button>
-      <div class="modal-titulo" id="tit-obs-expressa">📝 Adicionar Observação</div>
-      <p id="desc-obs-expressa" style="font-size:13.5px; color:#cbd5e1; margin-bottom:14px;"></p>
-      
-      <div class="campo-grupo">
-        <textarea class="campo-textarea-modal" id="input-obs-expressa" placeholder="Escreva as observações finais desta OS..."></textarea>
-      </div>
-      <button class="btn-salvar-modal" onclick="salvarObsExpressa()">💾 Confirmar e Finalizar</button>
+      <button class="btn-salvar-modal" id="btnSalvarModal" onclick="salvarEdicaoOS()">💾 Confirmar Edição</button>
     </div>
   </div>
 
@@ -825,8 +872,8 @@
     let dadosOS = [];
     let osEditandoIndex = null;
     
-    let statusTemporarioExpressado = null;
-    let indexTemporarioExpressado = null;
+    // Armazena cache da última API retornada para checar re-renders
+    let ultimoDadosRemotosCache = null;
 
     if(localStorage.getItem('lista_tecnicos_smart')) {
       try { listaTecnicos = JSON.parse(localStorage.getItem('lista_tecnicos_smart')); } catch(e){ listaTecnicos = []; }
@@ -836,7 +883,6 @@
       const painelTecnico = document.getElementById("painelTecnico");
       const painelTecnicoVisivel = painelTecnico && !painelTecnico.classList.contains("oculto");
 
-      // Só mantém a tela do técnico aberta no refresh se o painel do técnico estava visível na tela
       if (painelTecnicoVisivel && tecnicoAtual) {
         sessionStorage.setItem('tecnicoAberto', tecnicoAtual);
       } else {
@@ -849,12 +895,12 @@
 
     function toggleLoading(exibir, mensagem = "Sincronizando...") {
       const overlay = document.getElementById("loadingOverlay");
-      document.getElementById("loadingTexto").textContent = mensagem;
+      const texto = document.getElementById("loadingTexto");
+      if(texto) texto.textContent = message = mensagem;
       if (exibir) overlay.classList.add("ativo");
       else overlay.classList.remove("ativo");
     }
 
-    // Mantém a senha oculta/visível
     function toggleVisibilidadeSenha() {
       const input = document.getElementById("inputSenhaMaster");
       input.type = input.type === "password" ? "text" : "password";
@@ -910,7 +956,6 @@
     document.getElementById("modalConfigOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalConfig(); });
     document.getElementById("modalSenhaOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalSenha(); });
     document.getElementById("modalOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModal(); });
-    document.getElementById("modalObsExpressaOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalObsExpressa(); });
     document.getElementById("modalRelatorioOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalRelatorio(); });
 
     function toggleDropdown(tec, event) {
@@ -923,8 +968,32 @@
         btn.innerHTML = 'Expandir 🔽';
       } else {
         container.style.display = 'flex';
-        setTimeout(() => container.classList.add('visivel'), 10);
+        setTimeout(() => {
+          container.classList.add('visivel');
+        }, 10);
         btn.innerHTML = 'Recolher 🔼';
+      }
+    }
+
+    // Toggle para o novo Acordeão Inline de cada O.S.
+    function toggleAcordeonInline(elemento, event) {
+      // Impede propagação se clicar em botões, selects ou textareas
+      if (event && (event.target.tagName === 'BUTTON' || event.target.tagName === 'SELECT' || event.target.tagName === 'TEXTAREA' || event.target.tagName === 'OPTION')) {
+        return;
+      }
+      const itemAtividade = elemento;
+      const estaAberto = itemAtividade.classList.contains('aberto');
+      
+      // Fecha outros itens irmãos do mesmo técnico para ficar limpo
+      const irmaos = itemAtividade.parentNode.querySelectorAll('.log-atividade');
+      irmaos.forEach(ir => {
+        if (ir !== itemAtividade) ir.classList.remove('aberto');
+      });
+
+      if (estaAberto) {
+        itemAtividade.classList.remove('aberto');
+      } else {
+        itemAtividade.classList.add('aberto');
       }
     }
 
@@ -941,12 +1010,18 @@
           <div class="item-gerenciar">
             <span>👤 ${tec}</span>
             <div class="acoes-gerenciar-tec">
-              <button class="btn-editar-tec-lista" onclick="editarNomeTecnico('${tecEscapado}')">✏️</button>
+              <button class="btn-agenda-tec-lista" onclick="entrarNoTecnicoAdmin('${tecEscapado}')">⚙️ Agenda</button>
+              <button class="btn-editar-tec-lista" onclick="editarNomeTecnico('${tecEscapado}')">✏️ Nome</button>
               <button class="btn-deletar-tec" onclick="removerTecnico('${tecEscapado}')">Excluir</button>
             </div>
           </div>
         `;
       });
+    }
+
+    function entrarNoTecnicoAdmin(nome) {
+      fecharModalConfig();
+      selecionarTecnico(nome);
     }
 
     async function editarNomeTecnico(nomeAntigo) {
@@ -1084,75 +1159,157 @@
       const container = document.getElementById("seletorTecnico");
       container.innerHTML = "";
       if(!listaTecnicos || listaTecnicos.length === 0) {
-        container.innerHTML = `<div class="sem-atividade" style="padding:40px; background:rgba(255,255,255,0.02); border-radius:20px;">Nenhum técnico ativo. Adicione um no painel superior!</div>`;
+        container.innerHTML = `<div class="sem-atividade" style="padding:40px; background:rgba(255,255,255,0.02); border-radius:20px;">Nenhum técnico ativo no momento.</div>`;
         return;
       }
       listaTecnicos.forEach(tec => {
         container.innerHTML += `
           <div class="card-monitor" id="card-monitor-${tec}">
             <div class="monitor-header">
-              <div class="monitor-info-esquerda" onclick="selecionarTecnico('${tec}')">
+              <div class="monitor-info-esquerda" onclick="toggleDropdown('${tec}', event)">
                 <div class="monitor-nome">👤 ${tec}</div>
                 <div class="status-preview" id="preview-${tec}"></div>
               </div>
               <button class="btn-dropdown" id="btn-drop-${tec}" onclick="toggleDropdown('${tec}', event)">Expandir 🔽</button>
             </div>
             <div class="monitor-atividades" id="atividades-${tec}">
-               <div class="sem-atividade">Nenhuma rota activa no momento.</div>
+               <div class="sem-atividade">Nenhuma rota ativa no momento.</div>
             </div>
           </div>
         `;
       });
     }
 
-    async function abrirModalDeAtividadeRemota(nomeTecnico, osId) {
-      toggleLoading(true, "Carregando dados da O.S...");
+    function copiarTexto(txt) {
+      if (!txt) return;
+      navigator.clipboard.writeText(txt).then(() => {
+        mostrarToast("✅ Copiado com sucesso!");
+      });
+    }
+
+    // Salva o status alterado inline de forma assíncrona para a API
+    async function salvarStatusInline(osId, tecnicoNome, registroId) {
+      const selectStatus = document.getElementById(`inline-status-${tecnicoNome}-${osId}`);
+      const textareaObs = document.getElementById(`inline-obs-${tecnicoNome}-${osId}`);
+      
+      const novoStatus = selectStatus.value;
+      const obsTexto = textareaObs.value.trim();
+
+      if(novoStatus === "nao-concluido" && !obsTexto) {
+        alert("Para finalizar como Não Concluído, é obrigatório preencher a observação com o motivo.");
+        // Restaura status anterior
+        const anterior = localStorage.getItem(`status_${tecnicoNome}_${osId}`) || "";
+        selectStatus.value = anterior;
+        return;
+      }
+
+      // Salva dados no localStorage
+      if(novoStatus) {
+        localStorage.setItem(`status_${tecnicoNome}_${osId}`, novoStatus);
+        localStorage.setItem(`timestamp_${tecnicoNome}_${osId}_${novoStatus}`, obtenerHoraAtual());
+      } else {
+        localStorage.removeItem(`status_${tecnicoNome}_${osId}`);
+      }
+
+      if(obsTexto) {
+        localStorage.setItem(`obs_${tecnicoNome}_${osId}`, obsTexto);
+      } else {
+        localStorage.removeItem(`obs_${tecnicoNome}_${osId}`);
+      }
+
+      toggleLoading(true, "Sincronizando status...");
+
       try {
-        const resp = await fetch(API_URL);
-        if(!resp.ok) throw new Error();
-        const dados = await resp.json();
+        // Obter agenda textual atual do técnico para repassar na API
+        let agendaTextoOriginal = "";
+        const resp = await fetch(`${API_URL}/${registroId}`);
+        if(resp.ok) {
+          const dadoRemoto = await resp.json();
+          agendaTextoOriginal = dadoRemoto.agenda || "";
+        }
+
+        // Simula salvamento parcial na nuvem
+        const statusParaSalvar = {};
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith(`status_${tecnicoNome}_`)) {
+            const idKey = key.replace(`status_${tecnicoNome}_`, "");
+            const statusVal = localStorage.getItem(key);
+            const obsVal = localStorage.getItem(`obs_${tecnicoNome}_${idKey}`) || "";
+            const timeVal = localStorage.getItem(`timestamp_${tecnicoNome}_${idKey}_${statusVal}`) || "--:--";
+
+            statusParaSalvar[idKey] = { status: statusVal, obs: obsVal, timestamp: timeVal };
+          }
+        }
+
+        const payload = { 
+          tecnico: tecnicoNome, 
+          agenda: agendaTextoOriginal, 
+          status: JSON.stringify(statusParaSalvar) 
+        };
+
+        await fetch(`${API_URL}/${registroId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
         
-        const registro = dados.find(d => d.tecnico === nomeTecnico);
-        if (registro) {
-          tecnicoAtual = nomeTecnico;
-          registroAtualId = registro.id;
-          dadosOS = parsearAgenda(registro.agenda || "");
-
-          if (registro.status) {
-            try {
-              const statusSalvo = JSON.parse(registro.status);
-              Object.keys(statusSalvo).forEach(idKey => {
-                if (typeof statusSalvo[idKey] === 'object') {
-                  localStorage.setItem(`status_${tecnicoAtual}_${idKey}`, statusSalvo[idKey].status || "");
-                  localStorage.setItem(`obs_${tecnicoAtual}_${idKey}`, statusSalvo[idKey].obs || "");
-                  localStorage.setItem(`timestamp_${tecnicoAtual}_${idKey}_${statusSalvo[idKey].status}`, statusSalvo[idKey].timestamp || "--:--");
-                } else {
-                  localStorage.setItem(`status_${tecnicoAtual}_${idKey}`, statusSalvo[idKey]);
-                }
-              });
-            } catch(e) {}
-          }
-
-          const targetIndex = dadosOS.findIndex(os => os.id === String(osId));
-          if (targetIndex !== -1) {
-            toggleLoading(false);
-            abrirModal(targetIndex);
-          } else {
-            alert("Ordem de serviço não encontrada na agenda activa deste técnico.");
-            toggleLoading(false);
-          }
+        if (novoStatus === "rota") {
+          // Copia script de rota do cliente
+          const cardLog = selectStatus.closest('.log-atividade');
+          const cliNome = cardLog.dataset.clienteNome || "Cliente";
+          const cliEnd = cardLog.dataset.clienteEnd || "";
+          const script = `🚗 EM ROTA\n\n👤 Cliente: ${cliNome}\n📍 Endereço: ${cliEnd}`;
+          
+          navigator.clipboard.writeText(script).then(() => {
+            mostrarToast("✅ Rota Copiada!");
+            window.open("https://t.me/c/1989058391/167773", "_blank");
+            recarregarPagina(1000);
+          });
         } else {
-          toggleLoading(false);
+          mostrarToast("💾 Alterações sincronizadas!");
+          recarregarPagina(600);
         }
       } catch(e) {
-        console.error(e);
         toggleLoading(false);
-        alert("Erro ao buscar dados remotos da atividade.");
+        alert("Erro de comunicação ao sincronizar dados.");
       }
     }
 
-    function atualizarDashboardGeralComDados(todosDados) {
+    // Compara se os novos dados diferem dos atuais de forma profunda
+    function dadosForamModificados(novosDados) {
+      if (!ultimoDadosRemotosCache) return true;
+      if (novosDados.length !== ultimoDadosRemotosCache.length) return true;
+      
+      for(let i=0; i < novosDados.length; i++) {
+        const n = novosDados[i];
+        const u = ultimoDadosRemotosCache.find(x => x.id === n.id);
+        if(!u) return true;
+        if(n.agenda !== u.agenda || n.tecnico !== u.tecnico || n.status !== u.status) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function atualizarDashboardGeralComDados(todosDados, forcarReRender = false) {
       if(!listaTecnicos) return;
+
+      // Checa se os dropdowns ou selects internos estão focados ou sendo editados.
+      // Se sim, pulamos a renderização completa para não atrapalhar a digitação ou seleção.
+      const elementoAtivo = document.activeElement;
+      if (elementoAtivo && (elementoAtivo.tagName === 'INPUT' || elementoAtivo.tagName === 'SELECT' || elementoAtivo.tagName === 'TEXTAREA')) {
+        return; 
+      }
+
+      // Checagem inteligente de integridade para não re-renderizar à toa durante sync automático
+      if (!forcarReRender && !dadosForamModificados(todosDados)) {
+        return; // Retorna sem piscar a tela ou reiniciar animações
+      }
+
+      // Atualiza o cache
+      ultimoDadosRemotosCache = JSON.parse(JSON.stringify(todosDados));
+
       listaTecnicos.forEach(tec => {
         const dados = todosDados.filter(d => d.tecnico === tec);
         let emRota = 0, concluidas = 0, naoConcluidas = 0, aguardando = 0;
@@ -1177,68 +1334,111 @@
             }
           });
 
-          listaOS.forEach(itemOS => {
-            const statusAtual = localStorage.getItem(`status_${tec}_${itemOS.id}`);
+          listaOS.forEach((itemOS, index) => {
+            const statusAtual = localStorage.getItem(`status_${tec}_${itemOS.id}`) || "";
             const osIdLimpo = String(itemOS.id).replace(/"/g, '"');
             const tecLimpo = String(tec).replace(/"/g, '"');
             const osSalva = localStorage.getItem(`obs_${tec}_${itemOS.id}`) || "";
             
             const horarioOs = itemOS.horario ? `<span style="color:#94a3b8; font-weight:500;">| ⏳ ${escapeHtml(itemOS.horario)}</span>` : '';
+            const enderecoLimpo = (itemOS.endereco || "").replace(/\?/g, "").replace(/\s+/g, " ").trim();
+            const mapsLink = `https://maps.google.com/?q=${encodeURIComponent(enderecoLimpo)}`;
+
+            // Badge e classe do Status
+            let badgeHtml = "";
+            let horaLog = "--:--";
 
             if (statusAtual === 'rota') {
-              const horaLog = localStorage.getItem(`timestamp_${tec}_${itemOS.id}_rota`) || '--:--';
+              horaLog = localStorage.getItem(`timestamp_${tec}_${itemOS.id}_rota`) || '--:--';
               emRota++;
-              logsHtml += `
-                <div class="log-atividade" onclick="abrirModalDeAtividadeRemota('${tecLimpo}', '${osIdLimpo}')">
-                  <div class="log-topo-linha">
-                    <span class="log-badge rota">🚗 Em rota</span>
-                    <div class="log-hora">⏰ ${horaLog} ${horarioOs}</div>
-                  </div>
-                  <div class="log-info"><strong>${escapeHtml(itemOS.cliente)}</strong><span class="tipo-servico">📋 ${escapeHtml(itemOS.assunto)}</span></div>
-                </div>
-              `;
+              badgeHtml = `<span class="log-badge rota">🚗 Em rota</span>`;
             } else if (statusAtual === 'concluido') {
-              const horaLog = localStorage.getItem(`timestamp_${tec}_${itemOS.id}_concluido`) || '--:--';
+              horaLog = localStorage.getItem(`timestamp_${tec}_${itemOS.id}_concluido`) || '--:--';
               concluidas++;
-              logsHtml += `
-                <div class="log-atividade" onclick="abrirModalDeAtividadeRemota('${tecLimpo}', '${osIdLimpo}')">
-                  <div class="log-topo-linha">
-                    <span class="log-badge concluido">✅ Concluído</span>
-                    <div class="log-hora">⏰ ${horaLog} ${horarioOs}</div>
-                  </div>
-                  <div class="log-info">
-                    <strong>${escapeHtml(itemOS.cliente)}</strong><span class="tipo-servico">📋 ${escapeHtml(itemOS.assunto)}</span>
-                    ${osSalva ? `<span class="obs-texto" style="color:#4ade80; background:rgba(34,197,94,0.06); border-left-color:#22c55e;">📝 Obs: ${escapeHtml(osSalva)}</span>` : ''}
-                  </div>
-                </div>
-              `;
+              badgeHtml = `<span class="log-badge concluido">✅ Concluído</span>`;
             } else if (statusAtual === 'nao-concluido') {
-              const horaLog = localStorage.getItem(`timestamp_${tec}_${itemOS.id}_nao-concluido`) || '--:--';
+              horaLog = localStorage.getItem(`timestamp_${tec}_${itemOS.id}_nao-concluido`) || '--:--';
               naoConcluidas++;
-              logsHtml += `
-                <div class="log-atividade" onclick="abrirModalDeAtividadeRemota('${tecLimpo}', '${osIdLimpo}')">
-                  <div class="log-topo-linha">
-                    <span class="log-badge nao-concluido">❌ Mal Sucedida</span>
-                    <div class="log-hora">⏰ ${horaLog} ${horarioOs}</div>
-                  </div>
-                  <div class="log-info">
-                    <strong>${escapeHtml(itemOS.cliente)}</strong><span class="tipo-servico">📋 ${escapeHtml(itemOS.assunto)}</span>
-                    ${osSalva ? `<span class="obs-texto">⚠️ Motivo: ${escapeHtml(osSalva)}</span>` : ''}
-                  </div>
-                </div>
-              `;
+              badgeHtml = `<span class="log-badge nao-concluido">❌ Mal Sucedida</span>`;
             } else {
               aguardando++;
-              logsHtml += `
-                <div class="log-atividade" onclick="abrirModalDeAtividadeRemota('${tecLimpo}', '${osIdLimpo}')">
-                  <div class="log-topo-linha">
-                    <span class="log-badge aguardando">⏳ Pendente</span>
-                    <div class="log-hora">Pendente ${horarioOs}</div>
-                  </div>
-                  <div class="log-info"><strong>${escapeHtml(itemOS.cliente)}</strong><span class="tipo-servico">📋 ${escapeHtml(itemOS.assunto)}</span></div>
-                </div>
-              `;
+              badgeHtml = `<span class="log-badge aguardando">⏳ Pendente</span>`;
             }
+
+            // Injeta o atraso progressivo (animation-delay) para o efeito de cascata
+            const delayInSecs = (index * 0.08).toFixed(2);
+
+            // Monta o item expansível inline (Acordeão)
+            logsHtml += `
+              <div class="log-atividade" 
+                   id="item-os-${tec}-${itemOS.id}"
+                   style="animation-delay: ${delayInSecs}s;"
+                   onclick="toggleAcordeonInline(this, event)"
+                   data-cliente-nome="${escapeHtml(itemOS.cliente)}"
+                   data-cliente-end="${escapeHtml(enderecoLimpo)}">
+                
+                <div class="log-topo-linha">
+                  ${badgeHtml}
+                  <div style="display: flex; align-items: center; gap: 4px;">
+                    <div class="log-hora">⏰ ${horaLog} ${horarioOs}</div>
+                    <span class="seta-indicativa">▾</span>
+                  </div>
+                </div>
+
+                <div class="log-info">
+                  <strong>${escapeHtml(itemOS.cliente)}</strong>
+                  <span class="tipo-servico">📋 ${escapeHtml(itemOS.assunto)}</span>
+                  ${statusAtual === 'concluido' && osSalva ? `<span class="obs-texto" style="color:#4ade80; background:rgba(34,197,94,0.06); border-left-color:#22c55e;">📝 Obs: ${escapeHtml(osSalva)}</span>` : ''}
+                  ${statusAtual === 'nao-concluido' && osSalva ? `<span class="obs-texto">⚠️ Motivo: ${escapeHtml(osSalva)}</span>` : ''}
+                </div>
+
+                <!-- Painel Interno Expansível Inline -->
+                <div class="log-detalhes-inline">
+                  <div class="info"><strong>ID da O.S:</strong> <span class="os-number">${itemOS.id}</span></div>
+                  <div class="info"><strong>📍 Endereço de Atendimento:</strong><br>${escapeHtml(enderecoLimpo)}</div>
+
+                  <div class="info-linha">
+                    <div class="info"><strong>🔐 Login PPPoE:</strong> <span>${escapeHtml(itemOS.login) || "---"}</span></div>
+                    <button class="btn-copiar" onclick="copiarTexto('${escapeHtml(itemOS.login)}')">📋</button>
+                  </div>
+                  <div class="info-linha">
+                    <div class="info"><strong>🔑 Senha PPPoE:</strong> <span>${escapeHtml(itemOS.senha) || "---"}</span></div>
+                    <button class="btn-copiar" onclick="copiarTexto('${escapeHtml(itemOS.senha)}')">📋</button>
+                  </div>
+                  <div class="info-linha">
+                    <div class="info"><strong>📞 Telefone de Contato:</strong> <span>${escapeHtml(itemOS.contato) || "---"}</span></div>
+                    <button class="btn-copiar" onclick="copiarTexto('${escapeHtml(itemOS.contato)}')">📋</button>
+                  </div>
+
+                  <div class="botoes-grupo-novo">
+                    <div class="btn-links-linha">
+                      <button class="btn-acao-mobile btn-maps-mob" onclick="window.open('${mapsLink}', '_blank')">🗺️ Traçar Rota (Maps)</button>
+                      <button class="btn-acao-mobile btn-ativo-mob" onclick="window.open('https://sistema.ativotelecom.com.br/central_assinante_web/login', '_blank')">🌐 Abrir Ativo</button>
+                    </div>
+                  </div>
+
+                  <hr style="border: none; border-top: 1px solid rgba(255, 255, 255, 0.08); margin: 8px 0;" />
+                  
+                  <div class="campo-grupo">
+                    <label style="color:#94a3b8; font-size:12px; font-weight:700;">Status do Atendimento</label>
+                    <div class="seletor-status-container">
+                      <select class="select-status-unico" id="inline-status-${tec}-${itemOS.id}" onchange="salvarStatusInline('${itemOS.id}', '${tecLimpo}', '${registro.id}')">
+                        <option value="">⏳ Selecione o status...</option>
+                        <option value="rota" ${statusAtual === 'rota' ? 'selected' : ''}>🚗 Iniciar Rota</option>
+                        <option value="concluido" ${statusAtual === 'concluido' ? 'selected' : ''}>✅ Concluir Atendimento</option>
+                        <option value="nao-concluido" ${statusAtual === 'nao-concluido' ? 'selected' : ''}>❌ Não Executada / Falha</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="campo-grupo">
+                    <label style="color: #cbd5e1; font-size: 13px;">📝 Observações Técnicas / Motivo de Falha</label>
+                    <textarea class="campo-textarea-modal" id="inline-obs-${tec}-${itemOS.id}" placeholder="Caso mude para Não Concluído, o preenchimento desse campo é obrigatório..." onblur="salvarStatusInline('${itemOS.id}', '${tecLimpo}', '${registro.id}')">${escapeHtml(osSalva)}</textarea>
+                  </div>
+                </div>
+
+              </div>
+            `;
           });
         }
 
@@ -1259,26 +1459,26 @@
       });
     }
 
-    async function carregarDashboardGeral() {
+    async function carregarDashboardGeral(forcar = false) {
       if(!listaTecnicos) return;
       try {
         const resp = await fetch(API_URL);
         if (!resp.ok) throw new Error();
         const dados = await resp.json();
-        atualizarDashboardGeralComDados(dados);
+        atualizarDashboardGeralComDados(dados, forcar);
       } catch(e) { console.warn(e); }
     }
 
     async function selecionarTecnico(nome) {
       tecnicoAtual = nome;
-      document.getElementById("subtitulo").textContent = `Agenda: ${nome}`;
+      document.getElementById("subtitulo").textContent = `Modo Administrativo de Agenda: ${nome}`;
       document.getElementById("seletorTecnico").classList.add("oculto");
       document.getElementById("painelTecnico").classList.remove("oculto");
       
       document.getElementById("cards").innerHTML = "";
       document.getElementById("entrada").value = "";
 
-      toggleLoading(true, "Buscando agenda...");
+      toggleLoading(true, "Buscando agenda de técnicos...");
       try {
         const resp = await fetch(API_URL);
         if(!resp.ok) throw new Error();
@@ -1320,7 +1520,7 @@
       }
       document.getElementById("importador").classList.remove("oculto");
       document.getElementById("btnMostrar").style.display = "none";
-      document.getElementById("cards").innerHTML = `<div class="sem-atividade" style="width:100%">Nenhuma O.S. configurada para este técnico.</div>`;
+      document.getElementById("cards").innerHTML = `<div class="sem-atividade" style="width:100%">Cole a agenda técnica no campo acima para gerar as Ordens de Serviço.</div>`;
     }
 
     function trocarTecnico() {
@@ -1328,14 +1528,14 @@
       registroAtualId = null;
       statusOS = {};
       dadosOS = [];
-      document.getElementById("subtitulo").textContent = "Toque no painel do técnico para ver a agenda";
+      document.getElementById("subtitulo").textContent = "Toque para expandir as atividades dos técnicos";
       document.getElementById("seletorTecnico").classList.remove("oculto");
       document.getElementById("painelTecnico").classList.add("oculto");
-      carregarDashboardGeral();
+      carregarDashboardGeral(true);
     }
 
     async function salvarAgendaNaApi(texto, messageSilenciosa = false) {
-      if(!messageSilenciosa) toggleLoading(true, "Salvando alterações...");
+      if(!messageSilenciosa) toggleLoading(true, "Sincronizando com a nuvem...");
       
       const statusParaSalvar = {};
       for (let i = 0; i < localStorage.length; i++) {
@@ -1379,7 +1579,7 @@
       document.getElementById("importador").classList.add("oculto");
       document.getElementById("btnMostrar").style.display = "block";
       
-      mostrarToast("🚀 Agenda sincronizada!");
+      mostrarToast("🚀 Agenda gerada com sucesso!");
       recarregarPagina();
     }
 
@@ -1412,7 +1612,7 @@
 
     function escapeHtml(str) {
       if(!str) return "";
-      return str.replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">");
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
     function criarCards(texto) {
@@ -1427,7 +1627,6 @@
 
       dadosOS.forEach((os, idx) => {
         const enderecoLimpo = (os.endereco || "").replace(/\?/g, "").replace(/\s+/g, " ").trim();
-        const maps = `https://maps.google.com/?q=${encodeURIComponent(enderecoLimpo)}`;
         const loginSeguro = escapeHtml(os.login);
         const senhaSegura = escapeHtml(os.senha);
         const contatoSeguro = escapeHtml(os.contato);
@@ -1444,7 +1643,7 @@
         let obsHtmlExpressa = '';
         if(obsSalva) {
           const extraClass = (statusSalvo === 'concluido') ? ' concluida-obs' : '';
-          obsHtmlExpressa = `<div class="card-obs-preview${extraClass}" id="obs-preview-${os.id}">📝 Obs: ${escapeHtml(obsSalva)}</div>`;
+          obsHtmlExpressa = `<div class="card-obs-preview${extraClass}" id="obs-preview-${os.id}">📝 Obs Admin: ${escapeHtml(obsSalva)}</div>`;
         }
 
         cardsContainer.innerHTML += `
@@ -1473,22 +1672,6 @@
               <div class="info"><strong>📞 Contato:</strong> ${contatoSeguro || " "}</div>
               <button class="btn-copiar" data-copiar="${contatoSeguro}" title="Copiar contato">📋</button>
             </div>
-
-            <div class="botoes-grupo-novo">
-              <div class="btn-links-linha">
-                <button class="btn-acao-mobile btn-maps-mob" onclick="window.open('${escapeHtml(maps)}', '_blank')">🗺️ Maps</button>
-                <button class="btn-acao-mobile btn-ativo-mob" onclick="window.open('https://sistema.ativotelecom.com.br/central_assinante_web/login', '_blank')">🌐 Ativo</button>
-              </div>
-              
-              <div class="seletor-status-container">
-                <select class="select-status-unico" id="select-status-os-${idx}" onchange="dispararAlteracaoStatus(${idx}, this.value)">
-                  <option value="" ${statusSalvo===''?'selected':''}>⏳ Alterar Status...</option>
-                  <option value="rota" ${statusSalvo==='rota'?'selected':''}>🚗 Iniciar Rota</option>
-                  <option value="concluido" ${statusSalvo==='concluido'?'selected':''}>✅ Concluído OS</option>
-                  <option value="nao-concluido" ${statusSalvo==='nao-concluido'?'selected':''}>❌ Não Executada / Falha</option>
-                </select>
-              </div>
-            </div>
             <div id="container-obs-preview-box-${os.id}">${obsHtmlExpressa}</div>
           </div>
         `;
@@ -1499,8 +1682,9 @@
 
     function iniciarEventosCopiarNativos() {
       document.querySelectorAll(".btn-copiar").forEach(btn => {
-        btn.onclick = function() {
-          const valor = btn.dataset.copiar || "";
+        btn.onclick = function(e) {
+          if (e) e.stopPropagation();
+          const valor = btn.dataset.copiar || btn.getAttribute('onclick')?.match(/'(.*)'/)?.[1] || "";
           if (!valor) return;
           navigator.clipboard.writeText(valor).then(() => {
             mostrarToast("✅ Copiado com sucesso!");
@@ -1512,103 +1696,6 @@
     function obtenerHoraAtual() {
       const agora = new Date();
       return agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-    }
-
-    async function dispararAlteracaoStatus(idx, novoStatus) {
-      const os = dadosOS[idx];
-      
-      if (!novoStatus) {
-        localStorage.removeItem(`status_${tecnicoAtual}_${os.id}`);
-        atualizarLayoutCardStatus(os.id, "", "Aguardando status");
-        await salvarAgendaNaApi(document.getElementById("entrada").value, true);
-        recarregarPagina(400);
-        return;
-      }
-
-      if (novoStatus === "rota") {
-        localStorage.setItem(`status_${tecnicoAtual}_${os.id}`, "rota");
-        localStorage.setItem(`timestamp_${tecnicoAtual}_${os.id}_rota`, obtenerHoraAtual());
-        atualizarLayoutCardStatus(os.id, "rota", "🚗 Em rota");
-        await salvarAgendaNaApi(document.getElementById("entrada").value, true);
-
-        const script = `🚗 EM ROTA\n\n👤 Cliente: ${os.cliente}\n📍 Endereço: ${os.endereco}`;
-        navigator.clipboard.writeText(script).then(() => {
-          mostrarToast("✅ Rota Copiada!");
-          window.open("https://t.me/c/1989058391/167773", "_blank");
-          recarregarPagina(1000);
-        });
-      } 
-      else if (novoStatus === "concluido" || novoStatus === "nao-concluido") {
-        statusTemporarioExpressado = novoStatus;
-        indexTemporarioExpressado = idx;
-        
-        const overlay = document.getElementById("modalObsExpressaOverlay");
-        const titulo = document.getElementById("tit-obs-expressa");
-        const desc = document.getElementById("desc-obs-expressa");
-        const input = document.getElementById("input-obs-expressa");
-        
-        input.value = localStorage.getItem(`obs_${tecnicoAtual}_${os.id}`) || "";
-        
-        if(novoStatus === "concluido") {
-          titulo.innerText = "✅ Concluir Ordem de Serviço";
-          desc.innerText = "Insira as observações técnicas de encerramento da OS (Opcional):";
-        } else {
-          titulo.innerText = "❌ Finalizar como Não Concluída";
-          desc.innerText = "Insira detalhadamente o motivo/justificativa pelo qual a OS não foi executada (Obrigatório):";
-        }
-        
-        overlay.style.display = "flex";
-        setTimeout(() => { overlay.classList.add("aberto"); input.focus(); }, 10);
-      }
-    }
-
-    function fecharModalObsExpressa() {
-      const overlay = document.getElementById("modalObsExpressaOverlay");
-      overlay.classList.remove("aberto");
-      setTimeout(() => { 
-        overlay.style.display = "none";
-        if(indexTemporarioExpressado !== null) {
-          const statusSalvoOriginal = localStorage.getItem(`status_${tecnicoAtual}_${dadosOS[indexTemporarioExpressado].id}`) || "";
-          document.getElementById(`select-status-os-${indexTemporarioExpressado}`).value = statusSalvoOriginal;
-        }
-        statusTemporarioExpressado = null;
-        indexTemporarioExpressado = null;
-      }, 300);
-    }
-
-    async function salvarObsExpressa() {
-      if (indexTemporarioExpressado === null || !statusTemporarioExpressado) return;
-      
-      const os = dadosOS[indexTemporarioExpressado];
-      const obsTexto = document.getElementById("input-obs-expressa").value.trim();
-
-      if(statusTemporarioExpressado === "nao-concluido" && !obsTexto) {
-        alert("Por favor, digite um motivo para a não conclusão.");
-        return;
-      }
-
-      localStorage.setItem(`status_${tecnicoAtual}_${os.id}`, statusTemporarioExpressado);
-      localStorage.setItem(`timestamp_${tecnicoAtual}_${os.id}_${statusTemporarioExpressado}`, obtenerHoraAtual());
-
-      if(obsTexto) {
-        localStorage.setItem(`obs_${tecnicoAtual}_${os.id}`, obsTexto);
-      } else {
-        localStorage.removeItem(`obs_${tecnicoAtual}_${os.id}`);
-      }
-
-      fecharModalObsExpressa();
-      await salvarAgendaNaApi(document.getElementById("entrada").value, false);
-      
-      mostrarToast("💾 Status updated!");
-      recarregarPagina(800);
-    }
-
-    function atualizarLayoutCardStatus(osId, classeStatus, textoStatus) {
-      const badge = document.getElementById(`topo-status-badge-${osId}`);
-      if(badge) {
-        badge.className = `card-status-topo ${classeStatus || 'vazio'}`;
-        badge.innerText = textoStatus;
-      }
     }
 
     function abrirModal(idx) {
@@ -1626,7 +1713,6 @@
       document.getElementById("edit-observacao").value = localStorage.getItem(`obs_${tecnicoAtual}_${os.id}`) || "";
       document.getElementById("edit-status").value = localStorage.getItem(`status_${tecnicoAtual}_${os.id}`) || "";
       
-      // Popular Select de Migração de OS
       const selectTec = document.getElementById("edit-tecnico-resp");
       selectTec.innerHTML = "";
       listaTecnicos.forEach(t => {
@@ -1650,7 +1736,7 @@
 
       const novoTecnico = document.getElementById("edit-tecnico-resp").value;
       
-      // Lógica de Migração da OS para outro técnico
+      // MIGRAR O.S PARA OUTRO TECNICO
       if (novoTecnico && novoTecnico !== tecnicoAtual) {
         toggleLoading(true, `Migrando OS para ${novoTecnico}...`);
         try {
@@ -1667,11 +1753,9 @@
            const novaObs = document.getElementById("edit-observacao").value.trim();
            const novoStatus = document.getElementById("edit-status").value;
 
-           // Remove do atual
            dadosOS.splice(osEditandoIndex, 1);
            const novoTextoAtual = serializarAgenda(dadosOS);
            
-           // Busca técnico destino
            const resp = await fetch(API_URL);
            const dados = await resp.json();
            const registroNovo = dados.find(d => d.tecnico === novoTecnico);
@@ -1681,7 +1765,6 @@
               const textoOsMigrada = serializarAgenda([os]);
               agendaNova = agendaNova ? agendaNova + "\n\n" + textoOsMigrada : textoOsMigrada;
               
-              // Transfere status no local storage
               if(novoStatus) {
                  localStorage.setItem(`status_${novoTecnico}_${os.id}`, novoStatus);
                  localStorage.setItem(`timestamp_${novoTecnico}_${os.id}_${novoStatus}`, obtenerHoraAtual());
@@ -1690,7 +1773,6 @@
                  localStorage.setItem(`obs_${novoTecnico}_${os.id}`, novaObs);
               }
 
-              // Prepara status object para o novo tecnico na API
               let statusObjNovo = {};
               try { statusObjNovo = JSON.parse(registroNovo.status || "{}"); } catch(e){}
               statusObjNovo[os.id] = {
@@ -1699,19 +1781,16 @@
                  timestamp: novoStatus ? obtenerHoraAtual() : "--:--"
               };
 
-              // Atualiza o novo técnico na API
               await fetch(`${API_URL}/${registroNovo.id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ agenda: agendaNova, status: JSON.stringify(statusObjNovo) })
               });
 
-              // Limpa rastro no storage do técnico antigo
               localStorage.removeItem(`status_${tecnicoAtual}_${os.id}`);
               localStorage.removeItem(`obs_${tecnicoAtual}_${os.id}`);
               ['rota', 'concluido', 'nao-concluido'].forEach(st => localStorage.removeItem(`timestamp_${tecnicoAtual}_${os.id}_${st}`));
 
-              // Salva estado do técnico atual e reconstrói UI
               document.getElementById("entrada").value = novoTextoAtual;
               await salvarAgendaNaApi(novoTextoAtual, true);
               fecharModal();
@@ -1729,7 +1808,7 @@
         return;
       }
 
-      // Edição Normal da OS (Mesmo Técnico)
+      // EDIÇÃO NORMAL DE CAMPO DA O.S. (ADMIN)
       const os = dadosOS[osEditandoIndex];
       os.horario  = document.getElementById("edit-horario").value.trim();
       os.cliente  = document.getElementById("edit-cliente").value.trim();
@@ -1755,7 +1834,7 @@
       fecharModal();
       await salvarAgendaNaApi(novoTexto);
       
-      mostrarToast("💾 OS Atualizada!");
+      mostrarToast("💾 OS Sincronizada!");
       recarregarPagina(800);
     }
 
@@ -1773,7 +1852,7 @@
 
     function gerarRelatorioDiario() {
       fecharModalConfig();
-      toggleLoading(true, "Gerando relatório...");
+      toggleLoading(true, "Compilando relatório...");
       
       fetch(API_URL).then(r => r.json()).then(dados => {
          let relatorio = `📊 RELATÓRIO DIÁRIO - ${new Date().toLocaleDateString('pt-BR')}\n\n`;
@@ -1821,15 +1900,20 @@
             relatorio += `⏳ PENDENTES (${pendentes.length}):\n${pendentes.length ? pendentes.join('\n\n') : 'Nenhuma'}\n\n`;
             relatorio += `======================================\n\n`;
          });
-         
+
          document.getElementById("relatorio-texto").value = relatorio;
-         document.getElementById("modalRelatorioOverlay").style.display = "flex";
-         setTimeout(() => document.getElementById("modalRelatorioOverlay").classList.add("aberto"), 10);
          toggleLoading(false);
+         abrirModalRelatorio();
       }).catch(e => {
-         alert("Erro ao gerar relatório.");
          toggleLoading(false);
+         alert("Erro ao puxar dados do relatório remoto.");
       });
+    }
+
+    function abrirModalRelatorio() {
+      const overlay = document.getElementById("modalRelatorioOverlay");
+      overlay.style.display = "flex";
+      setTimeout(() => overlay.classList.add("aberto"), 10);
     }
 
     function fecharModalRelatorio() {
@@ -1839,117 +1923,34 @@
     }
 
     function copiarRelatorio() {
-      const txt = document.getElementById("relatorio-texto").value;
-      navigator.clipboard.writeText(txt).then(() => {
-         mostrarToast("✅ Relatório copiado para prancheta!");
+      const text = document.getElementById("relatorio-texto").value;
+      navigator.clipboard.writeText(text).then(() => {
+         mostrarToast("📋 Relatório copiado!");
+         fecharModalRelatorio();
       });
     }
 
-    async function sincronizarSilencioso() {
-      if (document.getElementById("modalOverlay").classList.contains("aberto") ||
-          document.getElementById("modalObsExpressaOverlay").classList.contains("aberto") ||
-          document.getElementById("modalSenhaOverlay").classList.contains("aberto") ||
-          document.getElementById("modalConfigOverlay").classList.contains("aberto") ||
-          document.getElementById("modalRelatorioOverlay").classList.contains("aberto")) {
-         return; 
-      }
-      
-      try {
-        const resp = await fetch(API_URL);
-        if(resp.ok) {
-           const dados = await resp.json();
-           
-           if (!tecnicoAtual) {
-             atualizarDashboardGeralComDados(dados);
-           } else {
-             const dadosTec = dados.find(d => d.tecnico === tecnicoAtual);
-             if (dadosTec) {
-                if (document.getElementById("importador").classList.contains("oculto")) {
-                   const novaAgenda = dadosTec.agenda || "";
-                   const textoAtual = document.getElementById("entrada").value;
-                   
-                   let precisaAtualizarUI = false;
-
-                   if(dadosTec.status) {
-                      try {
-                        const statusApi = JSON.parse(dadosTec.status);
-                        Object.keys(statusApi).forEach(osId => {
-                           const localStatus = localStorage.getItem(`status_${tecnicoAtual}_${osId}`);
-                           const localObs = localStorage.getItem(`obs_${tecnicoAtual}_${osId}`);
-                           
-                           let apiStat = "", apiObs = "", apiTime = "--:--";
-                           if(typeof statusApi[osId] === 'object') {
-                              apiStat = statusApi[osId].status || "";
-                              apiObs = statusApi[osId].obs || "";
-                              apiTime = statusApi[osId].timestamp || "--:--";
-                           } else {
-                              apiStat = statusApi[osId];
-                           }
-
-                           if (localStatus !== apiStat || localObs !== apiObs) {
-                              precisaAtualizarUI = true;
-                              localStorage.setItem(`status_${tecnicoAtual}_${osId}`, apiStat);
-                              localStorage.setItem(`obs_${tecnicoAtual}_${osId}`, apiObs);
-                              if(apiStat) {
-                                 localStorage.setItem(`timestamp_${tecnicoAtual}_${osId}_${apiStat}`, apiTime);
-                              }
-                           }
-                        });
-                      } catch(e) {}
-                   } 
-                   
-                   if (novaAgenda !== textoAtual) {
-                      precisaAtualizarUI = true;
-                   }
-
-                   if(precisaAtualizarUI) {
-                      document.getElementById("entrada").value = novaAgenda;
-                      criarCards(novaAgenda);
-                   }
-                }
-             }
-           }
-        }
-      } catch(e) {}
-    }
-
-    async function sincronizarTecnicosDaApi() {
+    // Inicialização da Página
+    window.addEventListener('DOMContentLoaded', () => {
       renderizarCardsMonitoramento();
-      carregarDashboardGeral();
 
-      toggleLoading(true, "Carregando painel remoto...");
-      try {
-        const resp = await fetch(API_URL);
-        if(resp.ok) {
-          const dados = await resp.json();
-          if (dados && dados.length > 0) {
-            const nomesApi = dados.map(d => d.tecnico).filter(t => t);
-            if(nomesApi.length > 0) {
-              listaTecnicos = nomesApi;
-              localStorage.setItem('lista_tecnicos_smart', JSON.stringify(listaTecnicos));
-            }
-          }
+      const tecnicoPreSalvo = sessionStorage.getItem('tecnicoAberto');
+      if (tecnicoPreSalvo && listaTecnicos.includes(tecnicoPreSalvo)) {
+         sessionStorage.removeItem('tecnicoAberto');
+         selecionarTecnico(tecnicoPreSalvo);
+      } else {
+         carregarDashboardGeral(true);
+      }
+
+      // Intervalo de Sincronização em Background (Seguro, evita Flicker nos inputs focados)
+      setInterval(() => {
+        const painelTecnico = document.getElementById("painelTecnico");
+        const painelTecnicoOculto = !painelTecnico || painelTecnico.classList.contains("oculto");
+        if (painelTecnicoOculto) {
+          carregarDashboardGeral(false); 
         }
-      } catch (e) { 
-        console.warn("Usando cache local."); 
-      } finally {
-        renderizarCardsMonitoramento();
-        carregarDashboardGeral();
-        toggleLoading(false);
-      }
-    }
-
-    window.onload = async function() { 
-      await sincronizarTecnicosDaApi(); 
-      
-      const tecnicoSalvo = sessionStorage.getItem('tecnicoAberto');
-      if (tecnicoSalvo && listaTecnicos.includes(tecnicoSalvo)) {
-        selecionarTecnico(tecnicoSalvo);
-        sessionStorage.removeItem('tecnicoAberto');
-      }
-
-      setInterval(sincronizarSilencioso, 10000);
-    };
+      }, 15000);
+    });
   </script>
 </body>
 </html>
