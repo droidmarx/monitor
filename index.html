@@ -25,6 +25,20 @@
       padding: 16px;
     }
 
+    .icon {
+      width: 16px;
+      height: 16px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vertical-align: -3px;
+      flex-shrink: 0;
+    }
+    .icon-sm { width: 13px; height: 13px; vertical-align: -2px; }
+    .icon-lg { width: 22px; height: 22px; vertical-align: -5px; }
+
     .topo {
       margin-bottom: 20px;
       text-align: center;
@@ -54,7 +68,10 @@
       border-radius: 12px;
       cursor: pointer;
       margin: 14px auto 0;
-      display: block;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      width: fit-content;
       transition: all 0.25s ease;
     }
 
@@ -83,6 +100,10 @@
       padding: 12px 20px;
       border-radius: 14px;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
 
     .lista-gerenciar {
@@ -105,22 +126,28 @@
       padding: 8px 12px;
       border-radius: 10px;
       background: rgba(255, 255, 255, 0.02);
+      flex-wrap: wrap;
+      gap: 8px;
     }
 
     .acoes-gerenciar-tec {
       display: flex;
       gap: 6px;
+      flex-wrap: wrap;
     }
 
     .btn-agenda-tec-lista {
-      background: rgba(34, 211, 238, 0.12);
-      border: 1px solid rgba(34, 211, 238, 0.25);
-      color: #22d3ee;
+      background: rgba(34, 197, 94, 0.12);
+      border: 1px solid rgba(34, 197, 94, 0.25);
+      color: #4ade80;
       font-size: 11.5px;
       font-weight: 700;
-      padding: 6px 12px;
+      padding: 6px 10px;
       border-radius: 8px;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .btn-editar-tec-lista {
@@ -129,9 +156,11 @@
       color: #60a5fa;
       font-size: 11.5px;
       font-weight: 700;
-      padding: 6px 12px;
+      padding: 6px 10px;
       border-radius: 8px;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
     }
 
     .btn-deletar-tec {
@@ -140,9 +169,12 @@
       color: #f87171;
       font-size: 11.5px;
       font-weight: 700;
-      padding: 6px 12px;
+      padding: 6px 10px;
       border-radius: 8px;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .seletor-tecnico {
@@ -176,7 +208,6 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      cursor: pointer;
       flex: 1;
     }
 
@@ -213,54 +244,169 @@
       padding: 6px 12px;
       border-radius: 10px;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
     }
-
-    /* Animação em cascata (Surgimento dos Itens de O.S.) */
-    @keyframes entradaCascata {
-      from {
-        opacity: 0;
-        transform: translateY(16px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+    .btn-dropdown .icon { transition: transform 0.3s ease; }
+    .btn-dropdown.aberto .icon { transform: rotate(180deg); }
 
     .monitor-atividades {
-      display: none;
+      display: flex;
       flex-direction: column;
       gap: 10px;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      margin-top: 0;
+      padding-top: 0;
+      border-top: 1px solid transparent;
+      transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity 0.35s ease,
+                  margin-top 0.4s ease,
+                  padding-top 0.4s ease,
+                  border-top-color 0.4s ease;
+    }
+
+    .monitor-atividades.visivel {
+      max-height: 3000px;
+      opacity: 1;
       margin-top: 6px;
       padding-top: 14px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      border-top-color: rgba(255, 255, 255, 0.08);
     }
 
-    .monitor-atividades.visivel { 
-      display: flex; 
+    @keyframes cascataFadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Classe aplicada dinamicamente para animar os itens em cascata */
-    .monitor-atividades.visivel .log-atividade {
-      animation: entradaCascata 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    .log-item-wrap {
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      animation: cascataFadeIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
+
+    .monitor-atividades:not(.visivel) .log-item-wrap { animation: none; opacity: 0; }
 
     .log-atividade {
       display: flex;
       flex-direction: column;
       gap: 8px;
       background: rgba(255, 255, 255, 0.02);
-      padding: 14px;
+      padding: 12px;
       border-radius: 14px;
       border: 1px solid rgba(255, 255, 255, 0.04);
       cursor: pointer;
-      transition: background 0.25s ease, border-color 0.25s ease;
-      overflow: hidden;
+      transition: background 0.2s ease, transform 0.1s ease;
     }
 
     .log-atividade:hover {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .log-atividade:active {
+      transform: scale(0.99);
+    }
+
+    .log-chevron {
+      display: inline-block;
+      transition: transform 0.3s ease;
+      color: #67e8f9;
+      font-size: 12px;
+    }
+
+    .log-chevron.aberto { transform: rotate(180deg); }
+
+    .log-detalhes {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      margin-top: 0;
+      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, margin-top 0.3s ease;
+    }
+
+    .log-detalhes.aberto {
+      max-height: 900px;
+      opacity: 1;
+      margin-top: 10px;
+    }
+
+    .log-detalhes-inner {
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 10px 2px 2px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .log-detalhes-status {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .log-detalhes-rotulo {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .link-maps-minimo {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #67e8f9;
+      font-size: 12.5px;
+      font-weight: 600;
+      background: none;
+      border: none;
+      padding: 6px 2px;
+      cursor: pointer;
+      align-self: flex-start;
+    }
+    .campo-select-minimo, .campo-textarea-minimo {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 9px 10px;
+      font-size: 13.5px;
+      color: white;
+      outline: none;
+      width: 100%;
+      cursor: pointer;
+    }
+    .campo-textarea-minimo { min-height: 60px; resize: vertical; cursor: text; }
+    .btn-salvar-minimo {
+      width: 100%;
+      border: 1px solid rgba(34, 211, 238, 0.3);
+      background: rgba(34, 211, 238, 0.1);
+      color: #67e8f9;
+      padding: 9px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-copiar-minimo {
+      border: none;
+      background: none;
+      color: #64748b;
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
     }
 
     .log-topo-linha {
@@ -268,38 +414,6 @@
       justify-content: space-between;
       align-items: center;
       width: 100%;
-    }
-
-    /* Seta indicativa que rotaciona */
-    .seta-indicativa {
-      font-size: 14px;
-      color: #94a3b8;
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      margin-left: 8px;
-    }
-
-    .log-atividade.aberto .seta-indicativa {
-      transform: rotate(180deg);
-      color: #22d3ee;
-    }
-
-    /* Acordeão Inline (Dropdown O.S.) */
-    .log-detalhes-inline {
-      max-height: 0;
-      opacity: 0;
-      overflow: hidden;
-      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, margin-top 0.3s ease;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .log-atividade.aberto .log-detalhes-inline {
-      max-height: 1000px; /* Suficiente para expandir tudo */
-      opacity: 1;
-      margin-top: 14px;
-      padding-top: 14px;
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
     }
 
     .log-badge {
@@ -349,7 +463,10 @@
     .painel-tecnico.oculto { display: none !important; }
 
     .btn-trocar {
-      display: block;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      width: fit-content;
       margin: 0 auto 16px;
       border: none;
       background: none;
@@ -357,6 +474,20 @@
       font-size: 14px;
       font-weight: 700;
       cursor: pointer;
+    }
+
+    .badge-admin {
+      display: block;
+      text-align: center;
+      margin: -10px auto 16px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #fbbf24;
+      background: rgba(251, 191, 36, 0.1);
+      border: 1px solid rgba(251, 191, 36, 0.25);
+      padding: 6px 14px;
+      border-radius: 999px;
+      width: fit-content;
     }
 
     .importador {
@@ -393,10 +524,17 @@
       cursor: pointer;
       color: white;
       background: linear-gradient(135deg, #22d3ee, #3b82f6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
     .btn-mostrar {
       display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       width: 100%;
       margin-bottom: 16px;
       border: none;
@@ -552,6 +690,7 @@
 
     .btn-maps-mob { background: linear-gradient(135deg, #f43f5e, #fb923c); }
     .btn-ativo-mob { background: linear-gradient(135deg, #64748b, #475569); }
+    .btn-instalacao-mob { width: 100%; margin-top: 10px; background: linear-gradient(135deg, #8b5cf6, #6366f1); }
 
     .seletor-status-container {
       position: relative;
@@ -648,7 +787,8 @@
 
     .modal-senha { text-align: center; }
     .erro-senha { color: #f87171; font-size: 13px; font-weight: 600; margin-top: 10px; display: none; }
-    .modal-titulo { font-size: 18px; font-weight: 800; margin-bottom: 20px; background: linear-gradient(90deg, #22d3ee, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .modal-titulo { font-size: 18px; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; background: linear-gradient(90deg, #22d3ee, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .modal-titulo .icon { -webkit-text-fill-color: initial; color: #67e8f9; }
 
     .modal-fechar {
       position: absolute;
@@ -689,7 +829,20 @@
 
     .modal-divider { border: none; border-top: 1px solid rgba(255,255,255,0.07); margin: 16px 0; }
     .modal-secao { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
-    .btn-salvar-modal { width: 100%; margin-top: 16px; border: none; padding: 14px; border-radius: 14px; font-size: 15px; font-weight: 700; cursor: pointer; color: white; background: linear-gradient(135deg, #22d3ee, #3b82f6); }
+    .btn-salvar-modal { width: 100%; margin-top: 16px; border: none; padding: 14px; border-radius: 14px; font-size: 15px; font-weight: 700; cursor: pointer; color: white; background: linear-gradient(135deg, #22d3ee, #3b82f6); display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+    .detalhe-linha {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 7px 2px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .detalhe-linha:last-of-type { border-bottom: none; }
+    .detalhe-linha .rotulo { font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .detalhe-linha .valor { font-size: 13.5px; color: #e2e8f0; word-break: break-word; text-align: right; flex: 1; }
+    .detalhe-linha-copiavel .valor { color: #67e8f9; font-weight: 600; }
 
     .toast {
       position: fixed;
@@ -708,6 +861,9 @@
       transition: all 0.4s;
       z-index: 999;
       white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .toast.show { opacity: 1; }
@@ -734,124 +890,174 @@
 
 <body>
 
+  <svg style="position:absolute; width:0; height:0; overflow:hidden;" aria-hidden="true">
+    <defs>
+      <symbol id="i-radio" viewBox="0 0 24 24"><circle cx="12" cy="18" r="1.6"/><path d="M8.5 14.5a5 5 0 0 1 7 0"/><path d="M5.5 11.5a9 9 0 0 1 13 0"/></symbol>
+      <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M21 12h-3M6 12H3M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1M18.4 18.4l-2.1-2.1M7.7 7.7 5.6 5.6"/></symbol>
+      <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+      <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="3.2"/><path d="M10.3 12.7 19 4M15.5 8.5 18 6M17.5 10.5 20 8"/></symbol>
+      <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.6"/></symbol>
+      <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M3 3l18 18"/><path d="M10.6 5.7A10.6 10.6 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a15.6 15.6 0 0 1-3 3.7M6.4 6.4C4 8 2.5 12 2.5 12S6 18.5 12 18.5a9.6 9.6 0 0 0 3.4-.6"/><path d="M9.9 9.9a2.6 2.6 0 0 0 3.6 3.6"/></symbol>
+      <symbol id="i-alert-triangle" viewBox="0 0 24 24"><path d="M12 3.5 21 20H3L12 3.5Z"/><path d="M12 10v4"/><circle cx="12" cy="17" r="0.6" fill="currentColor" stroke="none"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></symbol>
+      <symbol id="i-clipboard-list" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 3.5h6v2H9z"/><path d="M8.5 11h7M8.5 14.5h7M8.5 18h4.5"/></symbol>
+      <symbol id="i-tag" viewBox="0 0 24 24"><path d="M12.6 3.5H5a1.5 1.5 0 0 0-1.5 1.5v7.6c0 .4.16.78.44 1.06l9.9 9.9c.58.58 1.53.58 2.12 0l7.6-7.6c.58-.58.58-1.53 0-2.12l-9.9-9.9a1.5 1.5 0 0 0-1.06-.44Z"/><circle cx="8.3" cy="8.3" r="1.3"/></symbol>
+      <symbol id="i-file-text" viewBox="0 0 24 24"><path d="M7 3h7l4 4v14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M14 3v4h4"/><path d="M9 12h6M9 15.5h6M9 9h2"/></symbol>
+      <symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 3 5 13.5h5.5L11 21l8-11h-5.5L13 3Z"/></symbol>
+      <symbol id="i-edit-2" viewBox="0 0 24 24"><path d="M4 20.5 4.9 16.3 16.3 4.9a2 2 0 0 1 2.8 0 2 2 0 0 1 0 2.8L7.7 19.1 3.5 20.5Z"/><path d="M14.5 6.5 17.5 9.5"/></symbol>
+      <symbol id="i-trash-2" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4.8A1.3 1.3 0 0 1 10.3 3.5h3.4A1.3 1.3 0 0 1 15 4.8V7M6 7l1 13a2 2 0 0 0 2 1.9h6a2 2 0 0 0 2-1.9l1-13"/><path d="M10 11v6M14 11v6"/></symbol>
+      <symbol id="i-car" viewBox="0 0 24 24"><path d="M4 16v-3.2c0-.5.2-.9.6-1.2l2-2A2 2 0 0 1 8 9h8a2 2 0 0 1 1.4.6l2 2c.3.3.6.7.6 1.2V16"/><rect x="2.5" y="16" width="19" height="3.5" rx="1"/><circle cx="7" cy="19.5" r="1.4"/><circle cx="17" cy="19.5" r="1.4"/></symbol>
+      <symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.3l2.6 2.6L16.3 9"/></symbol>
+      <symbol id="i-x-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></symbol>
+      <symbol id="i-save" viewBox="0 0 24 24"><path d="M5 4h11l3 3v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z"/><path d="M8 4v5h7V4"/><path d="M7.5 14h9v6.5h-9z"/></symbol>
+      <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+      <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></symbol>
+      <symbol id="i-map-pin" viewBox="0 0 24 24"><path d="M12 21s7-6.6 7-11.5A7 7 0 0 0 5 9.5C5 14.4 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.4"/></symbol>
+      <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6.5 3.5 9 4.2c.5.15.85.63.8 1.15l-.3 3a1.1 1.1 0 0 1-.6.85l-1.6.8a13.6 13.6 0 0 0 6.2 6.2l.8-1.6c.2-.4.55-.6.85-.6l3 .3c.52-.05 1 .3 1.15.8l.7 2.5c.15.55-.15 1.1-.68 1.3-1.1.4-2.9.85-4.5.35C10.3 18 6 13.7 4.8 9.3c-.5-1.6-.05-3.4.35-4.5.2-.53.75-.83 1.3-.68Z"/></symbol>
+      <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.4 2.5 3.6 5.7 3.6 9s-1.2 6.5-3.6 9c-2.4-2.5-3.6-5.7-3.6-9S9.6 5.5 12 3Z"/></symbol>
+      <symbol id="i-truck" viewBox="0 0 24 24"><path d="M2.5 6.5h11v10h-11z"/><path d="M13.5 10.5h4l3 3v3h-7z"/><circle cx="7" cy="18.5" r="1.6"/><circle cx="17" cy="18.5" r="1.6"/></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
+      <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+      <symbol id="i-hash" viewBox="0 0 24 24"><path d="M9 3.5 6.5 20.5M17.5 3.5 15 20.5M4 8.5h16M3.2 15.5h16"/></symbol>
+      <symbol id="i-external-link" viewBox="0 0 24 24"><path d="M14 4h6v6"/><path d="M20 4 10 14"/><path d="M18 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6"/></symbol>
+    </defs>
+  </svg>
+
   <div class="topo">
-    <h1>📡 Monitoramento Técnico</h1>
-    <p id="subtitulo">Toque para expandir as atividades dos técnicos</p>
-    <button class="btn-config" onclick="abrirModalSenha()">⚙️ Painel de Controle (Admin)</button>
+    <h1><svg class="icon icon-lg"><use href="#i-radio"></use></svg> Monitoramento Técnico</h1>
+    <p id="subtitulo">Toque em uma O.S. para ver detalhes e alterar o status</p>
+    <button class="btn-config" onclick="abrirModalSenha()"><svg class="icon"><use href="#i-settings"></use></svg> Gerenciar Técnicos</button>
   </div>
 
   <!-- Modal Senha -->
   <div class="modal-overlay" id="modalSenhaOverlay">
     <div class="modal modal-senha" id="cardModalSenha">
-      <button class="modal-fechar" onclick="fecharModalSenha()">✕</button>
-      <div class="modal-titulo">🔑 Área Restrita</div>
+      <button class="modal-fechar" onclick="fecharModalSenha()"><svg class="icon"><use href="#i-x"></use></svg></button>
+      <div class="modal-titulo"><svg class="icon icon-lg"><use href="#i-lock"></use></svg> Área Restrita</div>
       <div class="modal-secao" style="margin-bottom: 20px;">Digite a senha master</div>
       
       <div class="campo-grupo">
         <div class="senha-input-wrapper">
           <input type="password" class="campo-input" id="inputSenhaMaster" placeholder="Senha..." style="text-align: center; font-size: 16px;" onkeydown="verificarTeclaSenha(event)" />
-          <button class="btn-toggle-senha" onclick="toggleVisibilidadeSenha()" id="btnToggleSenha">👁️</button>
+          <button class="btn-toggle-senha" onclick="toggleVisibilidadeSenha()" id="btnToggleSenha"><svg class="icon" id="iconToggleSenha"><use href="#i-eye"></use></svg></button>
         </div>
-        <div class="erro-senha" id="erroSenhaMsg">⚠️ Senha incorreta!</div>
+        <div class="erro-senha" id="erroSenhaMsg"><svg class="icon icon-sm"><use href="#i-alert-triangle"></use></svg> Senha incorreta!</div>
       </div>
       <button class="btn-salvar-modal" onclick="validarSenhaMaster()">Confirmar Acesso</button>
     </div>
   </div>
 
-  <!-- Modal Configurações (Gerenciar Técnicos) -->
+  <!-- Modal Configurações (Gerenciar Técnicos - ADMIN) -->
   <div class="modal-overlay" id="modalConfigOverlay">
     <div class="modal">
-      <button class="modal-fechar" onclick="fecharModalConfig()">✕</button>
-      <div class="modal-titulo">⚙️ Painel de Controle</div>
+      <button class="modal-fechar" onclick="fecharModalConfig()"><svg class="icon"><use href="#i-x"></use></svg></button>
+      <div class="modal-titulo"><svg class="icon icon-lg"><use href="#i-settings"></use></svg> Gerenciar Técnicos</div>
       
-      <div class="modal-secao">Cadastrar Novo Técnico</div>
+      <div class="modal-secao">Cadastrar Novo</div>
       <div class="form-add-tecnico">
         <input type="text" class="input-add" id="nomeNovoTecnico" placeholder="Nome..." />
-        <button class="btn-add" onclick="adicionarTecnico()">➕</button>
+        <button class="btn-add" onclick="adicionarTecnico()"><svg class="icon"><use href="#i-plus"></use></svg></button>
       </div>
       
       <div class="modal-divider"></div>
-      <div class="modal-secao">Gerenciar Técnicos e Agendas</div>
+      <div class="modal-secao">Técnicos Ativos</div>
+      <p style="font-size:12.5px; color:#64748b; margin:-4px 0 10px;">Use "Agenda" para colar/gerar a agenda, editar O.S. e clientes, e migrar O.S. entre técnicos.</p>
       <div class="lista-gerenciar" id="listaGerenciarTecnicos"></div>
 
       <div class="modal-divider"></div>
-      <button class="btn-salvar-modal" onclick="gerarRelatorioDiario()" style="margin-top: 0; background: linear-gradient(135deg, #10b981, #059669);">📄 Gerar Relatório do Dia</button>
+      <button class="btn-salvar-modal" onclick="gerarRelatorioDiario()" style="margin-top: 0; background: linear-gradient(135deg, #10b981, #059669);"><svg class="icon"><use href="#i-file-text"></use></svg> Gerar Relatório do Dia</button>
     </div>
   </div>
 
   <!-- Painel Inicial -->
   <div class="seletor-tecnico" id="seletorTecnico"></div>
 
-  <!-- Painel do Técnico Administrativo (Gerenciamento restrito de Agendas) -->
+  <!-- Painel do Técnico (Agenda Específica - somente ADMIN) -->
   <div class="painel-tecnico oculto" id="painelTecnico">
-    <button class="btn-trocar" onclick="trocarTecnico()">↩️ Voltar ao Dashboard Geral</button>
-    <button class="btn-mostrar" id="btnMostrar" onclick="mostrarImportador()">📋 Mostrar campo de edição da agenda</button>
+    <button class="btn-trocar" onclick="trocarTecnico()">↩️ Voltar ao Painel Geral</button>
+    <div class="badge-admin"><svg class="icon icon-sm"><use href="#i-key"></use></svg> Modo Admin — Gerenciamento de Agenda</div>
+    <button class="btn-mostrar" id="btnMostrar" onclick="mostrarImportador()"><svg class="icon"><use href="#i-clipboard-list"></use></svg> Mostrar campo da agenda</button>
 
     <div class="importador" id="importador">
-      <div class="modal-secao" style="margin-bottom: 8px;">Agenda Completa (Texto Bruto)</div>
-      <textarea id="entrada" placeholder="Cole aqui a agenda completa do sistema..."></textarea>
-      <button class="btn-gerar" onclick="gerarAgenda()">🚀 Salvar e Gerar Agenda Inteligente</button>
+      <textarea id="entrada" placeholder="Cole aqui a agenda completa..."></textarea>
+      <button class="btn-gerar" onclick="gerarAgenda()"><svg class="icon"><use href="#i-zap"></use></svg> Gerar Agenda Inteligente</button>
     </div>
 
     <div class="cards" id="cards"></div>
   </div>
 
-  <!-- Modal Editar OS (EXCLUSIVO ADMIN) -->
+  <!-- Modal Editar OS (ADMIN: edição completa + migração) -->
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
-      <button class="modal-fechar" onclick="fecharModal()">✕</button>
-      <div class="modal-titulo">✏️ Editar Ordem de Serviço (Admin)</div>
+      <button class="modal-fechar" onclick="fecharModal()"><svg class="icon"><use href="#i-x"></use></svg></button>
+      <div class="modal-titulo"><svg class="icon icon-lg"><use href="#i-edit-2"></use></svg> Editar OS</div>
 
-      <div class="modal-secao">Dados do Atendimento</div>
+      <div class="modal-secao">Dados Principais</div>
       <div class="campo-grupo"><label>Horário</label><input class="campo-input" id="edit-horario" type="text" /></div>
       <div class="campo-grupo"><label>Cliente</label><input class="campo-input" id="edit-cliente" type="text" /></div>
       <div class="campo-grupo"><label>Assunto</label><input class="campo-input" id="edit-assunto" type="text" /></div>
-      <div class="campo-grupo"><label>Endereço Completo</label><input class="campo-input" id="edit-endereco" type="text" /></div>
-      <div class="campo-grupo"><label>Contato Telefônico</label><input class="campo-input" id="edit-contato" type="text" /></div>
+      <div class="campo-grupo"><label>Endereço</label><input class="campo-input" id="edit-endereco" type="text" /></div>
+      <div class="campo-grupo"><label>Contato</label><input class="campo-input" id="edit-contato" type="text" /></div>
 
       <hr class="modal-divider" />
-      <div class="modal-secao">Acesso PPPoE</div>
+      <div class="modal-secao">Credenciais</div>
       <div class="campo-grupo"><label>Login</label><input class="campo-input" id="edit-login" type="text" /></div>
-      <div class="campo-grupo"><label>Senha</label><input class="campo-input" id="edit-senha" type="text" /></div>
+      <div class="campo-grupo"><label>Senha PPPoE</label><input class="campo-input" id="edit-senha" type="text" /></div>
 
       <hr class="modal-divider" />
-      <div class="modal-secao">Migrar O.S. de Técnico</div>
+      <div class="modal-secao">Migrar / Transferir OS</div>
       <div class="campo-grupo">
-        <label style="color: #67e8f9; font-size: 13.5px;">Responsável Técnico</label>
+        <label style="color: #67e8f9; font-size: 13.5px;">Técnico Responsável</label>
         <div class="select-wrapper">
           <select class="campo-select" id="edit-tecnico-resp"></select>
         </div>
       </div>
 
       <hr class="modal-divider" />
-      <div class="modal-secao">Forçar Status da OS</div>
+      <div class="modal-secao">Status da OS</div>
       <div class="campo-grupo">
         <div class="select-wrapper">
           <select class="campo-select" id="edit-status">
             <option value="">Aguardando status</option>
-            <option value="rota">🚗 Em rota</option>
-            <option value="concluido">✅ Concluído</option>
-            <option value="nao-concluido">❌ Não concluído</option>
+            <option value="rota">Em rota</option>
+            <option value="concluido">Concluído</option>
+            <option value="nao-concluido">Não concluído</option>
           </select>
         </div>
       </div>
 
       <div class="campo-grupo">
-        <label style="color: #cbd5e1; font-size: 13.5px;">📝 Observação do Administrador</label>
-        <textarea class="campo-textarea-modal" id="edit-observacao" placeholder="Motivos de alteração de rota ou encerramento manual..."></textarea>
+        <label style="color: #cbd5e1; font-size: 13.5px; display:flex; align-items:center; gap:6px;"><svg class="icon icon-sm"><use href="#i-file-text"></use></svg> Observações / Motivo</label>
+        <textarea class="campo-textarea-modal" id="edit-observacao" placeholder="Digite as observações ou o motivo do encerramento aqui..."></textarea>
       </div>
 
-      <button class="btn-salvar-modal" id="btnSalvarModal" onclick="salvarEdicaoOS()">💾 Confirmar Edição</button>
+      <button class="btn-salvar-modal" id="btnSalvarModal" onclick="salvarEdicaoOS()"><svg class="icon"><use href="#i-save"></use></svg> Salvar alterações</button>
+    </div>
+  </div>
+
+  <!-- Modal Observação Expressa -->
+  <div class="modal-overlay" id="modalObsExpressaOverlay">
+    <div class="modal">
+      <button class="modal-fechar" onclick="fecharModalObsExpressa()"><svg class="icon"><use href="#i-x"></use></svg></button>
+      <div class="modal-titulo" id="tit-obs-expressa"><svg class="icon icon-lg"><use href="#i-file-text"></use></svg> Adicionar Observação</div>
+      <p id="desc-obs-expressa" style="font-size:13.5px; color:#cbd5e1; margin-bottom:14px;"></p>
+      
+      <div class="campo-grupo">
+        <textarea class="campo-textarea-modal" id="input-obs-expressa" placeholder="Escreva as observações finais desta OS..."></textarea>
+      </div>
+      <button class="btn-salvar-modal" onclick="salvarObsExpressa()"><svg class="icon"><use href="#i-save"></use></svg> Confirmar e Finalizar</button>
     </div>
   </div>
 
   <!-- Modal Relatório -->
   <div class="modal-overlay" id="modalRelatorioOverlay">
     <div class="modal">
-      <button class="modal-fechar" onclick="fecharModalRelatorio()">✕</button>
-      <div class="modal-titulo">📄 Relatório Diário</div>
+      <button class="modal-fechar" onclick="fecharModalRelatorio()"><svg class="icon"><use href="#i-x"></use></svg></button>
+      <div class="modal-titulo"><svg class="icon icon-lg"><use href="#i-file-text"></use></svg> Relatório Diário</div>
       <textarea id="relatorio-texto" class="campo-textarea-modal" style="height: 350px; font-family: monospace; font-size: 12px; line-height: 1.4;" readonly></textarea>
-      <button class="btn-salvar-modal" onclick="copiarRelatorio()">📋 Copiar Relatório Completo</button>
+      <button class="btn-salvar-modal" onclick="copiarRelatorio()"><svg class="icon"><use href="#i-copy"></use></svg> Copiar Relatório Completo</button>
     </div>
   </div>
 
@@ -860,10 +1066,15 @@
     <div class="loading-texto" id="loadingTexto">Sincronizando...</div>
   </div>
 
-  <div class="toast" id="toast">✅ Copiado com sucesso</div>
+  <div class="toast" id="toast"><svg class="icon"><use href="#i-check-circle"></use></svg><span id="toast-msg">Copiado com sucesso</span></div>
 
   <script>
     const API_URL = "https://68f458d8b16eb6f46834542c.mockapi.io/Rexord/Galeria";
+
+    // Helper do pacote de ícones: retorna um <svg> referenciando um símbolo do sprite
+    function ic(nome, cls) {
+      return `<svg class="icon${cls ? ' ' + cls : ''}"><use href="#i-${nome}"></use></svg>`;
+    }
 
     let listaTecnicos = [];
     let tecnicoAtual = null;
@@ -872,8 +1083,8 @@
     let dadosOS = [];
     let osEditandoIndex = null;
     
-    // Armazena cache da última API retornada para checar re-renders
-    let ultimoDadosRemotosCache = null;
+    let statusTemporarioExpressado = null;
+    let indexTemporarioExpressado = null;
 
     if(localStorage.getItem('lista_tecnicos_smart')) {
       try { listaTecnicos = JSON.parse(localStorage.getItem('lista_tecnicos_smart')); } catch(e){ listaTecnicos = []; }
@@ -883,6 +1094,7 @@
       const painelTecnico = document.getElementById("painelTecnico");
       const painelTecnicoVisivel = painelTecnico && !painelTecnico.classList.contains("oculto");
 
+      // Só mantém a tela do técnico aberta no refresh se o painel do técnico estava visível na tela
       if (painelTecnicoVisivel && tecnicoAtual) {
         sessionStorage.setItem('tecnicoAberto', tecnicoAtual);
       } else {
@@ -895,15 +1107,18 @@
 
     function toggleLoading(exibir, mensagem = "Sincronizando...") {
       const overlay = document.getElementById("loadingOverlay");
-      const texto = document.getElementById("loadingTexto");
-      if(texto) texto.textContent = message = mensagem;
+      document.getElementById("loadingTexto").textContent = mensagem;
       if (exibir) overlay.classList.add("ativo");
       else overlay.classList.remove("ativo");
     }
 
+    // Mantém a senha oculta/visível
     function toggleVisibilidadeSenha() {
       const input = document.getElementById("inputSenhaMaster");
-      input.type = input.type === "password" ? "text" : "password";
+      const icone = document.querySelector("#iconToggleSenha use");
+      const oculto = input.type === "password";
+      input.type = oculto ? "text" : "password";
+      if (icone) icone.setAttribute("href", oculto ? "#i-eye-off" : "#i-eye");
     }
 
     function abrirModalSenha() {
@@ -956,6 +1171,7 @@
     document.getElementById("modalConfigOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalConfig(); });
     document.getElementById("modalSenhaOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalSenha(); });
     document.getElementById("modalOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModal(); });
+    document.getElementById("modalObsExpressaOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalObsExpressa(); });
     document.getElementById("modalRelatorioOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalRelatorio(); });
 
     function toggleDropdown(tec, event) {
@@ -964,37 +1180,23 @@
       const btn = document.getElementById(`btn-drop-${tec}`);
       if (container.classList.contains('visivel')) {
         container.classList.remove('visivel');
-        setTimeout(() => container.style.display = 'none', 250);
-        btn.innerHTML = 'Expandir 🔽';
+        btn.classList.remove('aberto');
+        btn.innerHTML = `${ic('chevron-down')} Expandir`;
       } else {
-        container.style.display = 'flex';
-        setTimeout(() => {
-          container.classList.add('visivel');
-        }, 10);
-        btn.innerHTML = 'Recolher 🔼';
+        container.classList.add('visivel');
+        btn.classList.add('aberto');
+        btn.innerHTML = `${ic('chevron-down')} Recolher`;
       }
     }
 
-    // Toggle para o novo Acordeão Inline de cada O.S.
-    function toggleAcordeonInline(elemento, event) {
-      // Impede propagação se clicar em botões, selects ou textareas
-      if (event && (event.target.tagName === 'BUTTON' || event.target.tagName === 'SELECT' || event.target.tagName === 'TEXTAREA' || event.target.tagName === 'OPTION')) {
-        return;
-      }
-      const itemAtividade = elemento;
-      const estaAberto = itemAtividade.classList.contains('aberto');
-      
-      // Fecha outros itens irmãos do mesmo técnico para ficar limpo
-      const irmaos = itemAtividade.parentNode.querySelectorAll('.log-atividade');
-      irmaos.forEach(ir => {
-        if (ir !== itemAtividade) ir.classList.remove('aberto');
-      });
-
-      if (estaAberto) {
-        itemAtividade.classList.remove('aberto');
-      } else {
-        itemAtividade.classList.add('aberto');
-      }
+    // Expande/recolhe o dropdown inline de detalhes + status de uma OS específica
+    function toggleDetalhesOS(idSeguro, event) {
+      if (event) event.stopPropagation();
+      const painel = document.getElementById(`detalhes-${idSeguro}`);
+      const chevron = document.getElementById(`chevron-${idSeguro}`);
+      if (!painel) return;
+      painel.classList.toggle('aberto');
+      if (chevron) chevron.classList.toggle('aberto');
     }
 
     function renderizarListaGerenciar() {
@@ -1008,10 +1210,10 @@
         const tecEscapado = String(tec).replace(/'/g, "\\'");
         container.innerHTML += `
           <div class="item-gerenciar">
-            <span>👤 ${tec}</span>
+            <span>${ic("user","icon-sm")} ${tec}</span>
             <div class="acoes-gerenciar-tec">
-              <button class="btn-agenda-tec-lista" onclick="entrarNoTecnicoAdmin('${tecEscapado}')">⚙️ Agenda</button>
-              <button class="btn-editar-tec-lista" onclick="editarNomeTecnico('${tecEscapado}')">✏️ Nome</button>
+              <button class="btn-agenda-tec-lista" onclick="abrirAgendaAdmin('${tecEscapado}')">${ic("clipboard-list","icon-sm")} Agenda</button>
+              <button class="btn-editar-tec-lista" onclick="editarNomeTecnico('${tecEscapado}')">${ic("edit-2","icon-sm")}</button>
               <button class="btn-deletar-tec" onclick="removerTecnico('${tecEscapado}')">Excluir</button>
             </div>
           </div>
@@ -1019,7 +1221,9 @@
       });
     }
 
-    function entrarNoTecnicoAdmin(nome) {
+    // Entrada exclusiva pelo admin para o painel completo de agenda de um técnico
+    // (colar agenda, editar dados de OS/cliente e migrar OS entre técnicos)
+    function abrirAgendaAdmin(nome) {
       fecharModalConfig();
       selecionarTecnico(nome);
     }
@@ -1056,8 +1260,8 @@
           if(registro) {
             
             if (registro.agenda) {
-              const oसेस = parsearAgenda(registro.agenda);
-              oसेस.forEach(os => {
+              const osExistentes = parsearAgenda(registro.agenda);
+              osExistentes.forEach(os => {
                 const statusSalvo = localStorage.getItem(`status_${nomeAntigo}_${os.id}`);
                 const osSalva = localStorage.getItem(`obs_${nomeAntigo}_${os.id}`);
                 if (statusSalvo) {
@@ -1090,7 +1294,7 @@
         if (idx !== -1) listaTecnicos[idx] = nomeLimpo;
         localStorage.setItem('lista_tecnicos_smart', JSON.stringify(listaTecnicos));
 
-        mostrarToast("💾 Nome atualizado!");
+        mostrarToast(ic('save') + ' Nome atualizado!');
         recarregarPagina();
       } catch (e) {
         alert("Erro ao atualizar o nome do técnico na nuvem.");
@@ -1123,7 +1327,7 @@
         localStorage.setItem('lista_tecnicos_smart', JSON.stringify(listaTecnicos));
         input.value = "";
         
-        mostrarToast("👤 Técnico adicionado!");
+        mostrarToast(ic('user') + ' Técnico adicionado!');
         recarregarPagina();
       } catch (e) {
         alert("Erro ao salvar técnico remoto.");
@@ -1151,7 +1355,7 @@
 
       if (tecnicoAtual === nome) tecnicoAtual = null;
 
-      mostrarToast("❌ Técnico removido!");
+      mostrarToast(ic('trash-2') + ' Técnico removido!');
       recarregarPagina();
     }
 
@@ -1159,161 +1363,190 @@
       const container = document.getElementById("seletorTecnico");
       container.innerHTML = "";
       if(!listaTecnicos || listaTecnicos.length === 0) {
-        container.innerHTML = `<div class="sem-atividade" style="padding:40px; background:rgba(255,255,255,0.02); border-radius:20px;">Nenhum técnico ativo no momento.</div>`;
+        container.innerHTML = `<div class="sem-atividade" style="padding:40px; background:rgba(255,255,255,0.02); border-radius:20px;">Nenhum técnico ativo. Adicione um no painel superior!</div>`;
         return;
       }
       listaTecnicos.forEach(tec => {
         container.innerHTML += `
           <div class="card-monitor" id="card-monitor-${tec}">
             <div class="monitor-header">
-              <div class="monitor-info-esquerda" onclick="toggleDropdown('${tec}', event)">
-                <div class="monitor-nome">👤 ${tec}</div>
+              <div class="monitor-info-esquerda">
+                <div class="monitor-nome">${ic("user")} ${tec}</div>
                 <div class="status-preview" id="preview-${tec}"></div>
               </div>
-              <button class="btn-dropdown" id="btn-drop-${tec}" onclick="toggleDropdown('${tec}', event)">Expandir 🔽</button>
+              <button class="btn-dropdown" id="btn-drop-${tec}" onclick="toggleDropdown('${tec}', event)">${ic('chevron-down')} Expandir</button>
             </div>
             <div class="monitor-atividades" id="atividades-${tec}">
-               <div class="sem-atividade">Nenhuma rota ativa no momento.</div>
+               <div class="sem-atividade">Nenhuma rota activa no momento.</div>
             </div>
           </div>
         `;
       });
     }
 
-    function copiarTexto(txt) {
-      if (!txt) return;
-      navigator.clipboard.writeText(txt).then(() => {
-        mostrarToast("✅ Copiado com sucesso!");
-      });
+    // Utilitário: gera um ID de elemento seguro a partir de técnico + OS
+    function gerarIdSeguro(tecnico, osId) {
+      return `${tecnico}-${osId}`.replace(/[^a-zA-Z0-9_-]/g, "_");
     }
 
-    // Salva o status alterado inline de forma assíncrona para a API
-    async function salvarStatusInline(osId, tecnicoNome, registroId) {
-      const selectStatus = document.getElementById(`inline-status-${tecnicoNome}-${osId}`);
-      const textareaObs = document.getElementById(`inline-obs-${tecnicoNome}-${osId}`);
-      
-      const novoStatus = selectStatus.value;
-      const obsTexto = textareaObs.value.trim();
+    // Extrai um CEP (formato 00000-000 ou 00000000) de um endereço, se existir
+    function extrairCep(endereco) {
+      const m = (endereco || "").match(/\d{5}-?\d{3}/);
+      return m ? m[0] : null;
+    }
 
-      if(novoStatus === "nao-concluido" && !obsTexto) {
-        alert("Para finalizar como Não Concluído, é obrigatório preencher a observação com o motivo.");
-        // Restaura status anterior
-        const anterior = localStorage.getItem(`status_${tecnicoNome}_${osId}`) || "";
-        selectStatus.value = anterior;
+    // Monta o link do Google Maps: busca pelo CEP quando encontrado, senão pelo endereço completo
+    function construirLinkMaps(endereco) {
+      const enderecoLimpo = (endereco || "").replace(/\?/g, "").replace(/\s+/g, " ").trim();
+      const cep = extrairCep(enderecoLimpo);
+      const termoBusca = cep || enderecoLimpo;
+      return `https://maps.google.com/?q=${encodeURIComponent(termoBusca)}`;
+    }
+
+    // Identifica se a O.S. é um pedido de instalação a partir do assunto
+    function ehInstalacao(assunto) {
+      return /instal/i.test(assunto || "");
+    }
+
+    // Copia o nome do cliente e encaminha para o sistema de instalação
+    function abrirInstalacao(nomeCliente) {
+      const nome = nomeCliente || "";
+      const irParaInstalacao = () => window.open("https://indai-app.vercel.app/", "_blank");
+      if (nome && navigator.clipboard) {
+        navigator.clipboard.writeText(nome).then(() => {
+          mostrarToast(ic('check-circle') + ' Nome copiado!');
+          irParaInstalacao();
+        }).catch(() => irParaInstalacao());
+      } else {
+        irParaInstalacao();
+      }
+    }
+
+    // Copia um valor de texto (usado pelos botões de copiar dentro do dropdown inline)
+    function copiarValorInline(valor) {
+      if (!valor) return;
+      navigator.clipboard.writeText(valor).then(() => mostrarToast(ic('check-circle') + ' Copiado com sucesso!'));
+    }
+
+    // Abre o Maps a partir do endereço embutido no dropdown inline (busca por CEP quando disponível)
+    function abrirMapsInline(endereco) {
+      if (!(endereco || "").trim()) return;
+      window.open(construirLinkMaps(endereco), "_blank");
+    }
+
+    // Salva o status + observação de uma OS a partir do dropdown inline (painel geral público)
+    async function salvarStatusInline(tecnico, osId, idSeguro) {
+      const novoStatus = document.getElementById(`det-status-${idSeguro}`).value;
+      const novaObs = document.getElementById(`det-obs-${idSeguro}`).value.trim();
+
+      if (novoStatus === "nao-concluido" && !novaObs) {
+        alert("Por favor, digite um motivo para a não conclusão.");
         return;
       }
 
-      // Salva dados no localStorage
-      if(novoStatus) {
-        localStorage.setItem(`status_${tecnicoNome}_${osId}`, novoStatus);
-        localStorage.setItem(`timestamp_${tecnicoNome}_${osId}_${novoStatus}`, obtenerHoraAtual());
-      } else {
-        localStorage.removeItem(`status_${tecnicoNome}_${osId}`);
-      }
-
-      if(obsTexto) {
-        localStorage.setItem(`obs_${tecnicoNome}_${osId}`, obsTexto);
-      } else {
-        localStorage.removeItem(`obs_${tecnicoNome}_${osId}`);
-      }
-
-      toggleLoading(true, "Sincronizando status...");
-
+      toggleLoading(true, "Salvando status...");
       try {
-        // Obter agenda textual atual do técnico para repassar na API
-        let agendaTextoOriginal = "";
-        const resp = await fetch(`${API_URL}/${registroId}`);
-        if(resp.ok) {
-          const dadoRemoto = await resp.json();
-          agendaTextoOriginal = dadoRemoto.agenda || "";
-        }
+        const resp = await fetch(API_URL);
+        const dados = await resp.json();
+        const registro = dados.find(d => d.tecnico === tecnico);
+        if (!registro) throw new Error("Técnico não encontrado.");
 
-        // Simula salvamento parcial na nuvem
-        const statusParaSalvar = {};
-        for (let i = 0; i < localStorage.length; i++) {
-          const key = localStorage.key(i);
-          if (key && key.startsWith(`status_${tecnicoNome}_`)) {
-            const idKey = key.replace(`status_${tecnicoNome}_`, "");
-            const statusVal = localStorage.getItem(key);
-            const obsVal = localStorage.getItem(`obs_${tecnicoNome}_${idKey}`) || "";
-            const timeVal = localStorage.getItem(`timestamp_${tecnicoNome}_${idKey}_${statusVal}`) || "--:--";
+        let statusObj = {};
+        try { statusObj = JSON.parse(registro.status || "{}"); } catch(e) {}
 
-            statusParaSalvar[idKey] = { status: statusVal, obs: obsVal, timestamp: timeVal };
-          }
-        }
-
-        const payload = { 
-          tecnico: tecnicoNome, 
-          agenda: agendaTextoOriginal, 
-          status: JSON.stringify(statusParaSalvar) 
+        statusObj[osId] = {
+          status: novoStatus || "",
+          obs: novaObs || "",
+          timestamp: novoStatus ? obtenerHoraAtual() : "--:--"
         };
 
-        await fetch(`${API_URL}/${registroId}`, {
+        await fetch(`${API_URL}/${registro.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
+          body: JSON.stringify({ status: JSON.stringify(statusObj) })
         });
-        
-        if (novoStatus === "rota") {
-          // Copia script de rota do cliente
-          const cardLog = selectStatus.closest('.log-atividade');
-          const cliNome = cardLog.dataset.clienteNome || "Cliente";
-          const cliEnd = cardLog.dataset.clienteEnd || "";
-          const script = `🚗 EM ROTA\n\n👤 Cliente: ${cliNome}\n📍 Endereço: ${cliEnd}`;
-          
-          navigator.clipboard.writeText(script).then(() => {
-            mostrarToast("✅ Rota Copiada!");
-            window.open("https://t.me/c/1989058391/167773", "_blank");
-            recarregarPagina(1000);
-          });
+
+        if (novoStatus) {
+          localStorage.setItem(`status_${tecnico}_${osId}`, novoStatus);
+          localStorage.setItem(`timestamp_${tecnico}_${osId}_${novoStatus}`, obtenerHoraAtual());
         } else {
-          mostrarToast("💾 Alterações sincronizadas!");
-          recarregarPagina(600);
+          localStorage.removeItem(`status_${tecnico}_${osId}`);
         }
+        if (novaObs) {
+          localStorage.setItem(`obs_${tecnico}_${osId}`, novaObs);
+        } else {
+          localStorage.removeItem(`obs_${tecnico}_${osId}`);
+        }
+
+        mostrarToast(ic('save') + ' Status atualizado!');
+        recarregarPagina(800);
       } catch(e) {
+        console.error(e);
+        alert("Erro ao salvar status.");
         toggleLoading(false);
-        alert("Erro de comunicação ao sincronizar dados.");
       }
     }
 
-    // Compara se os novos dados diferem dos atuais de forma profunda
-    function dadosForamModificados(novosDados) {
-      if (!ultimoDadosRemotosCache) return true;
-      if (novosDados.length !== ultimoDadosRemotosCache.length) return true;
-      
-      for(let i=0; i < novosDados.length; i++) {
-        const n = novosDados[i];
-        const u = ultimoDadosRemotosCache.find(x => x.id === n.id);
-        if(!u) return true;
-        if(n.agenda !== u.agenda || n.tecnico !== u.tecnico || n.status !== u.status) {
-          return true;
-        }
-      }
-      return false;
+    function construirDetalhesInlineOS(tec, itemOS, statusAtual, osSalva) {
+      const idSeguro = gerarIdSeguro(tec, itemOS.id);
+      const enderecoLimpo = (itemOS.endereco || "").replace(/\?/g, "").replace(/\s+/g, " ").trim();
+      const loginSeguro = escapeHtml(itemOS.login);
+      const senhaSegura = escapeHtml(itemOS.senha);
+      const contatoSeguro = escapeHtml(itemOS.contato);
+      const enderecoJs = enderecoLimpo.replace(/'/g, "\\'");
+      const loginJs = (itemOS.login || "").replace(/'/g, "\\'");
+      const senhaJs = (itemOS.senha || "").replace(/'/g, "\\'");
+      const contatoJs = (itemOS.contato || "").replace(/'/g, "\\'");
+
+      return `
+        <div class="log-detalhes" id="detalhes-${idSeguro}">
+          <div class="log-detalhes-inner">
+            <div class="detalhe-linha"><span class="rotulo">${ic('hash','icon-sm')} O.S.</span><span class="valor">${escapeHtml(itemOS.id)}</span></div>
+            <div class="detalhe-linha"><span class="rotulo">${ic('map-pin','icon-sm')} Endereço</span><span class="valor">${escapeHtml(enderecoLimpo) || "—"}</span></div>
+            <div class="detalhe-linha detalhe-linha-copiavel">
+              <span class="rotulo">${ic('user','icon-sm')} Login</span>
+              <span class="valor">${loginSeguro || "—"}</span>
+              <button class="btn-copiar-minimo" onclick="copiarValorInline('${loginJs}')" title="Copiar login">${ic('copy','icon-sm')}</button>
+            </div>
+            <div class="detalhe-linha detalhe-linha-copiavel">
+              <span class="rotulo">${ic('key','icon-sm')} Senha</span>
+              <span class="valor">${senhaSegura || "—"}</span>
+              <button class="btn-copiar-minimo" onclick="copiarValorInline('${senhaJs}')" title="Copiar senha">${ic('copy','icon-sm')}</button>
+            </div>
+            <div class="detalhe-linha detalhe-linha-copiavel">
+              <span class="rotulo">${ic('phone','icon-sm')} Contato</span>
+              <span class="valor">${contatoSeguro || "—"}</span>
+              <button class="btn-copiar-minimo" onclick="copiarValorInline('${contatoJs}')" title="Copiar contato">${ic('copy','icon-sm')}</button>
+            </div>
+
+            <button class="link-maps-minimo" onclick="abrirMapsInline('${enderecoJs}')">${ic('map-pin','icon-sm')} Ver no mapa</button>
+            ${ehInstalacao(itemOS.assunto) ? `<button class="btn-acao-mobile btn-instalacao-mob" onclick="abrirInstalacao('${(itemOS.cliente||'').replace(/'/g,"\\'")}')">${ic('external-link','icon-sm')} Nova Instalação</button>` : ''}
+
+            <div class="log-detalhes-status">
+              <span class="log-detalhes-rotulo">${ic('check-circle','icon-sm')} Status</span>
+              <div class="select-wrapper">
+                <select class="campo-select-minimo" id="det-status-${idSeguro}">
+                  <option value="" ${!statusAtual ? 'selected' : ''}>Aguardando status</option>
+                  <option value="rota" ${statusAtual==='rota' ? 'selected' : ''}>Em rota</option>
+                  <option value="concluido" ${statusAtual==='concluido' ? 'selected' : ''}>Concluído</option>
+                  <option value="nao-concluido" ${statusAtual==='nao-concluido' ? 'selected' : ''}>Não concluído</option>
+                </select>
+              </div>
+              <textarea class="campo-textarea-minimo" id="det-obs-${idSeguro}" placeholder="Observações / motivo...">${escapeHtml(osSalva)}</textarea>
+              <button class="btn-salvar-minimo" onclick="salvarStatusInline('${tec.replace(/'/g,"\\'")}', '${String(itemOS.id).replace(/'/g,"\\'")}', '${idSeguro}')">${ic('save','icon-sm')} Salvar Status</button>
+            </div>
+          </div>
+        </div>
+      `;
     }
 
-    function atualizarDashboardGeralComDados(todosDados, forcarReRender = false) {
+    function atualizarDashboardGeralComDados(todosDados) {
       if(!listaTecnicos) return;
-
-      // Checa se os dropdowns ou selects internos estão focados ou sendo editados.
-      // Se sim, pulamos a renderização completa para não atrapalhar a digitação ou seleção.
-      const elementoAtivo = document.activeElement;
-      if (elementoAtivo && (elementoAtivo.tagName === 'INPUT' || elementoAtivo.tagName === 'SELECT' || elementoAtivo.tagName === 'TEXTAREA')) {
-        return; 
-      }
-
-      // Checagem inteligente de integridade para não re-renderizar à toa durante sync automático
-      if (!forcarReRender && !dadosForamModificados(todosDados)) {
-        return; // Retorna sem piscar a tela ou reiniciar animações
-      }
-
-      // Atualiza o cache
-      ultimoDadosRemotosCache = JSON.parse(JSON.stringify(todosDados));
-
       listaTecnicos.forEach(tec => {
         const dados = todosDados.filter(d => d.tecnico === tec);
         let emRota = 0, concluidas = 0, naoConcluidas = 0, aguardando = 0;
         let logsHtml = "";
+        let cascataIdx = 0;
 
         if (dados && dados.length > 0 && dados[0].agenda) {
           const registro = dados[0];
@@ -1334,151 +1567,125 @@
             }
           });
 
-          listaOS.forEach((itemOS, index) => {
-            const statusAtual = localStorage.getItem(`status_${tec}_${itemOS.id}`) || "";
-            const osIdLimpo = String(itemOS.id).replace(/"/g, '"');
-            const tecLimpo = String(tec).replace(/"/g, '"');
+          listaOS.forEach(itemOS => {
+            const statusAtual = localStorage.getItem(`status_${tec}_${itemOS.id}`);
             const osSalva = localStorage.getItem(`obs_${tec}_${itemOS.id}`) || "";
-            
-            const horarioOs = itemOS.horario ? `<span style="color:#94a3b8; font-weight:500;">| ⏳ ${escapeHtml(itemOS.horario)}</span>` : '';
-            const enderecoLimpo = (itemOS.endereco || "").replace(/\?/g, "").replace(/\s+/g, " ").trim();
-            const mapsLink = `https://maps.google.com/?q=${encodeURIComponent(enderecoLimpo)}`;
+            const idSeguro = gerarIdSeguro(tec, itemOS.id);
+            const atraso = (cascataIdx++) * 70;
+            const detalhesHtml = construirDetalhesInlineOS(tec, itemOS, statusAtual, osSalva);
 
-            // Badge e classe do Status
-            let badgeHtml = "";
-            let horaLog = "--:--";
+            const horarioOs = itemOS.horario ? `<span style="color:#94a3b8; font-weight:500;">| ${ic('clock','icon-sm')} ${escapeHtml(itemOS.horario)}</span>` : '';
 
             if (statusAtual === 'rota') {
-              horaLog = localStorage.getItem(`timestamp_${tec}_${itemOS.id}_rota`) || '--:--';
+              const horaLog = localStorage.getItem(`timestamp_${tec}_${itemOS.id}_rota`) || '--:--';
               emRota++;
-              badgeHtml = `<span class="log-badge rota">🚗 Em rota</span>`;
+              logsHtml += `
+                <div class="log-item-wrap" style="animation-delay:${atraso}ms;">
+                  <div class="log-atividade" onclick="toggleDetalhesOS('${idSeguro}', event)">
+                    <div class="log-topo-linha">
+                      <span class="log-badge rota">${ic('car','icon-sm')} Em rota</span>
+                      <div class="log-hora">${ic('clock','icon-sm')} ${horaLog} ${horarioOs} <span class="log-chevron" id="chevron-${idSeguro}">${ic('chevron-down')}</span></div>
+                    </div>
+                    <div class="log-info"><strong>${escapeHtml(itemOS.cliente)}</strong><span class="tipo-servico">${ic('tag','icon-sm')} ${escapeHtml(itemOS.assunto)}</span></div>
+                  </div>
+                  ${detalhesHtml}
+                </div>
+              `;
             } else if (statusAtual === 'concluido') {
-              horaLog = localStorage.getItem(`timestamp_${tec}_${itemOS.id}_concluido`) || '--:--';
+              const horaLog = localStorage.getItem(`timestamp_${tec}_${itemOS.id}_concluido`) || '--:--';
               concluidas++;
-              badgeHtml = `<span class="log-badge concluido">✅ Concluído</span>`;
+              logsHtml += `
+                <div class="log-item-wrap" style="animation-delay:${atraso}ms;">
+                  <div class="log-atividade" onclick="toggleDetalhesOS('${idSeguro}', event)">
+                    <div class="log-topo-linha">
+                      <span class="log-badge concluido">${ic('check-circle','icon-sm')} Concluído</span>
+                      <div class="log-hora">${ic('clock','icon-sm')} ${horaLog} ${horarioOs} <span class="log-chevron" id="chevron-${idSeguro}">${ic('chevron-down')}</span></div>
+                    </div>
+                    <div class="log-info">
+                      <strong>${escapeHtml(itemOS.cliente)}</strong><span class="tipo-servico">${ic('tag','icon-sm')} ${escapeHtml(itemOS.assunto)}</span>
+                      ${osSalva ? `<span class="obs-texto" style="color:#4ade80; background:rgba(34,197,94,0.06); border-left-color:#22c55e;">${ic('file-text','icon-sm')} Obs: ${escapeHtml(osSalva)}</span>` : ''}
+                    </div>
+                  </div>
+                  ${detalhesHtml}
+                </div>
+              `;
             } else if (statusAtual === 'nao-concluido') {
-              horaLog = localStorage.getItem(`timestamp_${tec}_${itemOS.id}_nao-concluido`) || '--:--';
+              const horaLog = localStorage.getItem(`timestamp_${tec}_${itemOS.id}_nao-concluido`) || '--:--';
               naoConcluidas++;
-              badgeHtml = `<span class="log-badge nao-concluido">❌ Mal Sucedida</span>`;
+              logsHtml += `
+                <div class="log-item-wrap" style="animation-delay:${atraso}ms;">
+                  <div class="log-atividade" onclick="toggleDetalhesOS('${idSeguro}', event)">
+                    <div class="log-topo-linha">
+                      <span class="log-badge nao-concluido">${ic('x-circle','icon-sm')} Mal Sucedida</span>
+                      <div class="log-hora">${ic('clock','icon-sm')} ${horaLog} ${horarioOs} <span class="log-chevron" id="chevron-${idSeguro}">${ic('chevron-down')}</span></div>
+                    </div>
+                    <div class="log-info">
+                      <strong>${escapeHtml(itemOS.cliente)}</strong><span class="tipo-servico">${ic('tag','icon-sm')} ${escapeHtml(itemOS.assunto)}</span>
+                      ${osSalva ? `<span class="obs-texto">${ic('alert-triangle','icon-sm')} Motivo: ${escapeHtml(osSalva)}</span>` : ''}
+                    </div>
+                  </div>
+                  ${detalhesHtml}
+                </div>
+              `;
             } else {
               aguardando++;
-              badgeHtml = `<span class="log-badge aguardando">⏳ Pendente</span>`;
+              logsHtml += `
+                <div class="log-item-wrap" style="animation-delay:${atraso}ms;">
+                  <div class="log-atividade" onclick="toggleDetalhesOS('${idSeguro}', event)">
+                    <div class="log-topo-linha">
+                      <span class="log-badge aguardando">${ic('clock','icon-sm')} Pendente</span>
+                      <div class="log-hora">Pendente ${horarioOs} <span class="log-chevron" id="chevron-${idSeguro}">${ic('chevron-down')}</span></div>
+                    </div>
+                    <div class="log-info"><strong>${escapeHtml(itemOS.cliente)}</strong><span class="tipo-servico">${ic('tag','icon-sm')} ${escapeHtml(itemOS.assunto)}</span></div>
+                  </div>
+                  ${detalhesHtml}
+                </div>
+              `;
             }
-
-            // Injeta o atraso progressivo (animation-delay) para o efeito de cascata
-            const delayInSecs = (index * 0.08).toFixed(2);
-
-            // Monta o item expansível inline (Acordeão)
-            logsHtml += `
-              <div class="log-atividade" 
-                   id="item-os-${tec}-${itemOS.id}"
-                   style="animation-delay: ${delayInSecs}s;"
-                   onclick="toggleAcordeonInline(this, event)"
-                   data-cliente-nome="${escapeHtml(itemOS.cliente)}"
-                   data-cliente-end="${escapeHtml(enderecoLimpo)}">
-                
-                <div class="log-topo-linha">
-                  ${badgeHtml}
-                  <div style="display: flex; align-items: center; gap: 4px;">
-                    <div class="log-hora">⏰ ${horaLog} ${horarioOs}</div>
-                    <span class="seta-indicativa">▾</span>
-                  </div>
-                </div>
-
-                <div class="log-info">
-                  <strong>${escapeHtml(itemOS.cliente)}</strong>
-                  <span class="tipo-servico">📋 ${escapeHtml(itemOS.assunto)}</span>
-                  ${statusAtual === 'concluido' && osSalva ? `<span class="obs-texto" style="color:#4ade80; background:rgba(34,197,94,0.06); border-left-color:#22c55e;">📝 Obs: ${escapeHtml(osSalva)}</span>` : ''}
-                  ${statusAtual === 'nao-concluido' && osSalva ? `<span class="obs-texto">⚠️ Motivo: ${escapeHtml(osSalva)}</span>` : ''}
-                </div>
-
-                <!-- Painel Interno Expansível Inline -->
-                <div class="log-detalhes-inline">
-                  <div class="info"><strong>ID da O.S:</strong> <span class="os-number">${itemOS.id}</span></div>
-                  <div class="info"><strong>📍 Endereço de Atendimento:</strong><br>${escapeHtml(enderecoLimpo)}</div>
-
-                  <div class="info-linha">
-                    <div class="info"><strong>🔐 Login PPPoE:</strong> <span>${escapeHtml(itemOS.login) || "---"}</span></div>
-                    <button class="btn-copiar" onclick="copiarTexto('${escapeHtml(itemOS.login)}')">📋</button>
-                  </div>
-                  <div class="info-linha">
-                    <div class="info"><strong>🔑 Senha PPPoE:</strong> <span>${escapeHtml(itemOS.senha) || "---"}</span></div>
-                    <button class="btn-copiar" onclick="copiarTexto('${escapeHtml(itemOS.senha)}')">📋</button>
-                  </div>
-                  <div class="info-linha">
-                    <div class="info"><strong>📞 Telefone de Contato:</strong> <span>${escapeHtml(itemOS.contato) || "---"}</span></div>
-                    <button class="btn-copiar" onclick="copiarTexto('${escapeHtml(itemOS.contato)}')">📋</button>
-                  </div>
-
-                  <div class="botoes-grupo-novo">
-                    <div class="btn-links-linha">
-                      <button class="btn-acao-mobile btn-maps-mob" onclick="window.open('${mapsLink}', '_blank')">🗺️ Traçar Rota (Maps)</button>
-                      <button class="btn-acao-mobile btn-ativo-mob" onclick="window.open('https://sistema.ativotelecom.com.br/central_assinante_web/login', '_blank')">🌐 Abrir Ativo</button>
-                    </div>
-                  </div>
-
-                  <hr style="border: none; border-top: 1px solid rgba(255, 255, 255, 0.08); margin: 8px 0;" />
-                  
-                  <div class="campo-grupo">
-                    <label style="color:#94a3b8; font-size:12px; font-weight:700;">Status do Atendimento</label>
-                    <div class="seletor-status-container">
-                      <select class="select-status-unico" id="inline-status-${tec}-${itemOS.id}" onchange="salvarStatusInline('${itemOS.id}', '${tecLimpo}', '${registro.id}')">
-                        <option value="">⏳ Selecione o status...</option>
-                        <option value="rota" ${statusAtual === 'rota' ? 'selected' : ''}>🚗 Iniciar Rota</option>
-                        <option value="concluido" ${statusAtual === 'concluido' ? 'selected' : ''}>✅ Concluir Atendimento</option>
-                        <option value="nao-concluido" ${statusAtual === 'nao-concluido' ? 'selected' : ''}>❌ Não Executada / Falha</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="campo-grupo">
-                    <label style="color: #cbd5e1; font-size: 13px;">📝 Observações Técnicas / Motivo de Falha</label>
-                    <textarea class="campo-textarea-modal" id="inline-obs-${tec}-${itemOS.id}" placeholder="Caso mude para Não Concluído, o preenchimento desse campo é obrigatório..." onblur="salvarStatusInline('${itemOS.id}', '${tecLimpo}', '${registro.id}')">${escapeHtml(osSalva)}</textarea>
-                  </div>
-                </div>
-
-              </div>
-            `;
           });
         }
 
         const preview = document.getElementById(`preview-${tec}`);
         if(preview) {
           let htmlContador = '';
-          if (emRota > 0) htmlContador += `<span class="preview-rota">🚗 ${emRota}</span>`;
-          if (concluidas > 0) htmlContador += `<span class="preview-concluido">✅ ${concluidas}</span>`;
-          if (naoConcluidas > 0) htmlContador += `<span class="preview-nao-concluido">❌ ${naoConcluidas}</span>`;
-          if (aguardando > 0) htmlContador += `<span class="preview-aguardando">⏳ ${aguardando}</span>`;
+          if (emRota > 0) htmlContador += `<span class="preview-rota">${ic('car','icon-sm')} ${emRota}</span>`;
+          if (concluidas > 0) htmlContador += `<span class="preview-concluido">${ic('check-circle','icon-sm')} ${concluidas}</span>`;
+          if (naoConcluidas > 0) htmlContador += `<span class="preview-nao-concluido">${ic('x-circle','icon-sm')} ${naoConcluidas}</span>`;
+          if (aguardando > 0) htmlContador += `<span class="preview-aguardando">${ic('clock','icon-sm')} ${aguardando}</span>`;
           preview.innerHTML = htmlContador || '<span style="color:#64748b">Sem atividades</span>';
         }
 
+        const conteudoFinal = logsHtml || `<div class="sem-atividade">Nenhuma O.S. configurada no sistema.</div>`;
         const containerAtividades = document.getElementById(`atividades-${tec}`);
-        if(containerAtividades) {
-          containerAtividades.innerHTML = logsHtml || `<div class="sem-atividade">Nenhuma O.S. configurada no sistema.</div>`;
+        // Evita reescrever o DOM (e reiniciar animações/fechar dropdowns abertos) quando nada mudou
+        if(containerAtividades && containerAtividades.dataset.conteudoAtual !== conteudoFinal) {
+          containerAtividades.innerHTML = conteudoFinal;
+          containerAtividades.dataset.conteudoAtual = conteudoFinal;
         }
       });
     }
 
-    async function carregarDashboardGeral(forcar = false) {
+
+    async function carregarDashboardGeral() {
       if(!listaTecnicos) return;
       try {
         const resp = await fetch(API_URL);
         if (!resp.ok) throw new Error();
         const dados = await resp.json();
-        atualizarDashboardGeralComDados(dados, forcar);
+        atualizarDashboardGeralComDados(dados);
       } catch(e) { console.warn(e); }
     }
 
     async function selecionarTecnico(nome) {
       tecnicoAtual = nome;
-      document.getElementById("subtitulo").textContent = `Modo Administrativo de Agenda: ${nome}`;
+      document.getElementById("subtitulo").textContent = `Agenda: ${nome}`;
       document.getElementById("seletorTecnico").classList.add("oculto");
       document.getElementById("painelTecnico").classList.remove("oculto");
       
       document.getElementById("cards").innerHTML = "";
       document.getElementById("entrada").value = "";
 
-      toggleLoading(true, "Buscando agenda de técnicos...");
+      toggleLoading(true, "Buscando agenda...");
       try {
         const resp = await fetch(API_URL);
         if(!resp.ok) throw new Error();
@@ -1520,7 +1727,7 @@
       }
       document.getElementById("importador").classList.remove("oculto");
       document.getElementById("btnMostrar").style.display = "none";
-      document.getElementById("cards").innerHTML = `<div class="sem-atividade" style="width:100%">Cole a agenda técnica no campo acima para gerar as Ordens de Serviço.</div>`;
+      document.getElementById("cards").innerHTML = `<div class="sem-atividade" style="width:100%">Nenhuma O.S. configurada para este técnico.</div>`;
     }
 
     function trocarTecnico() {
@@ -1528,14 +1735,14 @@
       registroAtualId = null;
       statusOS = {};
       dadosOS = [];
-      document.getElementById("subtitulo").textContent = "Toque para expandir as atividades dos técnicos";
+      document.getElementById("subtitulo").textContent = "Toque em uma O.S. para ver detalhes e alterar o status";
       document.getElementById("seletorTecnico").classList.remove("oculto");
       document.getElementById("painelTecnico").classList.add("oculto");
-      carregarDashboardGeral(true);
+      carregarDashboardGeral();
     }
 
     async function salvarAgendaNaApi(texto, messageSilenciosa = false) {
-      if(!messageSilenciosa) toggleLoading(true, "Sincronizando com a nuvem...");
+      if(!messageSilenciosa) toggleLoading(true, "Salvando alterações...");
       
       const statusParaSalvar = {};
       for (let i = 0; i < localStorage.length; i++) {
@@ -1568,7 +1775,7 @@
           const criado = await resp.json();
           registroAtualId = criado.id;
         }
-      } catch (e) { mostrarToast("❌ Erro ao sincronizar nuvem."); } finally { if(!messageSilenciosa) toggleLoading(false); }
+      } catch (e) { mostrarToast(ic('alert-triangle') + ' Erro ao sincronizar nuvem.'); } finally { if(!messageSilenciosa) toggleLoading(false); }
     }
 
     async function gerarAgenda() {
@@ -1579,7 +1786,7 @@
       document.getElementById("importador").classList.add("oculto");
       document.getElementById("btnMostrar").style.display = "block";
       
-      mostrarToast("🚀 Agenda gerada com sucesso!");
+      mostrarToast(ic('zap') + ' Agenda sincronizada!');
       recarregarPagina();
     }
 
@@ -1627,6 +1834,7 @@
 
       dadosOS.forEach((os, idx) => {
         const enderecoLimpo = (os.endereco || "").replace(/\?/g, "").replace(/\s+/g, " ").trim();
+        const maps = construirLinkMaps(os.endereco);
         const loginSeguro = escapeHtml(os.login);
         const senhaSegura = escapeHtml(os.senha);
         const contatoSeguro = escapeHtml(os.contato);
@@ -1636,41 +1844,58 @@
 
         let statusClass = "vazio";
         let statusTxt = "Aguardando status";
-        if (statusSalvo === "rota") { statusClass = "rota"; statusTxt = "🚗 Em rota"; }
-        else if (statusSalvo === "concluido") { statusClass = "concluido"; statusTxt = "✅ Concluído"; }
-        else if (statusSalvo === "nao-concluido") { statusClass = "nao-concluido"; statusTxt = "❌ Não concluído"; }
+        if (statusSalvo === "rota") { statusClass = "rota"; statusTxt = ic('car','icon-sm') + " Em rota"; }
+        else if (statusSalvo === "concluido") { statusClass = "concluido"; statusTxt = ic('check-circle','icon-sm') + " Concluído"; }
+        else if (statusSalvo === "nao-concluido") { statusClass = "nao-concluido"; statusTxt = ic('x-circle','icon-sm') + " Não concluído"; }
 
         let obsHtmlExpressa = '';
         if(obsSalva) {
           const extraClass = (statusSalvo === 'concluido') ? ' concluida-obs' : '';
-          obsHtmlExpressa = `<div class="card-obs-preview${extraClass}" id="obs-preview-${os.id}">📝 Obs Admin: ${escapeHtml(obsSalva)}</div>`;
+          obsHtmlExpressa = `<div class="card-obs-preview${extraClass}" id="obs-preview-${os.id}">${ic('file-text','icon-sm')} Obs: ${escapeHtml(obsSalva)}</div>`;
         }
 
         cardsContainer.innerHTML += `
           <div class="card" data-idx="${idx}" data-id="${os.id}">
-            <button class="btn-editar-os" onclick="abrirModal(${idx})">✏️</button>
+            <button class="btn-editar-os" onclick="abrirModal(${idx})">${ic('edit-2','icon-sm')}</button>
             
             <div class="card-top-header">
-              <div class="horario">🕒 ${os.horario}</div>
+              <div class="horario">${ic('clock','icon-sm')} ${os.horario}</div>
               <div class="card-status-topo ${statusClass}" id="topo-status-badge-${os.id}">${statusTxt}</div>
             </div>
 
             <div class="cliente">${escapeHtml(os.cliente)}</div>
-            <div class="info"><strong>🔹 O.S:</strong> <span class="os-number">${os.id}</span></div>
-            <div class="assunto">📋 ${escapeHtml(os.assunto)}</div>
-            <div class="info"><strong>📍 Endereço:</strong><br>${escapeHtml(enderecoLimpo)}</div>
+            <div class="info"><strong>${ic('hash','icon-sm')} O.S:</strong> <span class="os-number">${os.id}</span></div>
+            <div class="assunto">${ic('tag','icon-sm')} ${escapeHtml(os.assunto)}</div>
+            <div class="info"><strong>${ic('map-pin','icon-sm')} Endereço:</strong><br>${escapeHtml(enderecoLimpo)}</div>
 
             <div class="info-linha">
-              <div class="info"><strong>🔐 Login:</strong> ${loginSeguro || " "}</div>
-              <button class="btn-copiar" data-copiar="${loginSeguro}" title="Copiar login">📋</button>
+              <div class="info"><strong>${ic('user','icon-sm')} Login:</strong> ${loginSeguro || " "}</div>
+              <button class="btn-copiar" data-copiar="${loginSeguro}" title="Copiar login">${ic('copy','icon-sm')}</button>
             </div>
             <div class="info-linha">
-              <div class="info"><strong>🔑 Senha:</strong> ${senhaSegura || " "}</div>
-              <button class="btn-copiar" data-copiar="${senhaSegura}" title="Copiar senha">📋</button>
+              <div class="info"><strong>${ic('key','icon-sm')} Senha:</strong> ${senhaSegura || " "}</div>
+              <button class="btn-copiar" data-copiar="${senhaSegura}" title="Copiar senha">${ic('copy','icon-sm')}</button>
             </div>
             <div class="info-linha">
-              <div class="info"><strong>📞 Contato:</strong> ${contatoSeguro || " "}</div>
-              <button class="btn-copiar" data-copiar="${contatoSeguro}" title="Copiar contato">📋</button>
+              <div class="info"><strong>${ic('phone','icon-sm')} Contato:</strong> ${contatoSeguro || " "}</div>
+              <button class="btn-copiar" data-copiar="${contatoSeguro}" title="Copiar contato">${ic('copy','icon-sm')}</button>
+            </div>
+
+            <div class="botoes-grupo-novo">
+              <div class="btn-links-linha">
+                <button class="btn-acao-mobile btn-maps-mob" onclick="window.open('${escapeHtml(maps)}', '_blank')">${ic('map-pin')} Maps</button>
+                <button class="btn-acao-mobile btn-ativo-mob" onclick="window.open('https://sistema.ativotelecom.com.br/central_assinante_web/login', '_blank')">${ic('globe')} Ativo</button>
+              </div>
+              ${ehInstalacao(os.assunto) ? `<button class="btn-acao-mobile btn-instalacao-mob" onclick="abrirInstalacao('${escapeHtml(os.cliente).replace(/'/g,"\\'")}')">${ic('external-link')} Nova Instalação</button>` : ''}
+              
+              <div class="seletor-status-container">
+                <select class="select-status-unico" id="select-status-os-${idx}" onchange="dispararAlteracaoStatus(${idx}, this.value)">
+                  <option value="" ${statusSalvo===''?'selected':''}>Alterar Status...</option>
+                  <option value="rota" ${statusSalvo==='rota'?'selected':''}>Iniciar Rota</option>
+                  <option value="concluido" ${statusSalvo==='concluido'?'selected':''}>Concluído OS</option>
+                  <option value="nao-concluido" ${statusSalvo==='nao-concluido'?'selected':''}>Não Executada / Falha</option>
+                </select>
+              </div>
             </div>
             <div id="container-obs-preview-box-${os.id}">${obsHtmlExpressa}</div>
           </div>
@@ -1682,12 +1907,11 @@
 
     function iniciarEventosCopiarNativos() {
       document.querySelectorAll(".btn-copiar").forEach(btn => {
-        btn.onclick = function(e) {
-          if (e) e.stopPropagation();
-          const valor = btn.dataset.copiar || btn.getAttribute('onclick')?.match(/'(.*)'/)?.[1] || "";
+        btn.onclick = function() {
+          const valor = btn.dataset.copiar || "";
           if (!valor) return;
           navigator.clipboard.writeText(valor).then(() => {
-            mostrarToast("✅ Copiado com sucesso!");
+            mostrarToast(ic('check-circle') + ' Copiado com sucesso!');
           });
         };
       });
@@ -1696,6 +1920,103 @@
     function obtenerHoraAtual() {
       const agora = new Date();
       return agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    async function dispararAlteracaoStatus(idx, novoStatus) {
+      const os = dadosOS[idx];
+      
+      if (!novoStatus) {
+        localStorage.removeItem(`status_${tecnicoAtual}_${os.id}`);
+        atualizarLayoutCardStatus(os.id, "", "Aguardando status");
+        await salvarAgendaNaApi(document.getElementById("entrada").value, true);
+        recarregarPagina(400);
+        return;
+      }
+
+      if (novoStatus === "rota") {
+        localStorage.setItem(`status_${tecnicoAtual}_${os.id}`, "rota");
+        localStorage.setItem(`timestamp_${tecnicoAtual}_${os.id}_rota`, obtenerHoraAtual());
+        atualizarLayoutCardStatus(os.id, "rota", ic('car','icon-sm') + " Em rota");
+        await salvarAgendaNaApi(document.getElementById("entrada").value, true);
+
+        const script = `🚗 EM ROTA\n\n👤 Cliente: ${os.cliente}\n📍 Endereço: ${os.endereco}`;
+        navigator.clipboard.writeText(script).then(() => {
+          mostrarToast(ic('check-circle') + ' Rota Copiada!');
+          window.open("https://t.me/c/1989058391/167773", "_blank");
+          recarregarPagina(1000);
+        });
+      } 
+      else if (novoStatus === "concluido" || novoStatus === "nao-concluido") {
+        statusTemporarioExpressado = novoStatus;
+        indexTemporarioExpressado = idx;
+        
+        const overlay = document.getElementById("modalObsExpressaOverlay");
+        const titulo = document.getElementById("tit-obs-expressa");
+        const desc = document.getElementById("desc-obs-expressa");
+        const input = document.getElementById("input-obs-expressa");
+        
+        input.value = localStorage.getItem(`obs_${tecnicoAtual}_${os.id}`) || "";
+        
+        if(novoStatus === "concluido") {
+          titulo.innerHTML = ic('check-circle','icon-lg') + " Concluir Ordem de Serviço";
+          desc.innerText = "Insira as observações técnicas de encerramento da OS (Opcional):";
+        } else {
+          titulo.innerHTML = ic('x-circle','icon-lg') + " Finalizar como Não Concluída";
+          desc.innerText = "Insira detalhadamente o motivo/justificativa pelo qual a OS não foi executada (Obrigatório):";
+        }
+        
+        overlay.style.display = "flex";
+        setTimeout(() => { overlay.classList.add("aberto"); input.focus(); }, 10);
+      }
+    }
+
+    function fecharModalObsExpressa() {
+      const overlay = document.getElementById("modalObsExpressaOverlay");
+      overlay.classList.remove("aberto");
+      setTimeout(() => { 
+        overlay.style.display = "none";
+        if(indexTemporarioExpressado !== null) {
+          const statusSalvoOriginal = localStorage.getItem(`status_${tecnicoAtual}_${dadosOS[indexTemporarioExpressado].id}`) || "";
+          document.getElementById(`select-status-os-${indexTemporarioExpressado}`).value = statusSalvoOriginal;
+        }
+        statusTemporarioExpressado = null;
+        indexTemporarioExpressado = null;
+      }, 300);
+    }
+
+    async function salvarObsExpressa() {
+      if (indexTemporarioExpressado === null || !statusTemporarioExpressado) return;
+      
+      const os = dadosOS[indexTemporarioExpressado];
+      const obsTexto = document.getElementById("input-obs-expressa").value.trim();
+
+      if(statusTemporarioExpressado === "nao-concluido" && !obsTexto) {
+        alert("Por favor, digite um motivo para a não conclusão.");
+        return;
+      }
+
+      localStorage.setItem(`status_${tecnicoAtual}_${os.id}`, statusTemporarioExpressado);
+      localStorage.setItem(`timestamp_${tecnicoAtual}_${os.id}_${statusTemporarioExpressado}`, obtenerHoraAtual());
+
+      if(obsTexto) {
+        localStorage.setItem(`obs_${tecnicoAtual}_${os.id}`, obsTexto);
+      } else {
+        localStorage.removeItem(`obs_${tecnicoAtual}_${os.id}`);
+      }
+
+      fecharModalObsExpressa();
+      await salvarAgendaNaApi(document.getElementById("entrada").value, false);
+      
+      mostrarToast(ic('save') + ' Status atualizado!');
+      recarregarPagina(800);
+    }
+
+    function atualizarLayoutCardStatus(osId, classeStatus, textoStatus) {
+      const badge = document.getElementById(`topo-status-badge-${osId}`);
+      if(badge) {
+        badge.className = `card-status-topo ${classeStatus || 'vazio'}`;
+        badge.innerHTML = textoStatus;
+      }
     }
 
     function abrirModal(idx) {
@@ -1713,6 +2034,7 @@
       document.getElementById("edit-observacao").value = localStorage.getItem(`obs_${tecnicoAtual}_${os.id}`) || "";
       document.getElementById("edit-status").value = localStorage.getItem(`status_${tecnicoAtual}_${os.id}`) || "";
       
+      // Popular Select de Migração de OS
       const selectTec = document.getElementById("edit-tecnico-resp");
       selectTec.innerHTML = "";
       listaTecnicos.forEach(t => {
@@ -1736,7 +2058,7 @@
 
       const novoTecnico = document.getElementById("edit-tecnico-resp").value;
       
-      // MIGRAR O.S PARA OUTRO TECNICO
+      // Lógica de Migração da OS para outro técnico
       if (novoTecnico && novoTecnico !== tecnicoAtual) {
         toggleLoading(true, `Migrando OS para ${novoTecnico}...`);
         try {
@@ -1753,9 +2075,11 @@
            const novaObs = document.getElementById("edit-observacao").value.trim();
            const novoStatus = document.getElementById("edit-status").value;
 
+           // Remove do atual
            dadosOS.splice(osEditandoIndex, 1);
            const novoTextoAtual = serializarAgenda(dadosOS);
            
+           // Busca técnico destino
            const resp = await fetch(API_URL);
            const dados = await resp.json();
            const registroNovo = dados.find(d => d.tecnico === novoTecnico);
@@ -1765,6 +2089,7 @@
               const textoOsMigrada = serializarAgenda([os]);
               agendaNova = agendaNova ? agendaNova + "\n\n" + textoOsMigrada : textoOsMigrada;
               
+              // Transfere status no local storage
               if(novoStatus) {
                  localStorage.setItem(`status_${novoTecnico}_${os.id}`, novoStatus);
                  localStorage.setItem(`timestamp_${novoTecnico}_${os.id}_${novoStatus}`, obtenerHoraAtual());
@@ -1773,6 +2098,7 @@
                  localStorage.setItem(`obs_${novoTecnico}_${os.id}`, novaObs);
               }
 
+              // Prepara status object para o novo tecnico na API
               let statusObjNovo = {};
               try { statusObjNovo = JSON.parse(registroNovo.status || "{}"); } catch(e){}
               statusObjNovo[os.id] = {
@@ -1781,21 +2107,24 @@
                  timestamp: novoStatus ? obtenerHoraAtual() : "--:--"
               };
 
+              // Atualiza o novo técnico na API
               await fetch(`${API_URL}/${registroNovo.id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ agenda: agendaNova, status: JSON.stringify(statusObjNovo) })
               });
 
+              // Limpa rastro no storage do técnico antigo
               localStorage.removeItem(`status_${tecnicoAtual}_${os.id}`);
               localStorage.removeItem(`obs_${tecnicoAtual}_${os.id}`);
               ['rota', 'concluido', 'nao-concluido'].forEach(st => localStorage.removeItem(`timestamp_${tecnicoAtual}_${os.id}_${st}`));
 
+              // Salva estado do técnico atual e reconstrói UI
               document.getElementById("entrada").value = novoTextoAtual;
               await salvarAgendaNaApi(novoTextoAtual, true);
               fecharModal();
 
-              mostrarToast("🚚 OS Migrada com sucesso!");
+              mostrarToast(ic('truck') + ' OS Migrada com sucesso!');
               recarregarPagina(1000);
            } else {
               throw new Error("Técnico destino não encontrado.");
@@ -1808,7 +2137,7 @@
         return;
       }
 
-      // EDIÇÃO NORMAL DE CAMPO DA O.S. (ADMIN)
+      // Edição Normal da OS (Mesmo Técnico)
       const os = dadosOS[osEditandoIndex];
       os.horario  = document.getElementById("edit-horario").value.trim();
       os.cliente  = document.getElementById("edit-cliente").value.trim();
@@ -1834,13 +2163,13 @@
       fecharModal();
       await salvarAgendaNaApi(novoTexto);
       
-      mostrarToast("💾 OS Sincronizada!");
+      mostrarToast(ic('save') + ' OS Atualizada!');
       recarregarPagina(800);
     }
 
     function mostrarToast(msg) {
       const toast = document.getElementById("toast");
-      toast.textContent = msg;
+      toast.innerHTML = msg;
       toast.classList.add("show");
       setTimeout(() => toast.classList.remove("show"), 2600);
     }
@@ -1852,7 +2181,7 @@
 
     function gerarRelatorioDiario() {
       fecharModalConfig();
-      toggleLoading(true, "Compilando relatório...");
+      toggleLoading(true, "Gerando relatório...");
       
       fetch(API_URL).then(r => r.json()).then(dados => {
          let relatorio = `📊 RELATÓRIO DIÁRIO - ${new Date().toLocaleDateString('pt-BR')}\n\n`;
@@ -1900,20 +2229,15 @@
             relatorio += `⏳ PENDENTES (${pendentes.length}):\n${pendentes.length ? pendentes.join('\n\n') : 'Nenhuma'}\n\n`;
             relatorio += `======================================\n\n`;
          });
-
+         
          document.getElementById("relatorio-texto").value = relatorio;
+         document.getElementById("modalRelatorioOverlay").style.display = "flex";
+         setTimeout(() => document.getElementById("modalRelatorioOverlay").classList.add("aberto"), 10);
          toggleLoading(false);
-         abrirModalRelatorio();
       }).catch(e => {
+         alert("Erro ao gerar relatório.");
          toggleLoading(false);
-         alert("Erro ao puxar dados do relatório remoto.");
       });
-    }
-
-    function abrirModalRelatorio() {
-      const overlay = document.getElementById("modalRelatorioOverlay");
-      overlay.style.display = "flex";
-      setTimeout(() => overlay.classList.add("aberto"), 10);
     }
 
     function fecharModalRelatorio() {
@@ -1923,34 +2247,117 @@
     }
 
     function copiarRelatorio() {
-      const text = document.getElementById("relatorio-texto").value;
-      navigator.clipboard.writeText(text).then(() => {
-         mostrarToast("📋 Relatório copiado!");
-         fecharModalRelatorio();
+      const txt = document.getElementById("relatorio-texto").value;
+      navigator.clipboard.writeText(txt).then(() => {
+         mostrarToast(ic('check-circle') + ' Relatório copiado para prancheta!');
       });
     }
 
-    // Inicialização da Página
-    window.addEventListener('DOMContentLoaded', () => {
-      renderizarCardsMonitoramento();
+    async function sincronizarSilencioso() {
+      if (document.getElementById("modalOverlay").classList.contains("aberto") ||
+          document.getElementById("modalObsExpressaOverlay").classList.contains("aberto") ||
+          document.getElementById("modalSenhaOverlay").classList.contains("aberto") ||
+          document.getElementById("modalConfigOverlay").classList.contains("aberto") ||
+          document.getElementById("modalRelatorioOverlay").classList.contains("aberto")) {
+         return; 
+      }
+      
+      try {
+        const resp = await fetch(API_URL);
+        if(resp.ok) {
+           const dados = await resp.json();
+           
+           if (!tecnicoAtual) {
+             atualizarDashboardGeralComDados(dados);
+           } else {
+             const dadosTec = dados.find(d => d.tecnico === tecnicoAtual);
+             if (dadosTec) {
+                if (document.getElementById("importador").classList.contains("oculto")) {
+                   const novaAgenda = dadosTec.agenda || "";
+                   const textoAtual = document.getElementById("entrada").value;
+                   
+                   let precisaAtualizarUI = false;
 
-      const tecnicoPreSalvo = sessionStorage.getItem('tecnicoAberto');
-      if (tecnicoPreSalvo && listaTecnicos.includes(tecnicoPreSalvo)) {
-         sessionStorage.removeItem('tecnicoAberto');
-         selecionarTecnico(tecnicoPreSalvo);
-      } else {
-         carregarDashboardGeral(true);
+                   if(dadosTec.status) {
+                      try {
+                        const statusApi = JSON.parse(dadosTec.status);
+                        Object.keys(statusApi).forEach(osId => {
+                           const localStatus = localStorage.getItem(`status_${tecnicoAtual}_${osId}`);
+                           const localObs = localStorage.getItem(`obs_${tecnicoAtual}_${osId}`);
+                           
+                           let apiStat = "", apiObs = "", apiTime = "--:--";
+                           if(typeof statusApi[osId] === 'object') {
+                              apiStat = statusApi[osId].status || "";
+                              apiObs = statusApi[osId].obs || "";
+                              apiTime = statusApi[osId].timestamp || "--:--";
+                           } else {
+                              apiStat = statusApi[osId];
+                           }
+
+                           if (localStatus !== apiStat || localObs !== apiObs) {
+                              precisaAtualizarUI = true;
+                              localStorage.setItem(`status_${tecnicoAtual}_${osId}`, apiStat);
+                              localStorage.setItem(`obs_${tecnicoAtual}_${osId}`, apiObs);
+                              if(apiStat) {
+                                 localStorage.setItem(`timestamp_${tecnicoAtual}_${osId}_${apiStat}`, apiTime);
+                              }
+                           }
+                        });
+                      } catch(e) {}
+                   } 
+                   
+                   if (novaAgenda !== textoAtual) {
+                      precisaAtualizarUI = true;
+                   }
+
+                   if(precisaAtualizarUI) {
+                      document.getElementById("entrada").value = novaAgenda;
+                      criarCards(novaAgenda);
+                   }
+                }
+             }
+           }
+        }
+      } catch(e) {}
+    }
+
+    async function sincronizarTecnicosDaApi() {
+      renderizarCardsMonitoramento();
+      carregarDashboardGeral();
+
+      toggleLoading(true, "Carregando painel remoto...");
+      try {
+        const resp = await fetch(API_URL);
+        if(resp.ok) {
+          const dados = await resp.json();
+          if (dados && dados.length > 0) {
+            const nomesApi = dados.map(d => d.tecnico).filter(t => t);
+            if(nomesApi.length > 0) {
+              listaTecnicos = nomesApi;
+              localStorage.setItem('lista_tecnicos_smart', JSON.stringify(listaTecnicos));
+            }
+          }
+        }
+      } catch (e) { 
+        console.warn("Usando cache local."); 
+      } finally {
+        renderizarCardsMonitoramento();
+        carregarDashboardGeral();
+        toggleLoading(false);
+      }
+    }
+
+    window.onload = async function() { 
+      await sincronizarTecnicosDaApi(); 
+      
+      const tecnicoSalvo = sessionStorage.getItem('tecnicoAberto');
+      if (tecnicoSalvo && listaTecnicos.includes(tecnicoSalvo)) {
+        selecionarTecnico(tecnicoSalvo);
+        sessionStorage.removeItem('tecnicoAberto');
       }
 
-      // Intervalo de Sincronização em Background (Seguro, evita Flicker nos inputs focados)
-      setInterval(() => {
-        const painelTecnico = document.getElementById("painelTecnico");
-        const painelTecnicoOculto = !painelTecnico || painelTecnico.classList.contains("oculto");
-        if (painelTecnicoOculto) {
-          carregarDashboardGeral(false); 
-        }
-      }, 15000);
-    });
+      setInterval(sincronizarSilencioso, 10000);
+    };
   </script>
 </body>
 </html>
