@@ -699,6 +699,19 @@
     .btn-ativo-mob { background: linear-gradient(135deg, #64748b, #475569); }
     .btn-instalacao-mob { width: 100%; margin-top: 10px; background: linear-gradient(135deg, #8b5cf6, #6366f1); }
 
+    .sinal-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+    .sinal-dot.sinal-verde { background: #22c55e; box-shadow: 0 0 6px rgba(34,197,94,0.7); }
+    .sinal-dot.sinal-vermelha { background: #ef4444; box-shadow: 0 0 6px rgba(239,68,68,0.7); }
+    .sinal-dot.sinal-amarela { background: #eab308; box-shadow: 0 0 6px rgba(234,179,8,0.7); }
+    .sinal-dot.sinal-cinza { background: #64748b; }
+
     .seletor-status-container {
       position: relative;
       width: 100%;
@@ -1429,6 +1442,32 @@
       }
     }
 
+    const SINAL_LABELS = { verde: 'Instalação', vermelha: 'LOS / sem sinal', amarela: 'Lentidão', cinza: 'Tipo não identificado' };
+
+    // Classifica automaticamente o tipo da O.S. a partir do texto do Assunto.
+    // Sempre retorna uma cor: verde (instalação), vermelha (LOS), amarela (lentidão) ou cinza (não reconhecido).
+    function classificarSinalOS(assunto) {
+      const a = (assunto || "").toLowerCase();
+
+      if (/\blos\b|sem sinal|sinal ausente|perda de sinal|rompiment|rompid|sem luz|fibra rompida|sem conex[aã]o|sem internet|desconectad/.test(a)) {
+        return 'vermelha';
+      }
+      if (/lent|lerd|baixa velocidade|instabilidade|oscilando|instável/.test(a)) {
+        return 'amarela';
+      }
+      if (/instal/.test(a)) {
+        return 'verde';
+      }
+      return 'cinza';
+    }
+
+    // Monta o dot indicador (bolinha) com base na classificação automática — sempre visível
+    function construirDotSinal(idSeguro, assunto) {
+      const cor = classificarSinalOS(assunto);
+      return `<span class="sinal-dot sinal-${cor}" id="sinaldot-${idSeguro}" title="${SINAL_LABELS[cor]}"></span>`;
+    }
+
+
     // Copia um valor de texto (usado pelos botões de copiar dentro do dropdown inline)
     function copiarValorInline(valor) {
       if (!valor) return;
@@ -1442,7 +1481,12 @@
     }
 
     // Salva o status + observação de uma OS a partir do dropdown inline (painel geral público)
-    async function salvarStatusInline(tecnico, osId, idSeguro) {
+    // Monta o texto padrão copiado para a área de transferência quando uma OS entra "Em Rota"
+    function montarScriptRota(cliente, endereco) {
+      return `EM ROTA 🚀\n\nCliente: \n${cliente}\n\nEndereço: \n${endereco}`;
+    }
+
+    async function salvarStatusInline(tecnico, osId, idSeguro, clienteOS, enderecoOS) {
       const novoStatus = document.getElementById(`det-status-${idSeguro}`).value;
       const novaObs = document.getElementById(`det-obs-${idSeguro}`).value.trim();
 
@@ -1486,7 +1530,20 @@
         }
 
         mostrarToast(ic('save') + ' Status atualizado!');
-        recarregarPagina(800);
+
+        if (novoStatus === "rota") {
+          const script = montarScriptRota(clienteOS || '', enderecoOS || '');
+          try {
+            await navigator.clipboard.writeText(script);
+            setTimeout(() => mostrarToast(ic('check-circle') + ' Rota copiada!'), 600);
+            recarregarPagina(1400);
+          } catch(e) {
+            console.warn('Não foi possível copiar automaticamente:', e);
+            recarregarPagina(800);
+          }
+        } else {
+          recarregarPagina(800);
+        }
       } catch(e) {
         console.error(e);
         alert("Erro ao salvar status.");
@@ -1540,7 +1597,7 @@
                 </select>
               </div>
               <textarea class="campo-textarea-minimo" id="det-obs-${idSeguro}" placeholder="Observações / motivo...">${escapeHtml(osSalva)}</textarea>
-              <button class="btn-salvar-minimo" onclick="salvarStatusInline('${tec.replace(/'/g,"\\'")}', '${String(itemOS.id).replace(/'/g,"\\'")}', '${idSeguro}')">${ic('save','icon-sm')} Salvar Status</button>
+              <button class="btn-salvar-minimo" onclick="salvarStatusInline('${tec.replace(/'/g,"\\'")}', '${String(itemOS.id).replace(/'/g,"\\'")}', '${idSeguro}', '${(itemOS.cliente||'').replace(/'/g,"\\'")}', '${enderecoJs}')">${ic('save','icon-sm')} Salvar Status</button>
             </div>
           </div>
         </div>
@@ -1580,6 +1637,7 @@
             const idSeguro = gerarIdSeguro(tec, itemOS.id);
             const atraso = (cascataIdx++) * 70;
             const detalhesHtml = construirDetalhesInlineOS(tec, itemOS, statusAtual, osSalva);
+            const sinalDotHtml = construirDotSinal(idSeguro, itemOS.assunto);
 
             const horarioOs = itemOS.horario ? `<span style="color:#94a3b8; font-weight:500;">| ${ic('clock','icon-sm')} ${escapeHtml(itemOS.horario)}</span>` : '';
 
@@ -1593,7 +1651,7 @@
                       <span class="log-badge rota">${ic('car','icon-sm')} Em rota</span>
                       <div class="log-hora">${ic('clock','icon-sm')} ${horaLog} ${horarioOs} <span class="log-chevron" id="chevron-${idSeguro}">${ic('chevron-down')}</span></div>
                     </div>
-                    <div class="log-info"><strong>${escapeHtml(itemOS.cliente)}</strong><span class="tipo-servico">${ic('tag','icon-sm')} ${escapeHtml(itemOS.assunto)}</span></div>
+                    <div class="log-info"><strong>${escapeHtml(itemOS.cliente)}</strong> ${sinalDotHtml}<span class="tipo-servico">${ic('tag','icon-sm')} ${escapeHtml(itemOS.assunto)}</span></div>
                   </div>
                   ${detalhesHtml}
                 </div>
@@ -1609,7 +1667,7 @@
                       <div class="log-hora">${ic('clock','icon-sm')} ${horaLog} ${horarioOs} <span class="log-chevron" id="chevron-${idSeguro}">${ic('chevron-down')}</span></div>
                     </div>
                     <div class="log-info">
-                      <strong>${escapeHtml(itemOS.cliente)}</strong><span class="tipo-servico">${ic('tag','icon-sm')} ${escapeHtml(itemOS.assunto)}</span>
+                      <strong>${escapeHtml(itemOS.cliente)}</strong> ${sinalDotHtml}<span class="tipo-servico">${ic('tag','icon-sm')} ${escapeHtml(itemOS.assunto)}</span>
                       ${osSalva ? `<span class="obs-texto" style="color:#4ade80; background:rgba(34,197,94,0.06); border-left-color:#22c55e;">${ic('file-text','icon-sm')} Obs: ${escapeHtml(osSalva)}</span>` : ''}
                     </div>
                   </div>
@@ -1627,7 +1685,7 @@
                       <div class="log-hora">${ic('clock','icon-sm')} ${horaLog} ${horarioOs} <span class="log-chevron" id="chevron-${idSeguro}">${ic('chevron-down')}</span></div>
                     </div>
                     <div class="log-info">
-                      <strong>${escapeHtml(itemOS.cliente)}</strong><span class="tipo-servico">${ic('tag','icon-sm')} ${escapeHtml(itemOS.assunto)}</span>
+                      <strong>${escapeHtml(itemOS.cliente)}</strong> ${sinalDotHtml}<span class="tipo-servico">${ic('tag','icon-sm')} ${escapeHtml(itemOS.assunto)}</span>
                       ${osSalva ? `<span class="obs-texto">${ic('alert-triangle','icon-sm')} Motivo: ${escapeHtml(osSalva)}</span>` : ''}
                     </div>
                   </div>
@@ -1643,7 +1701,7 @@
                       <span class="log-badge aguardando">${ic('clock','icon-sm')} Pendente</span>
                       <div class="log-hora">Pendente ${horarioOs} <span class="log-chevron" id="chevron-${idSeguro}">${ic('chevron-down')}</span></div>
                     </div>
-                    <div class="log-info"><strong>${escapeHtml(itemOS.cliente)}</strong><span class="tipo-servico">${ic('tag','icon-sm')} ${escapeHtml(itemOS.assunto)}</span></div>
+                    <div class="log-info"><strong>${escapeHtml(itemOS.cliente)}</strong> ${sinalDotHtml}<span class="tipo-servico">${ic('tag','icon-sm')} ${escapeHtml(itemOS.assunto)}</span></div>
                   </div>
                   ${detalhesHtml}
                 </div>
@@ -1861,12 +1919,16 @@
           obsHtmlExpressa = `<div class="card-obs-preview${extraClass}" id="obs-preview-${os.id}">${ic('file-text','icon-sm')} Obs: ${escapeHtml(obsSalva)}</div>`;
         }
 
+        const idSeguroCard = gerarIdSeguro(tecnicoAtual, os.id);
+        const sinalDotCard = construirDotSinal(idSeguroCard, os.assunto);
+
         cardsContainer.innerHTML += `
           <div class="card" data-idx="${idx}" data-id="${os.id}">
             <button class="btn-editar-os" onclick="abrirModal(${idx})">${ic('edit-2','icon-sm')}</button>
             
             <div class="card-top-header">
               <div class="horario">${ic('clock','icon-sm')} ${os.horario}</div>
+              ${sinalDotCard}
               <div class="card-status-topo ${statusClass}" id="topo-status-badge-${os.id}">${statusTxt}</div>
             </div>
 
@@ -1945,12 +2007,13 @@
         localStorage.setItem(`timestamp_${tecnicoAtual}_${os.id}_rota`, obtenerHoraAtual());
         atualizarLayoutCardStatus(os.id, "rota", ic('car','icon-sm') + " Em rota");
         await salvarAgendaNaApi(document.getElementById("entrada").value, true);
+        mostrarToast(ic('save') + ' Status atualizado!');
 
-        const script = `🚗 EM ROTA\n\n👤 Cliente: ${os.cliente}\n📍 Endereço: ${os.endereco}`;
+        const script = montarScriptRota(os.cliente, os.endereco);
         navigator.clipboard.writeText(script).then(() => {
-          mostrarToast(ic('check-circle') + ' Rota Copiada!');
+          setTimeout(() => mostrarToast(ic('check-circle') + ' Rota copiada!'), 600);
           window.open("https://t.me/c/1989058391/167773", "_blank");
-          recarregarPagina(1000);
+          recarregarPagina(1600);
         });
       } 
       else if (novoStatus === "concluido" || novoStatus === "nao-concluido") {
