@@ -905,6 +905,46 @@
     .spinner { width: 50px; height: 50px; border-radius: 50%; border: 3px solid rgba(255, 255, 255, 0.03); border-top-color: #22d3ee; animation: rodar 1s linear infinite; }
     @keyframes rodar { to { transform: rotate(360deg); } }
     .loading-texto { font-size: 14px; font-weight: 700; color: #e2e8f0; }
+
+    /* Modal Nova Instalação */
+    .campo-loc-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px;
+      color: #64748b;
+      padding: 4px 2px 0;
+      min-height: 18px;
+    }
+    .campo-loc-status.ok { color: #4ade80; font-weight: 600; }
+    .campo-loc-status.erro { color: #f87171; font-weight: 600; }
+    .btn-capturar-loc {
+      width: 100%;
+      border: 1px solid rgba(96, 165, 250, 0.3);
+      background: rgba(96, 165, 250, 0.1);
+      color: #93c5fd;
+      padding: 13px;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.2s ease;
+    }
+    .btn-capturar-loc.capturado {
+      border-color: rgba(34, 197, 94, 0.35);
+      background: rgba(34, 197, 94, 0.12);
+      color: #4ade80;
+    }
+    .btn-capturar-loc .spin-loc {
+      animation: rodar 0.9s linear infinite;
+    }
+    .btn-enviar-instalacao {
+      background: linear-gradient(135deg, #25d366, #128c7e);
+    }
   </style>
 </head>
 
@@ -942,6 +982,9 @@
       <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
       <symbol id="i-hash" viewBox="0 0 24 24"><path d="M9 3.5 6.5 20.5M17.5 3.5 15 20.5M4 8.5h16M3.2 15.5h16"/></symbol>
       <symbol id="i-external-link" viewBox="0 0 24 24"><path d="M14 4h6v6"/><path d="M20 4 10 14"/><path d="M18 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6"/></symbol>
+      <symbol id="i-crosshair" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 2v3.5M12 18.5V22M2 12h3.5M18.5 12H22"/><circle cx="12" cy="12" r="2.2"/></symbol>
+      <symbol id="i-router" viewBox="0 0 24 24"><rect x="3" y="12" width="18" height="7" rx="1.6"/><path d="M7 16h.01M11 16h.01"/><path d="M8 12V9a4 4 0 0 1 8 0v3"/></symbol>
+      <symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 3v5M15 3v5M6 8h12l-1 4a5 5 0 0 1-10 0Z"/><path d="M12 15.5V21"/></symbol>
     </defs>
   </svg>
 
@@ -1081,6 +1124,46 @@
     </div>
   </div>
 
+  <!-- Modal Nova Instalação -->
+  <div class="modal-overlay" id="modalNovaInstalacaoOverlay">
+    <div class="modal">
+      <button class="modal-fechar" onclick="fecharModalNovaInstalacao()"><svg class="icon"><use href="#i-x"></use></svg></button>
+      <div class="modal-titulo"><svg class="icon icon-lg"><use href="#i-router"></use></svg> Nova Instalação</div>
+
+      <div class="campo-grupo">
+        <label style="color: #cbd5e1; font-size: 13.5px; display:flex; align-items:center; gap:6px;"><svg class="icon icon-sm"><use href="#i-user"></use></svg> Cliente</label>
+        <input class="campo-input" id="inst-cliente" type="text" />
+      </div>
+
+      <div class="campo-grupo">
+        <label style="color: #cbd5e1; font-size: 13.5px; display:flex; align-items:center; gap:6px;"><svg class="icon icon-sm"><use href="#i-router"></use></svg> CTO</label>
+        <input class="campo-input" id="inst-cto" type="text" placeholder="Ex: CTO-014" />
+      </div>
+
+      <div class="campo-grupo">
+        <label style="color: #cbd5e1; font-size: 13.5px; display:flex; align-items:center; gap:6px;"><svg class="icon icon-sm"><use href="#i-plug"></use></svg> Porta</label>
+        <div class="select-wrapper">
+          <select class="campo-select" id="inst-porta"></select>
+        </div>
+      </div>
+
+      <div class="campo-grupo">
+        <label style="color: #cbd5e1; font-size: 13.5px; display:flex; align-items:center; gap:6px;"><svg class="icon icon-sm"><use href="#i-file-text"></use></svg> Observações</label>
+        <textarea class="campo-textarea-modal" id="inst-obs" placeholder="Observações da instalação..."></textarea>
+      </div>
+
+      <div class="campo-grupo">
+        <button class="btn-capturar-loc" id="btn-capturar-loc" onclick="capturarLocalizacaoInstalacao()">
+          <svg class="icon" id="icon-capturar-loc"><use href="#i-crosshair"></use></svg>
+          <span id="txt-capturar-loc">Capturar localização exata</span>
+        </button>
+        <div class="campo-loc-status" id="status-loc-instalacao"></div>
+      </div>
+
+      <button class="btn-salvar-modal btn-enviar-instalacao" onclick="copiarEnviarInstalacao()"><svg class="icon"><use href="#i-copy"></use></svg> Copiar e Enviar</button>
+    </div>
+  </div>
+
   <div class="loading-overlay" id="loadingOverlay">
     <div class="spinner"></div>
     <div class="loading-texto" id="loadingTexto">Sincronizando...</div>
@@ -1105,6 +1188,12 @@
     
     let statusTemporarioExpressado = null;
     let indexTemporarioExpressado = null;
+
+    // Coordenadas capturadas para a instalação em andamento no modal
+    let localizacaoInstalacaoAtual = null;
+    // Técnico e ID da OS de instalação atualmente aberta no modal (para fechar a OS como concluída ao final)
+    let instalacaoTecnicoAtual = null;
+    let instalacaoOsIdAtual = null;
 
     if(localStorage.getItem('lista_tecnicos_smart')) {
       try { listaTecnicos = JSON.parse(localStorage.getItem('lista_tecnicos_smart')); } catch(e){ listaTecnicos = []; }
@@ -1193,6 +1282,7 @@
     document.getElementById("modalOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModal(); });
     document.getElementById("modalObsExpressaOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalObsExpressa(); });
     document.getElementById("modalRelatorioOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalRelatorio(); });
+    document.getElementById("modalNovaInstalacaoOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalNovaInstalacao(); });
 
     function toggleDropdown(tec, event) {
       if (event) event.stopPropagation();
@@ -1428,17 +1518,176 @@
       return /instal/i.test(assunto || "");
     }
 
-    // Copia o nome do cliente e encaminha para o sistema de instalação
-    function abrirInstalacao(nomeCliente) {
-      const nome = nomeCliente || "";
-      const irParaInstalacao = () => window.open("https://indai-app.vercel.app/", "_blank");
-      if (nome && navigator.clipboard) {
-        navigator.clipboard.writeText(nome).then(() => {
-          mostrarToast(ic('check-circle') + ' Nome copiado!');
-          irParaInstalacao();
-        }).catch(() => irParaInstalacao());
-      } else {
-        irParaInstalacao();
+    // Abre o modal de Nova Instalação já com o nome do cliente preenchido
+    function abrirInstalacao(nomeCliente, tecnico, osId) {
+      abrirModalNovaInstalacao(nomeCliente || "", tecnico || null, osId || null);
+    }
+
+    function popularPortasInstalacao() {
+      const select = document.getElementById("inst-porta");
+      let opcoes = `<option value="">Selecione a porta...</option>`;
+      for (let p = 1; p <= 16; p++) {
+        opcoes += `<option value="${p}">Porta ${p}</option>`;
+      }
+      select.innerHTML = opcoes;
+    }
+
+    function abrirModalNovaInstalacao(nomeCliente, tecnico, osId) {
+      instalacaoTecnicoAtual = tecnico || null;
+      instalacaoOsIdAtual = osId || null;
+      document.getElementById("inst-cliente").value = nomeCliente || "";
+      document.getElementById("inst-cto").value = "";
+      document.getElementById("inst-obs").value = "";
+      popularPortasInstalacao();
+      document.getElementById("inst-porta").value = "";
+
+      localizacaoInstalacaoAtual = null;
+      const btnLoc = document.getElementById("btn-capturar-loc");
+      btnLoc.classList.remove("capturado");
+      document.getElementById("icon-capturar-loc").innerHTML = `<use href="#i-crosshair"></use>`;
+      document.getElementById("txt-capturar-loc").textContent = "Capturar localização exata";
+      const statusLoc = document.getElementById("status-loc-instalacao");
+      statusLoc.className = "campo-loc-status";
+      statusLoc.textContent = "";
+
+      const overlay = document.getElementById("modalNovaInstalacaoOverlay");
+      overlay.style.display = "flex";
+      setTimeout(() => overlay.classList.add("aberto"), 10);
+    }
+
+    function fecharModalNovaInstalacao() {
+      const overlay = document.getElementById("modalNovaInstalacaoOverlay");
+      overlay.classList.remove("aberto");
+      setTimeout(() => overlay.style.display = "none", 300);
+    }
+
+    // Captura a localização exata do técnico via GPS do dispositivo
+    function capturarLocalizacaoInstalacao() {
+      const statusLoc = document.getElementById("status-loc-instalacao");
+      const btnLoc = document.getElementById("btn-capturar-loc");
+      const iconLoc = document.getElementById("icon-capturar-loc");
+      const txtLoc = document.getElementById("txt-capturar-loc");
+
+      if (!navigator.geolocation) {
+        statusLoc.className = "campo-loc-status erro";
+        statusLoc.textContent = "Geolocalização não suportada neste dispositivo.";
+        return;
+      }
+
+      iconLoc.innerHTML = `<use href="#i-crosshair"></use>`;
+      iconLoc.classList.add("spin-loc");
+      txtLoc.textContent = "Obtendo localização...";
+      statusLoc.className = "campo-loc-status";
+      statusLoc.textContent = "Aguardando permissão de GPS...";
+
+      navigator.geolocation.getCurrentPosition(
+        (posicao) => {
+          const lat = posicao.coords.latitude;
+          const lng = posicao.coords.longitude;
+          const precisao = Math.round(posicao.coords.accuracy || 0);
+
+          localizacaoInstalacaoAtual = { lat, lng, precisao };
+
+          iconLoc.classList.remove("spin-loc");
+          iconLoc.innerHTML = `<use href="#i-check-circle"></use>`;
+          txtLoc.textContent = "Localização capturada";
+          btnLoc.classList.add("capturado");
+
+          statusLoc.className = "campo-loc-status ok";
+          statusLoc.innerHTML = `${ic('map-pin','icon-sm')} ${lat.toFixed(6)}, ${lng.toFixed(6)} (±${precisao}m)`;
+        },
+        (erro) => {
+          iconLoc.classList.remove("spin-loc");
+          iconLoc.innerHTML = `<use href="#i-crosshair"></use>`;
+          txtLoc.textContent = "Tentar novamente";
+          btnLoc.classList.remove("capturado");
+
+          statusLoc.className = "campo-loc-status erro";
+          let msg = "Não foi possível obter a localização.";
+          if (erro.code === 1) msg = "Permissão de localização negada.";
+          else if (erro.code === 2) msg = "Localização indisponível no momento.";
+          else if (erro.code === 3) msg = "Tempo esgotado ao obter localização.";
+          statusLoc.textContent = msg;
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+      );
+    }
+
+    // Monta o texto/script final e copia para a área de transferência, deixando pronto para enviar no WhatsApp
+    async function copiarEnviarInstalacao() {
+      const cliente = document.getElementById("inst-cliente").value.trim();
+      const cto = document.getElementById("inst-cto").value.trim();
+      const porta = document.getElementById("inst-porta").value;
+      const obs = document.getElementById("inst-obs").value.trim();
+
+      if (!cliente) {
+        alert("Informe o nome do cliente.");
+        return;
+      }
+
+      let linhaLocalizacao = "Não capturada";
+      if (localizacaoInstalacaoAtual) {
+        const { lat, lng } = localizacaoInstalacaoAtual;
+        linhaLocalizacao = `https://maps.google.com/?q=${lat},${lng}`;
+      }
+
+      let script = `🔧 NOVA INSTALAÇÃO\n\n`;
+      script += `Cliente: ${cliente}\n`;
+      script += `CTO: ${cto || "—"}\n`;
+      script += `Porta: ${porta ? "Porta " + porta : "—"}\n\n`;
+      script += `📍 Localização: ${linhaLocalizacao}\n`;
+      if (obs) {
+        script += `\n📝 Observações:\n${obs}\n`;
+      }
+
+      const tecnicoContexto = instalacaoTecnicoAtual;
+      const osIdContexto = instalacaoOsIdAtual;
+
+      try {
+        await navigator.clipboard.writeText(script);
+        mostrarToast(ic('check-circle') + ' Script copiado! Cole no WhatsApp.');
+        fecharModalNovaInstalacao();
+        window.open(`https://wa.me/?text=${encodeURIComponent(script)}`, "_blank");
+      } catch (e) {
+        alert("Não foi possível copiar automaticamente. Copie manualmente o texto.");
+        return;
+      }
+
+      if (tecnicoContexto && osIdContexto) {
+        toggleLoading(true, "Finalizando OS...");
+        await finalizarInstalacaoComoConcluida(tecnicoContexto, osIdContexto, script);
+        mostrarToast(ic('check-circle') + ' OS marcada como concluída!');
+        recarregarPagina(1200);
+      }
+    }
+
+    // Fecha a OS de instalação como "Concluído", salvando o script gerado como observação
+    async function finalizarInstalacaoComoConcluida(tecnico, osId, obsTexto) {
+      const horaAtual = obtenerHoraAtual();
+
+      localStorage.setItem(`status_${tecnico}_${osId}`, 'concluido');
+      localStorage.setItem(`obs_${tecnico}_${osId}`, obsTexto);
+      localStorage.setItem(`timestamp_${tecnico}_${osId}_concluido`, horaAtual);
+
+      try {
+        const resp = await fetch(API_URL);
+        const dados = await resp.json();
+        const registro = dados.find(d => d.tecnico === tecnico);
+        if (!registro) { toggleLoading(false); return; }
+
+        let statusObj = {};
+        try { statusObj = JSON.parse(registro.status || "{}"); } catch(e) {}
+        statusObj[osId] = { status: 'concluido', obs: obsTexto, timestamp: horaAtual };
+
+        await fetch(`${API_URL}/${registro.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: JSON.stringify(statusObj) })
+        });
+      } catch(e) {
+        console.warn("Erro ao finalizar OS de instalação:", e);
+      } finally {
+        toggleLoading(false);
       }
     }
 
@@ -1584,7 +1833,7 @@
             </div>
 
             <button class="link-maps-minimo" onclick="abrirMapsInline('${enderecoJs}')">${ic('map-pin','icon-sm')} Ver no mapa</button>
-            ${ehInstalacao(itemOS.assunto) ? `<button class="btn-acao-mobile btn-instalacao-mob" onclick="abrirInstalacao('${(itemOS.cliente||'').replace(/'/g,"\\'")}')">${ic('external-link','icon-sm')} Nova Instalação</button>` : ''}
+            ${ehInstalacao(itemOS.assunto) ? `<button class="btn-acao-mobile btn-instalacao-mob" onclick="abrirInstalacao('${(itemOS.cliente||'').replace(/'/g,"\\'")}', '${tec.replace(/'/g,"\\'")}', '${String(itemOS.id).replace(/'/g,"\\'")}')">${ic('external-link','icon-sm')} Nova Instalação</button>` : ''}
 
             <div class="log-detalhes-status">
               <span class="log-detalhes-rotulo">${ic('check-circle','icon-sm')} Status</span>
@@ -1955,7 +2204,7 @@
                 <button class="btn-acao-mobile btn-maps-mob" onclick="window.open('${escapeHtml(maps)}', '_blank')">${ic('map-pin')} Maps</button>
                 <button class="btn-acao-mobile btn-ativo-mob" onclick="window.open('https://sistema.ativotelecom.com.br/central_assinante_web/login', '_blank')">${ic('globe')} Ativo</button>
               </div>
-              ${ehInstalacao(os.assunto) ? `<button class="btn-acao-mobile btn-instalacao-mob" onclick="abrirInstalacao('${escapeHtml(os.cliente).replace(/'/g,"\\'")}')">${ic('external-link')} Nova Instalação</button>` : ''}
+              ${ehInstalacao(os.assunto) ? `<button class="btn-acao-mobile btn-instalacao-mob" onclick="abrirInstalacao('${escapeHtml(os.cliente).replace(/'/g,"\\'")}', '${tecnicoAtual.replace(/'/g,"\\'")}', '${String(os.id).replace(/'/g,"\\'")}')">${ic('external-link')} Nova Instalação</button>` : ''}
               
               <div class="seletor-status-container">
                 <select class="select-status-unico" id="select-status-os-${idx}" onchange="dispararAlteracaoStatus(${idx}, this.value)">
@@ -2328,7 +2577,8 @@
           document.getElementById("modalObsExpressaOverlay").classList.contains("aberto") ||
           document.getElementById("modalSenhaOverlay").classList.contains("aberto") ||
           document.getElementById("modalConfigOverlay").classList.contains("aberto") ||
-          document.getElementById("modalRelatorioOverlay").classList.contains("aberto")) {
+          document.getElementById("modalRelatorioOverlay").classList.contains("aberto") ||
+          document.getElementById("modalNovaInstalacaoOverlay").classList.contains("aberto")) {
          return; 
       }
       
