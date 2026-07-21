@@ -84,8 +84,14 @@
 
     .form-add-tecnico {
       display: flex;
+      flex-direction: column;
       gap: 10px;
       margin-bottom: 18px;
+    }
+
+    .form-add-tecnico .linha-senha-add {
+      display: flex;
+      gap: 10px;
     }
 
     .input-add {
@@ -96,7 +102,14 @@
       font-size: 14.5px;
       color: white;
       outline: none;
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    .form-add-tecnico .linha-senha-add .input-add {
       flex: 1;
+      min-width: 0;
     }
 
     .btn-add {
@@ -104,20 +117,21 @@
       border: none;
       color: white;
       font-weight: 700;
-      padding: 12px 20px;
+      padding: 12px 18px;
       border-radius: 14px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
+      flex-shrink: 0;
     }
 
     .lista-gerenciar {
       display: flex;
       flex-direction: column;
       gap: 10px;
-      max-height: 240px;
+      max-height: 280px;
       overflow-y: auto;
       background: rgba(0, 0, 0, 0.2);
       padding: 12px;
@@ -126,30 +140,50 @@
 
     .item-gerenciar {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
       font-size: 15px;
       color: #cbd5e1;
-      padding: 8px 12px;
-      border-radius: 10px;
+      padding: 12px;
+      border-radius: 14px;
       background: rgba(255, 255, 255, 0.02);
-      flex-wrap: wrap;
+    }
+
+    .item-gerenciar-nome {
+      display: flex;
+      align-items: center;
       gap: 8px;
+      font-weight: 700;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .acoes-gerenciar-tec {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
       gap: 6px;
-      flex-wrap: wrap;
+    }
+
+    .acoes-gerenciar-tec button {
+      width: 100%;
+      min-width: 0;
+      justify-content: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-left: 4px;
+      padding-right: 4px;
     }
 
     .btn-agenda-tec-lista {
       background: rgba(34, 197, 94, 0.12);
       border: 1px solid rgba(34, 197, 94, 0.25);
       color: #4ade80;
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 700;
-      padding: 6px 10px;
+      padding: 8px 4px;
       border-radius: 8px;
       cursor: pointer;
       display: inline-flex;
@@ -161,9 +195,9 @@
       background: rgba(96, 165, 250, 0.12);
       border: 1px solid rgba(96, 165, 250, 0.25);
       color: #60a5fa;
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 700;
-      padding: 6px 10px;
+      padding: 8px 4px;
       border-radius: 8px;
       cursor: pointer;
       display: inline-flex;
@@ -174,9 +208,9 @@
       background: rgba(239, 68, 68, 0.12);
       border: 1px solid rgba(239, 68, 68, 0.25);
       color: #f87171;
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 700;
-      padding: 6px 10px;
+      padding: 8px 4px;
       border-radius: 8px;
       cursor: pointer;
       display: inline-flex;
@@ -887,6 +921,8 @@
     }
 
     .toast.show { opacity: 1; }
+    .toast.erro { border-color: rgba(239, 68, 68, 0.35); }
+    .toast.erro svg { color: #f87171; }
 
     .loading-overlay {
       display: none;
@@ -1044,6 +1080,93 @@
       color: #f1f5f9;
       font-size: 14.5px;
     }
+
+    /* Tela de Login */
+    .tela-login {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      background: radial-gradient(circle at top, #0f172a 0%, #020617 75%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .tela-login.oculto { display: none !important; }
+    .login-card {
+      background: #0f172a;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 24px;
+      padding: 30px 22px;
+      width: 100%;
+      max-width: 380px;
+      text-align: center;
+    }
+    .login-card.shake { animation: chacoalhar 0.4s both; }
+    .login-logo {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 4px;
+      background: linear-gradient(90deg, #22d3ee, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .login-sub {
+      color: #94a3b8;
+      font-size: 13px;
+      margin-bottom: 24px;
+    }
+    .login-card .campo-grupo { text-align: left; }
+    .login-card .campo-grupo label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* Barra de usuário logado no topo */
+    .topo-usuario {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    .topo-usuario-nome {
+      font-size: 13px;
+      color: #cbd5e1;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .badge-perfil {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(167, 139, 250, 0.15);
+      color: #c4b5fd;
+      letter-spacing: 0.04em;
+    }
+    .btn-sair {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: #f87171;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    #topoUsuarioBox, #btnConfigTecnicos { display: none; }
   </style>
 </head>
 
@@ -1085,48 +1208,64 @@
       <symbol id="i-router" viewBox="0 0 24 24"><rect x="3" y="12" width="18" height="7" rx="1.6"/><path d="M7 16h.01M11 16h.01"/><path d="M8 12V9a4 4 0 0 1 8 0v3"/></symbol>
       <symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 3v5M15 3v5M6 8h12l-1 4a5 5 0 0 1-10 0Z"/><path d="M12 15.5V21"/></symbol>
       <symbol id="i-pie-chart" viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></symbol>
+      <symbol id="i-log-out" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></symbol>
     </defs>
   </svg>
 
   <div class="topo">
     <h1><svg class="icon icon-lg"><use href="#i-radio"></use></svg> Monitoramento Técnico</h1>
     <p id="subtitulo">Toque em uma O.S. para ver detalhes e alterar o status</p>
-    <button class="btn-config" onclick="abrirModalSenha()"><svg class="icon"><use href="#i-settings"></use></svg> Gerenciar Técnicos</button>
+    <div class="topo-usuario" id="topoUsuarioBox">
+      <span class="topo-usuario-nome"><svg class="icon icon-sm"><use href="#i-user"></use></svg> <span id="nomeUsuarioLogado"></span> <span class="badge-perfil" id="badgePerfilLogado"></span></span>
+      <button class="btn-sair" onclick="sairDaConta()"><svg class="icon icon-sm"><use href="#i-log-out"></use></svg> Sair</button>
+    </div>
+    <button class="btn-config" id="btnConfigTecnicos" onclick="abrirModalConfig()"><svg class="icon"><use href="#i-settings"></use></svg> Gerenciar Técnicos</button>
   </div>
 
-  <!-- Modal Senha -->
-  <div class="modal-overlay" id="modalSenhaOverlay">
-    <div class="modal modal-senha" id="cardModalSenha">
-      <button class="modal-fechar" onclick="fecharModalSenha()"><svg class="icon"><use href="#i-x"></use></svg></button>
-      <div class="modal-titulo"><svg class="icon icon-lg"><use href="#i-lock"></use></svg> Área Restrita</div>
-      <div class="modal-secao" style="margin-bottom: 20px;">Digite a senha master</div>
-      
+  <!-- Tela de Login (obrigatória, substitui o acesso livre à tela inicial) -->
+  <div class="tela-login" id="telaLogin">
+    <div class="login-card" id="cardLogin">
+      <div class="login-logo"><svg class="icon icon-lg"><use href="#i-radio"></use></svg> Agenda Técnico</div>
+      <div class="login-sub">Entre com seu usuário e senha para continuar</div>
+
       <div class="campo-grupo">
-        <div class="senha-input-wrapper">
-          <input type="password" class="campo-input" id="inputSenhaMaster" placeholder="Senha..." style="text-align: center; font-size: 16px;" onkeydown="verificarTeclaSenha(event)" />
-          <button class="btn-toggle-senha" onclick="toggleVisibilidadeSenha()" id="btnToggleSenha"><svg class="icon" id="iconToggleSenha"><use href="#i-eye"></use></svg></button>
-        </div>
-        <div class="erro-senha" id="erroSenhaMsg"><svg class="icon icon-sm"><use href="#i-alert-triangle"></use></svg> Senha incorreta!</div>
+        <label>Usuário</label>
+        <input type="text" class="campo-input" id="loginUsuario" placeholder="Login..." autocomplete="username" />
       </div>
-      <button class="btn-salvar-modal" onclick="validarSenhaMaster()">Confirmar Acesso</button>
+      <div class="campo-grupo">
+        <label>Senha</label>
+        <div class="senha-input-wrapper">
+          <input type="password" class="campo-input" id="loginSenha" placeholder="Senha..." autocomplete="current-password" onkeydown="verificarTeclaLogin(event)" />
+          <button class="btn-toggle-senha" onclick="toggleVisibilidadeSenhaLogin()" id="btnToggleSenhaLogin" aria-label="Mostrar ou ocultar senha"><svg class="icon" id="iconToggleSenhaLogin"><use href="#i-eye"></use></svg></button>
+        </div>
+        <div class="erro-senha" id="erroLoginMsg"><svg class="icon icon-sm"><use href="#i-alert-triangle"></use></svg> <span id="erroLoginTexto">Usuário ou senha inválidos!</span></div>
+      </div>
+      <button class="btn-salvar-modal" onclick="realizarLogin()"><svg class="icon"><use href="#i-lock"></use></svg> Entrar</button>
     </div>
   </div>
+
+  <!-- Todo o conteúdo do app fica escondido até o login ser confirmado -->
+  <div id="appConteudo" class="oculto">
 
   <!-- Modal Configurações (Gerenciar Técnicos - ADMIN) -->
   <div class="modal-overlay" id="modalConfigOverlay">
     <div class="modal">
-      <button class="modal-fechar" onclick="fecharModalConfig()"><svg class="icon"><use href="#i-x"></use></svg></button>
+      <button class="modal-fechar" onclick="fecharModalConfig()" aria-label="Fechar"><svg class="icon"><use href="#i-x"></use></svg></button>
       <div class="modal-titulo"><svg class="icon icon-lg"><use href="#i-settings"></use></svg> Gerenciar Técnicos</div>
       
       <div class="modal-secao">Cadastrar Novo</div>
       <div class="form-add-tecnico">
         <input type="text" class="input-add" id="nomeNovoTecnico" placeholder="Nome..." />
-        <button class="btn-add" onclick="adicionarTecnico()"><svg class="icon"><use href="#i-plus"></use></svg></button>
+        <div class="linha-senha-add">
+          <input type="text" class="input-add" id="senhaNovoTecnico" placeholder="Senha de acesso..." />
+          <button class="btn-add" onclick="adicionarTecnico()" aria-label="Adicionar técnico"><svg class="icon"><use href="#i-plus"></use></svg></button>
+        </div>
       </div>
+      <p style="font-size:12px; color:#64748b; margin:-10px 0 0;">O técnico usa o próprio nome como login e essa senha para acessar somente a sua agenda.</p>
       
       <div class="modal-divider"></div>
       <div class="modal-secao">Técnicos Ativos</div>
-      <p style="font-size:12.5px; color:#64748b; margin:-4px 0 10px;">Use "Agenda" para colar/gerar a agenda, editar O.S. e clientes, e migrar O.S. entre técnicos.</p>
+      <p style="font-size:12.5px; color:#64748b; margin:-4px 0 10px;">Use "Agenda" para colar/gerar a agenda, editar O.S. e clientes, e migrar O.S. entre técnicos. Use a chave para trocar a senha de acesso do técnico.</p>
       <div class="lista-gerenciar" id="listaGerenciarTecnicos"></div>
 
       <div class="modal-divider"></div>
@@ -1134,9 +1273,9 @@
     </div>
   </div>
 
-  <!-- Resumo Geral: gráfico com o total de OS's de todos os técnicos -->
+  <!-- Resumo Geral: gráfico com o total de OS's (todos os técnicos para master/admin, só as próprias para o técnico) -->
   <div class="resumo-geral-card" id="resumoGeralCard">
-    <div class="resumo-titulo"><svg class="icon icon-sm"><use href="#i-pie-chart"></use></svg> Resumo Geral de O.S.'s</div>
+    <div class="resumo-titulo" id="resumoTitulo"><svg class="icon icon-sm"><use href="#i-pie-chart"></use></svg> Resumo Geral de O.S.'s</div>
     <div class="resumo-conteudo">
       <div class="donut-chart" id="donutChart">
         <div class="donut-centro">
@@ -1148,13 +1287,22 @@
     </div>
   </div>
 
+  <!-- Gerar/atualizar agenda — exclusivo do técnico logado, para colar a própria agenda do dia -->
+  <div class="resumo-geral-card oculto" id="importadorTecnicoCard">
+    <button class="btn-mostrar" id="btnMostrarImportadorTecnico" onclick="mostrarImportadorTecnico()" style="margin-bottom:0; display:flex;"><svg class="icon"><use href="#i-clipboard-list"></use></svg> Colar / Atualizar minha agenda</button>
+    <div class="importador oculto" id="importadorTecnico" style="margin:14px 0 0; padding:0; background:none; border:none;">
+      <textarea id="entradaTecnico" placeholder="Cole aqui a sua agenda do dia..."></textarea>
+      <button class="btn-gerar" onclick="gerarAgendaTecnico()"><svg class="icon"><use href="#i-zap"></use></svg> Gerar Agenda Inteligente</button>
+    </div>
+  </div>
+
   <!-- Painel Inicial -->
   <div class="seletor-tecnico" id="seletorTecnico"></div>
 
-  <!-- Painel do Técnico (Agenda Específica - somente ADMIN) -->
+  <!-- Painel do Técnico (Agenda Específica) -->
   <div class="painel-tecnico oculto" id="painelTecnico">
-    <button class="btn-trocar" onclick="trocarTecnico()">↩️ Voltar ao Painel Geral</button>
-    <div class="badge-admin"><svg class="icon icon-sm"><use href="#i-key"></use></svg> Modo Admin — Gerenciamento de Agenda</div>
+    <button class="btn-trocar" id="btnVoltarPainel" onclick="trocarTecnico()">↩️ Voltar ao Painel Geral</button>
+    <div class="badge-admin" id="badgeModoPainel"><svg class="icon icon-sm"><use href="#i-key"></use></svg> Modo Admin — Gerenciamento de Agenda</div>
     <button class="btn-mostrar" id="btnMostrar" onclick="mostrarImportador()"><svg class="icon"><use href="#i-clipboard-list"></use></svg> Mostrar campo da agenda</button>
 
     <div class="importador" id="importador">
@@ -1168,7 +1316,7 @@
   <!-- Modal Editar OS (ADMIN: edição completa + migração) -->
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
-      <button class="modal-fechar" onclick="fecharModal()"><svg class="icon"><use href="#i-x"></use></svg></button>
+      <button class="modal-fechar" onclick="fecharModal()" aria-label="Fechar"><svg class="icon"><use href="#i-x"></use></svg></button>
       <div class="modal-titulo"><svg class="icon icon-lg"><use href="#i-edit-2"></use></svg> Editar OS</div>
 
       <div class="modal-secao">Dados Principais</div>
@@ -1183,12 +1331,14 @@
       <div class="campo-grupo"><label>Login</label><input class="campo-input" id="edit-login" type="text" /></div>
       <div class="campo-grupo"><label>Senha PPPoE</label><input class="campo-input" id="edit-senha" type="text" /></div>
 
-      <hr class="modal-divider" />
-      <div class="modal-secao">Migrar / Transferir OS</div>
-      <div class="campo-grupo">
-        <label style="color: #67e8f9; font-size: 13.5px;">Técnico Responsável</label>
-        <div class="select-wrapper">
-          <select class="campo-select" id="edit-tecnico-resp"></select>
+      <div id="secaoMigrarOS">
+        <hr class="modal-divider" />
+        <div class="modal-secao">Migrar / Transferir OS</div>
+        <div class="campo-grupo">
+          <label style="color: #67e8f9; font-size: 13.5px;">Técnico Responsável</label>
+          <div class="select-wrapper">
+            <select class="campo-select" id="edit-tecnico-resp"></select>
+          </div>
         </div>
       </div>
 
@@ -1217,7 +1367,7 @@
   <!-- Modal Observação Expressa -->
   <div class="modal-overlay" id="modalObsExpressaOverlay">
     <div class="modal">
-      <button class="modal-fechar" onclick="fecharModalObsExpressa()"><svg class="icon"><use href="#i-x"></use></svg></button>
+      <button class="modal-fechar" onclick="fecharModalObsExpressa()" aria-label="Fechar"><svg class="icon"><use href="#i-x"></use></svg></button>
       <div class="modal-titulo" id="tit-obs-expressa"><svg class="icon icon-lg"><use href="#i-file-text"></use></svg> Adicionar Observação</div>
       <p id="desc-obs-expressa" style="font-size:13.5px; color:#cbd5e1; margin-bottom:14px;"></p>
       
@@ -1231,7 +1381,7 @@
   <!-- Modal Relatório -->
   <div class="modal-overlay" id="modalRelatorioOverlay">
     <div class="modal">
-      <button class="modal-fechar" onclick="fecharModalRelatorio()"><svg class="icon"><use href="#i-x"></use></svg></button>
+      <button class="modal-fechar" onclick="fecharModalRelatorio()" aria-label="Fechar"><svg class="icon"><use href="#i-x"></use></svg></button>
       <div class="modal-titulo"><svg class="icon icon-lg"><use href="#i-file-text"></use></svg> Relatório Diário</div>
       <textarea id="relatorio-texto" class="campo-textarea-modal" style="height: 350px; font-family: monospace; font-size: 12px; line-height: 1.4;" readonly></textarea>
       <button class="btn-salvar-modal" onclick="copiarRelatorio()"><svg class="icon"><use href="#i-copy"></use></svg> Copiar Relatório Completo</button>
@@ -1241,7 +1391,7 @@
   <!-- Modal Nova Instalação -->
   <div class="modal-overlay" id="modalNovaInstalacaoOverlay">
     <div class="modal">
-      <button class="modal-fechar" onclick="fecharModalNovaInstalacao()"><svg class="icon"><use href="#i-x"></use></svg></button>
+      <button class="modal-fechar" onclick="fecharModalNovaInstalacao()" aria-label="Fechar"><svg class="icon"><use href="#i-x"></use></svg></button>
       <div class="modal-titulo"><svg class="icon icon-lg"><use href="#i-router"></use></svg> Nova Instalação</div>
 
       <div class="campo-grupo">
@@ -1278,6 +1428,8 @@
     </div>
   </div>
 
+  </div> <!-- /#appConteudo -->
+
   <div class="loading-overlay" id="loadingOverlay">
     <div class="spinner"></div>
     <div class="loading-texto" id="loadingTexto">Sincronizando...</div>
@@ -1287,6 +1439,16 @@
 
   <script>
     const API_URL = "https://68f458d8b16eb6f46834542c.mockapi.io/Rexord/Galeria";
+
+    // Credenciais fixas de equipe (master e admin têm o mesmo nível de acesso — visão completa do sistema)
+    const MASTER_LOGIN = "master";
+    const MASTER_SENHA = "master123";
+    const ADMIN_LOGIN = "admin";
+    const ADMIN_SENHA = "mike";
+
+    // Perfil e usuário autenticados na sessão atual
+    let perfilAtual = null;   // 'master' | 'admin' | 'tecnico'
+    let usuarioLogado = null;
 
     // Helper do pacote de ícones: retorna um <svg> referenciando um símbolo do sprite
     function ic(nome, cls) {
@@ -1313,6 +1475,12 @@
       try { listaTecnicos = JSON.parse(localStorage.getItem('lista_tecnicos_smart')); } catch(e){ listaTecnicos = []; }
     }
 
+    // Retorna a lista de técnicos que o perfil atual pode enxergar: um técnico logado só vê a si mesmo
+    function listaTecnicosVisiveis() {
+      if (perfilAtual === 'tecnico' && usuarioLogado) return [usuarioLogado];
+      return listaTecnicos;
+    }
+
     function recarregarPagina(delay = 800) {
       const painelTecnico = document.getElementById("painelTecnico");
       const painelTecnicoVisivel = painelTecnico && !painelTecnico.classList.contains("oculto");
@@ -1335,47 +1503,130 @@
       else overlay.classList.remove("ativo");
     }
 
-    // Mantém a senha oculta/visível
-    function toggleVisibilidadeSenha() {
-      const input = document.getElementById("inputSenhaMaster");
-      const icone = document.querySelector("#iconToggleSenha use");
+    // Mantém a senha oculta/visível na tela de login
+    function toggleVisibilidadeSenhaLogin() {
+      const input = document.getElementById("loginSenha");
+      const icone = document.querySelector("#iconToggleSenhaLogin use");
       const oculto = input.type === "password";
       input.type = oculto ? "text" : "password";
       if (icone) icone.setAttribute("href", oculto ? "#i-eye-off" : "#i-eye");
     }
 
-    function abrirModalSenha() {
-      const overlay = document.getElementById("modalSenhaOverlay");
-      const modal = document.getElementById("cardModalSenha");
-      document.getElementById("erroSenhaMsg").style.display = "none";
-      document.getElementById("inputSenhaMaster").value = "";
-      modal.classList.remove("shake");
-      overlay.style.display = "flex";
-      setTimeout(() => { overlay.classList.add("aberto"); document.getElementById("inputSenhaMaster").focus(); }, 10);
+    function verificarTeclaLogin(e) { if (e.key === "Enter") realizarLogin(); }
+
+    function mostrarErroLogin(msg) {
+      const card = document.getElementById("cardLogin");
+      const erro = document.getElementById("erroLoginMsg");
+      document.getElementById("erroLoginTexto").textContent = msg;
+      erro.style.display = "block";
+      card.classList.remove("shake");
+      void card.offsetWidth;
+      card.classList.add("shake");
     }
 
-    function fecharModalSenha() {
-      const overlay = document.getElementById("modalSenhaOverlay");
-      overlay.classList.remove("aberto");
-      setTimeout(() => overlay.style.display = "none", 300);
-    }
+    // Valida as credenciais digitadas contra os 3 perfis possíveis: master, admin (senha fixa) e técnico (senha própria na API)
+    async function realizarLogin() {
+      const usuario = document.getElementById("loginUsuario").value.trim();
+      const senha = document.getElementById("loginSenha").value;
+      document.getElementById("erroLoginMsg").style.display = "none";
 
-    function verificarTeclaSenha(e) { if (e.key === "Enter") validarSenhaMaster(); }
-
-    function validarSenhaMaster() {
-      const input = document.getElementById("inputSenhaMaster");
-      const modal = document.getElementById("cardModalSenha");
-
-      if (input.value === "mike") {
-        fecharModalSenha();
-        abrirModalConfig();
-      } else {
-        modal.classList.remove("shake");
-        void modal.offsetWidth;
-        modal.classList.add("shake");
-        document.getElementById("erroSenhaMsg").style.display = "block";
-        setTimeout(() => { input.value = ""; input.focus(); }, 400);
+      if (!usuario || !senha) {
+        mostrarErroLogin("Preencha usuário e senha.");
+        return;
       }
+
+      if (usuario.toLowerCase() === MASTER_LOGIN && senha === MASTER_SENHA) {
+        persistirSessao('master', usuario);
+        await entrarNoApp('master', usuario);
+        return;
+      }
+
+      if (usuario.toLowerCase() === ADMIN_LOGIN && senha === ADMIN_SENHA) {
+        persistirSessao('admin', usuario);
+        await entrarNoApp('admin', usuario);
+        return;
+      }
+
+      // Não bateu com master/admin: tenta como login de técnico (senha cadastrada na API)
+      toggleLoading(true, "Verificando credenciais...");
+      try {
+        const resp = await fetch(API_URL);
+        const dados = await resp.json();
+        const registro = dados.find(d => (d.tecnico || "").toLowerCase() === usuario.toLowerCase());
+        toggleLoading(false);
+
+        if (registro && registro.senha && registro.senha === senha) {
+          persistirSessao('tecnico', registro.tecnico);
+          await entrarNoApp('tecnico', registro.tecnico);
+          return;
+        }
+      } catch (e) {
+        toggleLoading(false);
+        console.error("Erro ao validar login:", e);
+      }
+
+      mostrarErroLogin("Usuário ou senha inválidos.");
+      document.getElementById("loginSenha").value = "";
+    }
+
+    function persistirSessao(perfil, usuario) {
+      sessionStorage.setItem('auth_perfil', perfil);
+      sessionStorage.setItem('auth_usuario', usuario);
+    }
+
+    // Libera o conteúdo do app e adapta a interface conforme o perfil autenticado
+    async function entrarNoApp(perfil, usuario) {
+      perfilAtual = perfil;
+      usuarioLogado = usuario;
+
+      document.getElementById("telaLogin").classList.add("oculto");
+      document.getElementById("appConteudo").classList.remove("oculto");
+
+      const ehEquipe = (perfil === 'master' || perfil === 'admin');
+      document.getElementById("nomeUsuarioLogado").textContent = usuario;
+      document.getElementById("badgePerfilLogado").textContent = perfil === 'tecnico' ? 'Técnico' : (perfil === 'master' ? 'Master' : 'Admin');
+      document.getElementById("topoUsuarioBox").style.display = "flex";
+      document.getElementById("btnConfigTecnicos").style.display = ehEquipe ? "flex" : "none";
+
+      if (perfil === 'tecnico') {
+        // Técnico fica na tela de monitoramento, mas filtrada para enxergar somente a própria agenda
+        document.getElementById("resumoTitulo").innerHTML = `${ic('pie-chart', 'icon-sm')} Meu Resumo de O.S.'s`;
+        document.getElementById("importadorTecnicoCard").classList.remove("oculto");
+        tecnicoAtual = usuario;
+      }
+
+      await sincronizarTecnicosDaApi();
+
+      if (perfil === 'tecnico') {
+        // Busca o registro do próprio técnico para permitir colar/atualizar a agenda depois
+        try {
+          const resp = await fetch(API_URL);
+          const dados = await resp.json();
+          const registro = dados.find(d => d.tecnico === usuario);
+          if (registro) {
+            registroAtualId = registro.id;
+            document.getElementById("entradaTecnico").value = registro.agenda || "";
+          }
+        } catch (e) { console.warn("Erro ao carregar agenda do técnico:", e); }
+
+        // Expande automaticamente o próprio card, já que é o único visível
+        toggleDropdown(usuario);
+      } else {
+        const tecnicoSalvo = sessionStorage.getItem('tecnicoAberto');
+        if (tecnicoSalvo && listaTecnicos.includes(tecnicoSalvo)) {
+          selecionarTecnico(tecnicoSalvo);
+          sessionStorage.removeItem('tecnicoAberto');
+        }
+      }
+
+      setInterval(sincronizarSilencioso, 10000);
+    }
+
+    function sairDaConta() {
+      sessionStorage.removeItem('auth_perfil');
+      sessionStorage.removeItem('auth_usuario');
+      sessionStorage.removeItem('tecnicoAberto');
+      window.location.reload();
     }
 
     function abrirModalConfig() {
@@ -1392,7 +1643,6 @@
     }
 
     document.getElementById("modalConfigOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalConfig(); });
-    document.getElementById("modalSenhaOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalSenha(); });
     document.getElementById("modalOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModal(); });
     document.getElementById("modalObsExpressaOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalObsExpressa(); });
     document.getElementById("modalRelatorioOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalRelatorio(); });
@@ -1405,18 +1655,16 @@
       const estavaAberto = container.classList.contains('visivel');
 
       // Comportamento de acordeão: ao maximizar um técnico, minimiza qualquer outro que esteja aberto
-      if (listaTecnicos) {
-        listaTecnicos.forEach(outroTec => {
-          if (outroTec === tec) return;
-          const outroContainer = document.getElementById(`atividades-${outroTec}`);
-          const outroBtn = document.getElementById(`btn-drop-${outroTec}`);
-          if (outroContainer && outroContainer.classList.contains('visivel')) {
-            outroContainer.classList.remove('visivel');
-            outroBtn.classList.remove('aberto');
-            outroBtn.innerHTML = `${ic('chevron-down')} Expandir`;
-          }
-        });
-      }
+      listaTecnicosVisiveis().forEach(outroTec => {
+        if (outroTec === tec) return;
+        const outroContainer = document.getElementById(`atividades-${outroTec}`);
+        const outroBtn = document.getElementById(`btn-drop-${outroTec}`);
+        if (outroContainer && outroContainer.classList.contains('visivel')) {
+          outroContainer.classList.remove('visivel');
+          outroBtn.classList.remove('aberto');
+          outroBtn.innerHTML = `${ic('chevron-down')} Expandir`;
+        }
+      });
 
       if (estavaAberto) {
         container.classList.remove('visivel');
@@ -1441,24 +1689,25 @@
 
     function renderizarListaGerenciar() {
       const container = document.getElementById("listaGerenciarTecnicos");
-      container.innerHTML = "";
       if(!listaTecnicos || listaTecnicos.length === 0) {
         container.innerHTML = `<div class="sem-atividade">Nenhum técnico cadastrado.</div>`;
         return;
       }
-      listaTecnicos.forEach(tec => {
+      const html = listaTecnicos.map(tec => {
         const tecEscapado = String(tec).replace(/'/g, "\\'");
-        container.innerHTML += `
+        return `
           <div class="item-gerenciar">
-            <span>${ic("user","icon-sm")} ${tec}</span>
+            <span class="item-gerenciar-nome">${ic("user","icon-sm")} ${escapeHtml(tec)}</span>
             <div class="acoes-gerenciar-tec">
               <button class="btn-agenda-tec-lista" onclick="abrirAgendaAdmin('${tecEscapado}')">${ic("clipboard-list","icon-sm")} Agenda</button>
-              <button class="btn-editar-tec-lista" onclick="editarNomeTecnico('${tecEscapado}')">${ic("edit-2","icon-sm")}</button>
+              <button class="btn-editar-tec-lista" onclick="alterarSenhaTecnico('${tecEscapado}')" aria-label="Trocar senha do técnico" style="background: rgba(251,191,36,0.12); border-color: rgba(251,191,36,0.25); color:#fbbf24;">${ic("key","icon-sm")}</button>
+              <button class="btn-editar-tec-lista" onclick="editarNomeTecnico('${tecEscapado}')" aria-label="Editar nome do técnico">${ic("edit-2","icon-sm")}</button>
               <button class="btn-deletar-tec" onclick="removerTecnico('${tecEscapado}')">Excluir</button>
             </div>
           </div>
         `;
-      });
+      }).join("");
+      container.innerHTML = html;
     }
 
     // Entrada exclusiva pelo admin para o painel completo de agenda de um técnico
@@ -1537,15 +1786,23 @@
         mostrarToast(ic('save') + ' Nome atualizado!');
         recarregarPagina();
       } catch (e) {
-        alert("Erro ao atualizar o nome do técnico na nuvem.");
+        console.error("Erro ao atualizar técnico:", e);
+        mostrarErro("Erro ao atualizar o nome do técnico na nuvem.");
         toggleLoading(false);
       }
     }
 
     async function adicionarTecnico() {
       const input = document.getElementById("nomeNovoTecnico");
+      const inputSenha = document.getElementById("senhaNovoTecnico");
       const nome = input.value.trim().replace(/[^a-zA-Z0-9 ]/g, "");
+      const senha = inputSenha.value.trim();
       if(!nome) return;
+
+      if(!senha) {
+        alert("Defina uma senha de acesso para o técnico fazer login.");
+        return;
+      }
 
       if(listaTecnicos.includes(nome)) {
         alert("Este técnico já existe!");
@@ -1556,7 +1813,7 @@
       toggleLoading(true, `Salvando técnico ${nome}...`);
 
       try {
-        const payload = { tecnico: nome, agenda: "", status: JSON.stringify({}) };
+        const payload = { tecnico: nome, agenda: "", status: JSON.stringify({}), senha: senha };
         await fetch(API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -1566,11 +1823,48 @@
         listaTecnicos.push(nome);
         localStorage.setItem('lista_tecnicos_smart', JSON.stringify(listaTecnicos));
         input.value = "";
+        inputSenha.value = "";
         
         mostrarToast(ic('user') + ' Técnico adicionado!');
         recarregarPagina();
       } catch (e) {
-        alert("Erro ao salvar técnico remoto.");
+        console.error("Erro ao salvar técnico:", e);
+        mostrarErro("Erro ao salvar técnico remoto.");
+        toggleLoading(false);
+      }
+    }
+
+    // Permite ao master/admin trocar a senha de acesso de um técnico já cadastrado
+    async function alterarSenhaTecnico(nome) {
+      const novaSenha = prompt(`Nova senha de acesso para "${nome}":`);
+      if (novaSenha === null) return;
+
+      const senhaLimpa = novaSenha.trim();
+      if (!senhaLimpa) {
+        alert("A senha não pode ficar em branco.");
+        return;
+      }
+
+      fecharModalConfig();
+      toggleLoading(true, `Atualizando senha de ${nome}...`);
+      try {
+        const resp = await fetch(API_URL);
+        const dados = await resp.json();
+        const registro = dados.find(d => d.tecnico === nome);
+        if (registro) {
+          await fetch(`${API_URL}/${registro.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ senha: senhaLimpa })
+          });
+          mostrarToast(ic('key') + ' Senha atualizada!');
+        } else {
+          mostrarErro("Técnico não encontrado na nuvem.");
+        }
+      } catch (e) {
+        console.error("Erro ao atualizar senha do técnico:", e);
+        mostrarErro("Erro ao atualizar senha do técnico.");
+      } finally {
         toggleLoading(false);
       }
     }
@@ -1601,27 +1895,31 @@
 
     function renderizarCardsMonitoramento() {
       const container = document.getElementById("seletorTecnico");
-      container.innerHTML = "";
-      if(!listaTecnicos || listaTecnicos.length === 0) {
+      const tecnicosParaExibir = listaTecnicosVisiveis();
+      if(!tecnicosParaExibir || tecnicosParaExibir.length === 0) {
         container.innerHTML = `<div class="sem-atividade" style="padding:40px; background:rgba(255,255,255,0.02); border-radius:20px;">Nenhum técnico ativo. Adicione um no painel superior!</div>`;
         return;
       }
-      listaTecnicos.forEach(tec => {
-        container.innerHTML += `
-          <div class="card-monitor" id="card-monitor-${tec}">
+      // Monta todo o HTML em memória e escreve no DOM uma única vez (evita reflow a cada iteração)
+      const html = tecnicosParaExibir.map(tec => {
+        const tecSeguro = escapeHtml(tec);
+        const tecJs = String(tec).replace(/'/g, "\\'");
+        return `
+          <div class="card-monitor" id="card-monitor-${tecSeguro}">
             <div class="monitor-header">
               <div class="monitor-info-esquerda">
-                <div class="monitor-nome">${ic("user")} ${tec}</div>
-                <div class="status-preview" id="preview-${tec}"></div>
+                <div class="monitor-nome">${ic("user")} ${tecSeguro}</div>
+                <div class="status-preview" id="preview-${tecSeguro}"></div>
               </div>
-              <button class="btn-dropdown" id="btn-drop-${tec}" onclick="toggleDropdown('${tec}', event)">${ic('chevron-down')} Expandir</button>
+              <button class="btn-dropdown" id="btn-drop-${tecSeguro}" onclick="toggleDropdown('${tecJs}', event)">${ic('chevron-down')} Expandir</button>
             </div>
-            <div class="monitor-atividades" id="atividades-${tec}">
-               <div class="sem-atividade">Nenhuma rota activa no momento.</div>
+            <div class="monitor-atividades" id="atividades-${tecSeguro}">
+               <div class="sem-atividade">Nenhuma rota ativa no momento.</div>
             </div>
           </div>
         `;
-      });
+      }).join("");
+      container.innerHTML = html;
     }
 
     // Utilitário: gera um ID de elemento seguro a partir de técnico + OS
@@ -1779,7 +2077,8 @@
         fecharModalNovaInstalacao();
         window.open(`https://wa.me/?text=${encodeURIComponent(script)}`, "_blank");
       } catch (e) {
-        alert("Não foi possível copiar automaticamente. Copie manualmente o texto.");
+        console.error("Erro ao copiar script de instalação:", e);
+        mostrarErro("Não foi possível copiar automaticamente. Copie manualmente o texto.");
         return;
       }
 
@@ -1924,8 +2223,8 @@
           recarregarPagina(800);
         }
       } catch(e) {
-        console.error(e);
-        alert("Erro ao salvar status.");
+        console.error("Erro ao salvar status:", e);
+        mostrarErro("Erro ao salvar status.");
         toggleLoading(false);
       }
     }
@@ -1983,10 +2282,56 @@
       `;
     }
 
+    // Configuração visual de cada status possível de uma OS no log de atividades
+    const LOG_STATUS_CONFIG = {
+      'rota': {
+        badgeClass: 'rota',
+        badgeHtml: () => ic('car', 'icon-sm') + ' Em rota',
+        horaHtml: (tec, osId) => `${ic('clock', 'icon-sm')} ${localStorage.getItem(`timestamp_${tec}_${osId}_rota`) || '--:--'}`,
+        obsHtml: () => ''
+      },
+      'concluido': {
+        badgeClass: 'concluido',
+        badgeHtml: () => ic('check-circle', 'icon-sm') + ' Concluído',
+        horaHtml: (tec, osId) => `${ic('clock', 'icon-sm')} ${localStorage.getItem(`timestamp_${tec}_${osId}_concluido`) || '--:--'}`,
+        obsHtml: (osSalva) => osSalva ? `<span class="obs-texto" style="color:#4ade80; background:rgba(34,197,94,0.06); border-left-color:#22c55e;">${ic('file-text', 'icon-sm')} Obs: ${escapeHtml(osSalva)}</span>` : ''
+      },
+      'nao-concluido': {
+        badgeClass: 'nao-concluido',
+        badgeHtml: () => ic('x-circle', 'icon-sm') + ' Mal Sucedida',
+        horaHtml: (tec, osId) => `${ic('clock', 'icon-sm')} ${localStorage.getItem(`timestamp_${tec}_${osId}_nao-concluido`) || '--:--'}`,
+        obsHtml: (osSalva) => osSalva ? `<span class="obs-texto">${ic('alert-triangle', 'icon-sm')} Motivo: ${escapeHtml(osSalva)}</span>` : ''
+      },
+      'aguardando': {
+        badgeClass: 'aguardando',
+        badgeHtml: () => ic('clock', 'icon-sm') + ' Pendente',
+        horaHtml: () => 'Pendente',
+        obsHtml: () => ''
+      }
+    };
+
+    // Monta o HTML de um item do log de atividades (substitui os 4 blocos quase idênticos que existiam antes)
+    function construirLogItemHtml(tec, itemOS, statusChave, osSalva, idSeguro, detalhesHtml, sinalDotHtml, horarioOs, atraso) {
+      const cfg = LOG_STATUS_CONFIG[statusChave] || LOG_STATUS_CONFIG['aguardando'];
+      return `
+        <div class="log-item-wrap" style="animation-delay:${atraso}ms;">
+          <div class="log-atividade" onclick="toggleDetalhesOS('${idSeguro}', event)">
+            <div class="log-topo-linha">
+              <span class="log-badge ${cfg.badgeClass}">${cfg.badgeHtml()}</span>
+              <div class="log-hora">${cfg.horaHtml(tec, itemOS.id)} ${horarioOs} <span class="log-chevron" id="chevron-${idSeguro}">${ic('chevron-down')}</span></div>
+            </div>
+            <div class="log-info"><strong>${escapeHtml(itemOS.cliente)}</strong> ${sinalDotHtml}<span class="tipo-servico">${ic('tag', 'icon-sm')} ${escapeHtml(itemOS.assunto)}</span>${cfg.obsHtml(osSalva)}</div>
+          </div>
+          ${detalhesHtml}
+        </div>
+      `;
+    }
+
     function atualizarDashboardGeralComDados(todosDados) {
-      if(!listaTecnicos) return;
+      const tecnicosParaExibir = listaTecnicosVisiveis();
+      if(!tecnicosParaExibir) return;
       const totalGeral = { rota: 0, concluido: 0, naoConcluido: 0, aguardando: 0 };
-      listaTecnicos.forEach(tec => {
+      tecnicosParaExibir.forEach(tec => {
         const dados = todosDados.filter(d => d.tecnico === tec);
         let emRota = 0, concluidas = 0, naoConcluidas = 0, aguardando = 0;
         let logsHtml = "";
@@ -2018,75 +2363,17 @@
             const atraso = (cascataIdx++) * 70;
             const detalhesHtml = construirDetalhesInlineOS(tec, itemOS, statusAtual, osSalva);
             const sinalDotHtml = construirDotSinal(idSeguro, itemOS.assunto);
-
             const horarioOs = itemOS.horario ? `<span style="color:#94a3b8; font-weight:500;">| ${ic('clock','icon-sm')} ${escapeHtml(itemOS.horario)}</span>` : '';
 
-            if (statusAtual === 'rota') {
-              const horaLog = localStorage.getItem(`timestamp_${tec}_${itemOS.id}_rota`) || '--:--';
-              emRota++;
-              logsHtml += `
-                <div class="log-item-wrap" style="animation-delay:${atraso}ms;">
-                  <div class="log-atividade" onclick="toggleDetalhesOS('${idSeguro}', event)">
-                    <div class="log-topo-linha">
-                      <span class="log-badge rota">${ic('car','icon-sm')} Em rota</span>
-                      <div class="log-hora">${ic('clock','icon-sm')} ${horaLog} ${horarioOs} <span class="log-chevron" id="chevron-${idSeguro}">${ic('chevron-down')}</span></div>
-                    </div>
-                    <div class="log-info"><strong>${escapeHtml(itemOS.cliente)}</strong> ${sinalDotHtml}<span class="tipo-servico">${ic('tag','icon-sm')} ${escapeHtml(itemOS.assunto)}</span></div>
-                  </div>
-                  ${detalhesHtml}
-                </div>
-              `;
-            } else if (statusAtual === 'concluido') {
-              const horaLog = localStorage.getItem(`timestamp_${tec}_${itemOS.id}_concluido`) || '--:--';
-              concluidas++;
-              logsHtml += `
-                <div class="log-item-wrap" style="animation-delay:${atraso}ms;">
-                  <div class="log-atividade" onclick="toggleDetalhesOS('${idSeguro}', event)">
-                    <div class="log-topo-linha">
-                      <span class="log-badge concluido">${ic('check-circle','icon-sm')} Concluído</span>
-                      <div class="log-hora">${ic('clock','icon-sm')} ${horaLog} ${horarioOs} <span class="log-chevron" id="chevron-${idSeguro}">${ic('chevron-down')}</span></div>
-                    </div>
-                    <div class="log-info">
-                      <strong>${escapeHtml(itemOS.cliente)}</strong> ${sinalDotHtml}<span class="tipo-servico">${ic('tag','icon-sm')} ${escapeHtml(itemOS.assunto)}</span>
-                      ${osSalva ? `<span class="obs-texto" style="color:#4ade80; background:rgba(34,197,94,0.06); border-left-color:#22c55e;">${ic('file-text','icon-sm')} Obs: ${escapeHtml(osSalva)}</span>` : ''}
-                    </div>
-                  </div>
-                  ${detalhesHtml}
-                </div>
-              `;
-            } else if (statusAtual === 'nao-concluido') {
-              const horaLog = localStorage.getItem(`timestamp_${tec}_${itemOS.id}_nao-concluido`) || '--:--';
-              naoConcluidas++;
-              logsHtml += `
-                <div class="log-item-wrap" style="animation-delay:${atraso}ms;">
-                  <div class="log-atividade" onclick="toggleDetalhesOS('${idSeguro}', event)">
-                    <div class="log-topo-linha">
-                      <span class="log-badge nao-concluido">${ic('x-circle','icon-sm')} Mal Sucedida</span>
-                      <div class="log-hora">${ic('clock','icon-sm')} ${horaLog} ${horarioOs} <span class="log-chevron" id="chevron-${idSeguro}">${ic('chevron-down')}</span></div>
-                    </div>
-                    <div class="log-info">
-                      <strong>${escapeHtml(itemOS.cliente)}</strong> ${sinalDotHtml}<span class="tipo-servico">${ic('tag','icon-sm')} ${escapeHtml(itemOS.assunto)}</span>
-                      ${osSalva ? `<span class="obs-texto">${ic('alert-triangle','icon-sm')} Motivo: ${escapeHtml(osSalva)}</span>` : ''}
-                    </div>
-                  </div>
-                  ${detalhesHtml}
-                </div>
-              `;
-            } else {
-              aguardando++;
-              logsHtml += `
-                <div class="log-item-wrap" style="animation-delay:${atraso}ms;">
-                  <div class="log-atividade" onclick="toggleDetalhesOS('${idSeguro}', event)">
-                    <div class="log-topo-linha">
-                      <span class="log-badge aguardando">${ic('clock','icon-sm')} Pendente</span>
-                      <div class="log-hora">Pendente ${horarioOs} <span class="log-chevron" id="chevron-${idSeguro}">${ic('chevron-down')}</span></div>
-                    </div>
-                    <div class="log-info"><strong>${escapeHtml(itemOS.cliente)}</strong> ${sinalDotHtml}<span class="tipo-servico">${ic('tag','icon-sm')} ${escapeHtml(itemOS.assunto)}</span></div>
-                  </div>
-                  ${detalhesHtml}
-                </div>
-              `;
-            }
+            // Normaliza para uma das 4 chaves conhecidas (qualquer valor não reconhecido cai em "aguardando")
+            const statusChave = (statusAtual === 'rota' || statusAtual === 'concluido' || statusAtual === 'nao-concluido') ? statusAtual : 'aguardando';
+
+            if (statusChave === 'rota') emRota++;
+            else if (statusChave === 'concluido') concluidas++;
+            else if (statusChave === 'nao-concluido') naoConcluidas++;
+            else aguardando++;
+
+            logsHtml += construirLogItemHtml(tec, itemOS, statusChave, osSalva, idSeguro, detalhesHtml, sinalDotHtml, horarioOs, atraso);
           });
         }
 
@@ -2190,7 +2477,16 @@
       document.getElementById("seletorTecnico").classList.add("oculto");
       document.getElementById("resumoGeralCard").classList.add("oculto");
       document.getElementById("painelTecnico").classList.remove("oculto");
-      
+
+      // Adapta o painel conforme o perfil: técnico não vê "voltar ao painel geral" nem o campo de colar agenda
+      const ehTecnico = (perfilAtual === 'tecnico');
+      document.getElementById("btnVoltarPainel").style.display = ehTecnico ? "none" : "";
+      document.getElementById("badgeModoPainel").innerHTML = ehTecnico
+        ? `${ic('user', 'icon-sm')} Minha Agenda`
+        : `${ic('key', 'icon-sm')} Modo Admin — Gerenciamento de Agenda`;
+      document.getElementById("btnMostrar").style.display = ehTecnico ? "none" : "";
+      if (ehTecnico) document.getElementById("importador").classList.add("oculto");
+
       document.getElementById("cards").innerHTML = "";
       document.getElementById("entrada").value = "";
 
@@ -2224,7 +2520,7 @@
           if (registro.agenda) {
             criarCards(registro.agenda);
             document.getElementById("importador").classList.add("oculto");
-            document.getElementById("btnMostrar").style.display = "block";
+            if (!ehTecnico) document.getElementById("btnMostrar").style.display = "block";
           } else { abrirModoVazio(true); }
         } else { abrirModoVazio(false); }
       } catch (e) { abrirModoVazio(false); } finally { toggleLoading(false); }
@@ -2300,6 +2596,46 @@
       recarregarPagina();
     }
 
+    // Abre/fecha o campo de colar agenda do próprio técnico, recarregando o texto atual ao abrir
+    async function mostrarImportadorTecnico() {
+      const importador = document.getElementById("importadorTecnico");
+      const estaFechado = importador.classList.contains("oculto");
+
+      if (estaFechado) {
+        toggleLoading(true, "Carregando sua agenda...");
+        try {
+          const resp = await fetch(API_URL);
+          const dados = await resp.json();
+          const registro = dados.find(d => d.tecnico === usuarioLogado);
+          if (registro) {
+            registroAtualId = registro.id;
+            document.getElementById("entradaTecnico").value = registro.agenda || "";
+          }
+        } catch (e) {
+          console.warn("Erro ao carregar agenda do técnico:", e);
+        } finally {
+          toggleLoading(false);
+        }
+        importador.classList.remove("oculto");
+      } else {
+        importador.classList.add("oculto");
+      }
+    }
+
+    // Gera/atualiza a própria agenda a partir do texto colado pelo técnico logado
+    async function gerarAgendaTecnico() {
+      const texto = document.getElementById("entradaTecnico").value.trim();
+      if (!texto) return;
+
+      tecnicoAtual = usuarioLogado;
+      toggleLoading(true, "Salvando sua agenda...");
+      await salvarAgendaNaApi(texto);
+      document.getElementById("importadorTecnico").classList.add("oculto");
+
+      mostrarToast(ic('zap') + ' Agenda atualizada!');
+      recarregarPagina();
+    }
+
     function parsearAgenda(texto) {
       const blocks = texto.split(/ID:\s*/i).slice(1);
       return blocks.map(bloco => ({
@@ -2369,10 +2705,10 @@
 
         cardsContainer.innerHTML += `
           <div class="card" data-idx="${idx}" data-id="${os.id}">
-            <button class="btn-editar-os" onclick="abrirModal(${idx})">${ic('edit-2','icon-sm')}</button>
+            <button class="btn-editar-os" onclick="abrirModal(${idx})" aria-label="Editar ordem de serviço">${ic('edit-2','icon-sm')}</button>
             
             <div class="card-top-header">
-              <div class="horario">${ic('clock','icon-sm')} ${os.horario}</div>
+              <div class="horario">${ic('clock','icon-sm')} ${escapeHtml(os.horario)}</div>
               ${sinalDotCard}
               <div class="card-status-topo ${statusClass}" id="topo-status-badge-${os.id}">${statusTxt}</div>
             </div>
@@ -2384,15 +2720,15 @@
 
             <div class="info-linha">
               <div class="info"><strong>${ic('user','icon-sm')} Login:</strong> ${loginSeguro || " "}</div>
-              <button class="btn-copiar" data-copiar="${loginSeguro}" title="Copiar login">${ic('copy','icon-sm')}</button>
+              <button class="btn-copiar" data-copiar="${loginSeguro}" title="Copiar login" aria-label="Copiar login">${ic('copy','icon-sm')}</button>
             </div>
             <div class="info-linha">
               <div class="info"><strong>${ic('key','icon-sm')} Senha:</strong> ${senhaSegura || " "}</div>
-              <button class="btn-copiar" data-copiar="${senhaSegura}" title="Copiar senha">${ic('copy','icon-sm')}</button>
+              <button class="btn-copiar" data-copiar="${senhaSegura}" title="Copiar senha" aria-label="Copiar senha">${ic('copy','icon-sm')}</button>
             </div>
             <div class="info-linha">
               <div class="info"><strong>${ic('phone','icon-sm')} Contato:</strong> ${contatoSeguro || " "}</div>
-              <button class="btn-copiar" data-copiar="${contatoSeguro}" title="Copiar contato">${ic('copy','icon-sm')}</button>
+              <button class="btn-copiar" data-copiar="${contatoSeguro}" title="Copiar contato" aria-label="Copiar contato">${ic('copy','icon-sm')}</button>
             </div>
 
             <div class="botoes-grupo-novo">
@@ -2549,13 +2885,20 @@
       document.getElementById("edit-observacao").value = localStorage.getItem(`obs_${tecnicoAtual}_${os.id}`) || "";
       document.getElementById("edit-status").value = localStorage.getItem(`status_${tecnicoAtual}_${os.id}`) || "";
       
-      // Popular Select de Migração de OS
-      const selectTec = document.getElementById("edit-tecnico-resp");
-      selectTec.innerHTML = "";
-      listaTecnicos.forEach(t => {
-        const selected = t === tecnicoAtual ? "selected" : "";
-        selectTec.innerHTML += `<option value="${t}" ${selected}>${t}</option>`;
-      });
+      // Migração de OS entre técnicos é exclusiva de master/admin — técnico não vê nem tem essa opção
+      const secaoMigrar = document.getElementById("secaoMigrarOS");
+      if (perfilAtual === 'tecnico') {
+        secaoMigrar.style.display = "none";
+        document.getElementById("edit-tecnico-resp").innerHTML = "";
+      } else {
+        secaoMigrar.style.display = "";
+        const selectTec = document.getElementById("edit-tecnico-resp");
+        selectTec.innerHTML = "";
+        listaTecnicos.forEach(t => {
+          const selected = t === tecnicoAtual ? "selected" : "";
+          selectTec.innerHTML += `<option value="${t}" ${selected}>${t}</option>`;
+        });
+      }
 
       const overlay = document.getElementById("modalOverlay");
       overlay.style.display = "flex";
@@ -2570,6 +2913,12 @@
 
     async function salvarEdicaoOS() {
       if (osEditandoIndex === null) return;
+
+      if (!document.getElementById("edit-cliente").value.trim()) {
+        alert("O campo Cliente é obrigatório.");
+        document.getElementById("edit-cliente").focus();
+        return;
+      }
 
       const novoTecnico = document.getElementById("edit-tecnico-resp").value;
       
@@ -2645,7 +2994,8 @@
               throw new Error("Técnico destino não encontrado.");
            }
         } catch(e) {
-           alert("Erro ao migrar OS: " + e.message);
+           console.error("Erro ao migrar OS:", e);
+           mostrarErro("Erro ao migrar OS: " + e.message);
         } finally {
            toggleLoading(false);
         }
@@ -2684,9 +3034,19 @@
 
     function mostrarToast(msg) {
       const toast = document.getElementById("toast");
+      toast.classList.remove("erro");
       toast.innerHTML = msg;
       toast.classList.add("show");
       setTimeout(() => toast.classList.remove("show"), 2600);
+    }
+
+    // Feedback padronizado para falhas de rede/API — evita alert() bloqueante para erros não-críticos
+    function mostrarErro(msg) {
+      const toast = document.getElementById("toast");
+      toast.classList.add("erro");
+      toast.innerHTML = ic('alert-triangle') + ' ' + msg;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 3400);
     }
 
     function mostrarImportador() {
@@ -2750,7 +3110,8 @@
          setTimeout(() => document.getElementById("modalRelatorioOverlay").classList.add("aberto"), 10);
          toggleLoading(false);
       }).catch(e => {
-         alert("Erro ao gerar relatório.");
+         console.error("Erro ao gerar relatório:", e);
+         mostrarErro("Erro ao gerar relatório.");
          toggleLoading(false);
       });
     }
@@ -2771,7 +3132,6 @@
     async function sincronizarSilencioso() {
       if (document.getElementById("modalOverlay").classList.contains("aberto") ||
           document.getElementById("modalObsExpressaOverlay").classList.contains("aberto") ||
-          document.getElementById("modalSenhaOverlay").classList.contains("aberto") ||
           document.getElementById("modalConfigOverlay").classList.contains("aberto") ||
           document.getElementById("modalRelatorioOverlay").classList.contains("aberto") ||
           document.getElementById("modalNovaInstalacaoOverlay").classList.contains("aberto")) {
@@ -2783,7 +3143,7 @@
         if(resp.ok) {
            const dados = await resp.json();
            
-           if (!tecnicoAtual) {
+           if (!tecnicoAtual || perfilAtual === 'tecnico') {
              atualizarDashboardGeralComDados(dados);
            } else {
              const dadosTec = dados.find(d => d.tecnico === tecnicoAtual);
@@ -2854,8 +3214,9 @@
             }
           }
         }
-      } catch (e) { 
-        console.warn("Usando cache local."); 
+      } catch (e) {
+        console.warn("Falha ao buscar dados remotos, usando cache local:", e);
+        mostrarErro("Sem conexão — exibindo dados salvos localmente.");
       } finally {
         renderizarCardsMonitoramento();
         carregarDashboardGeral();
@@ -2863,16 +3224,15 @@
       }
     }
 
-    window.onload = async function() { 
-      await sincronizarTecnicosDaApi(); 
-      
-      const tecnicoSalvo = sessionStorage.getItem('tecnicoAberto');
-      if (tecnicoSalvo && listaTecnicos.includes(tecnicoSalvo)) {
-        selecionarTecnico(tecnicoSalvo);
-        sessionStorage.removeItem('tecnicoAberto');
-      }
+    window.onload = async function() {
+      const perfilSalvo = sessionStorage.getItem('auth_perfil');
+      const usuarioSalvo = sessionStorage.getItem('auth_usuario');
 
-      setInterval(sincronizarSilencioso, 10000);
+      if (perfilSalvo && usuarioSalvo) {
+        await entrarNoApp(perfilSalvo, usuarioSalvo);
+      } else {
+        document.getElementById("loginUsuario").focus();
+      }
     };
 
     // Registro do Service Worker (necessário para o app funcionar como PWA/offline)
