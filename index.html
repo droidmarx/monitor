@@ -1270,6 +1270,34 @@
 
       <div class="modal-divider"></div>
       <button class="btn-salvar-modal" onclick="gerarRelatorioDiario()" style="margin-top: 0; background: linear-gradient(135deg, #10b981, #059669);"><svg class="icon"><use href="#i-file-text"></use></svg> Gerar Relatório do Dia</button>
+      <button class="btn-salvar-modal" onclick="abrirModalInstalacoesMes()" style="margin-top: 10px; background: linear-gradient(135deg, #8b5cf6, #6366f1);"><svg class="icon"><use href="#i-router"></use></svg> Ver Instalações do Mês</button>
+    </div>
+  </div>
+
+  <!-- Modal Instalações do Mês -->
+  <div class="modal-overlay" id="modalInstalacoesMesOverlay">
+    <div class="modal">
+      <button class="modal-fechar" onclick="fecharModalInstalacoesMes()" aria-label="Fechar"><svg class="icon"><use href="#i-x"></use></svg></button>
+      <div class="modal-titulo"><svg class="icon icon-lg"><use href="#i-router"></use></svg> <span id="instalMesTitulo">Instalações do Mês</span></div>
+
+      <div style="text-align:center; margin-bottom:22px;">
+        <div style="font-size:44px; font-weight:800; color:#f8fafc; line-height:1;" id="instalMesTotal">0</div>
+        <div style="font-size:11px; color:#64748b; text-transform:uppercase; letter-spacing:0.05em; font-weight:700; margin-top:4px;">Total no mês</div>
+      </div>
+
+      <div class="modal-secao">Por Técnico</div>
+      <div class="resumo-legenda" id="instalMesLista" style="margin-bottom:4px;"></div>
+      <p style="font-size:11.5px; color:#64748b; margin-top:16px;">A contagem reinicia automaticamente a cada novo mês — o histórico completo continua salvo.</p>
+    </div>
+  </div>
+
+  <!-- Resumo Geral: gráfico com o total de OS's (todos os técnicos para master/admin, só as próprias para o técnico) -->
+  <div class="resumo-geral-card oculto" id="instalacoesTecnicoCard" style="text-align:center;">
+    <div class="resumo-titulo" style="justify-content:center;" id="instalTecnicoTitulo"><svg class="icon icon-sm"><use href="#i-router"></use></svg> Minhas Instalações</div>
+    <div style="font-size:40px; font-weight:800; color:#4ade80; line-height:1;" id="instalTecnicoTotal">0</div>
+    <button class="btn-dropdown" id="btnDetalhesInstalTecnico" onclick="toggleDetalhesInstalacoesTecnico()" style="margin-top:14px;"><svg class="icon"><use href="#i-chevron-down"></use></svg> Ver histórico</button>
+    <div class="log-detalhes" id="detalhesInstalTecnico" style="text-align:left;">
+      <div class="log-detalhes-inner" id="listaInstalTecnico"></div>
     </div>
   </div>
 
@@ -1592,6 +1620,7 @@
         // Técnico fica na tela de monitoramento, mas filtrada para enxergar somente a própria agenda
         document.getElementById("resumoTitulo").innerHTML = `${ic('pie-chart', 'icon-sm')} Meu Resumo de O.S.'s`;
         document.getElementById("importadorTecnicoCard").classList.remove("oculto");
+        document.getElementById("instalacoesTecnicoCard").classList.remove("oculto");
         tecnicoAtual = usuario;
       }
 
@@ -1608,6 +1637,8 @@
             document.getElementById("entradaTecnico").value = registro.agenda || "";
           }
         } catch (e) { console.warn("Erro ao carregar agenda do técnico:", e); }
+
+        atualizarContadorInstalacoesTecnico();
 
         // Expande automaticamente o próprio card, já que é o único visível
         toggleDropdown(usuario);
@@ -1647,6 +1678,7 @@
     document.getElementById("modalObsExpressaOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalObsExpressa(); });
     document.getElementById("modalRelatorioOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalRelatorio(); });
     document.getElementById("modalNovaInstalacaoOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalNovaInstalacao(); });
+    document.getElementById("modalInstalacoesMesOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalInstalacoesMes(); });
 
     function toggleDropdown(tec, event) {
       if (event) event.stopPropagation();
@@ -2085,6 +2117,7 @@
       if (tecnicoContexto && osIdContexto) {
         toggleLoading(true, "Finalizando OS...");
         await finalizarInstalacaoComoConcluida(tecnicoContexto, osIdContexto, script);
+        await registrarInstalacao(tecnicoContexto, { cliente, cto, porta });
         mostrarToast(ic('check-circle') + ' OS marcada como concluída!');
         recarregarPagina(1200);
       }
@@ -2118,6 +2151,182 @@
       } finally {
         toggleLoading(false);
       }
+    }
+
+    // Chave "AAAA-MM" do mês atual — usada para agrupar/filtrar instalações por mês
+    function mesAnoAtual() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    }
+
+    // Nome do mês atual por extenso, para exibição (ex: "julho de 2026")
+    function nomeMesAtual() {
+      return new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+    }
+
+    // Adiciona um registro permanente de instalação ao histórico do técnico (usado para a contagem mensal)
+    async function registrarInstalacao(tecnico, dadosInstalacao) {
+      try {
+        const resp = await fetch(API_URL);
+        const dados = await resp.json();
+        const registro = dados.find(d => d.tecnico === tecnico);
+        if (!registro) return;
+
+        let historico = [];
+        try { historico = JSON.parse(registro.instalacoes || "[]"); } catch(e) {}
+
+        historico.push({
+          data: new Date().toISOString(),
+          mesAno: mesAnoAtual(),
+          cliente: dadosInstalacao.cliente || "",
+          cto: dadosInstalacao.cto || "",
+          porta: dadosInstalacao.porta || ""
+        });
+
+        await fetch(`${API_URL}/${registro.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ instalacoes: JSON.stringify(historico) })
+        });
+      } catch(e) {
+        console.warn("Erro ao registrar instalação no histórico mensal:", e);
+      }
+    }
+
+    // Calcula e exibe, para o master/admin, o total de instalações do mês por técnico
+    // Formata uma instalação individual em uma linha de histórico (data + cliente + CTO + porta)
+    function construirLinhaHistoricoInstalacao(item) {
+      const dataFormatada = new Date(item.data).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+      return `
+        <div class="detalhe-linha">
+          <span class="rotulo">${ic('clock', 'icon-sm')} ${dataFormatada}</span>
+          <span class="valor">${escapeHtml(item.cliente || '—')} · CTO ${escapeHtml(item.cto || '—')} · Porta ${escapeHtml(String(item.porta || '—'))}</span>
+        </div>
+      `;
+    }
+
+    // Monta a linha expansível de um técnico dentro do modal de Instalações do Mês (clique para ver o histórico)
+    function construirLinhaInstalacoesTecnico(p, idx) {
+      const idSeguro = `instalmes-${idx}`;
+      const itensHtml = p.itens.length
+        ? p.itens.map(construirLinhaHistoricoInstalacao).join("")
+        : `<div class="sem-atividade" style="padding:10px 0;">Nenhuma instalação neste mês.</div>`;
+
+      return `
+        <div class="log-item-wrap" style="opacity:1;">
+          <div class="log-atividade" onclick="toggleDetalhesOS('${idSeguro}', event)">
+            <div class="log-topo-linha">
+              <div class="log-info"><strong>${escapeHtml(p.tec)}</strong></div>
+              <div class="log-hora">${p.qtd} instalaç${p.qtd === 1 ? 'ão' : 'ões'} <span class="log-chevron" id="chevron-${idSeguro}">${ic('chevron-down')}</span></div>
+            </div>
+          </div>
+          <div class="log-detalhes" id="detalhes-${idSeguro}">
+            <div class="log-detalhes-inner">
+              ${itensHtml}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function abrirModalInstalacoesMes() {
+      fecharModalConfig();
+      toggleLoading(true, "Calculando instalações do mês...");
+      try {
+        const resp = await fetch(API_URL);
+        const dados = await resp.json();
+        const mesAtual = mesAnoAtual();
+
+        let totalGeral = 0;
+        const porTecnico = listaTecnicos.map(tec => {
+          const registro = dados.find(d => d.tecnico === tec);
+          let historico = [];
+          if (registro && registro.instalacoes) {
+            try { historico = JSON.parse(registro.instalacoes); } catch(e) {}
+          }
+          const doMes = historico.filter(i => i.mesAno === mesAtual).sort((a, b) => new Date(b.data) - new Date(a.data));
+          totalGeral += doMes.length;
+          return { tec, qtd: doMes.length, itens: doMes };
+        }).sort((a, b) => b.qtd - a.qtd);
+
+        document.getElementById("instalMesTitulo").textContent = `Instalações — ${nomeMesAtual()}`;
+        document.getElementById("instalMesTotal").textContent = totalGeral;
+        document.getElementById("instalMesLista").innerHTML = porTecnico.length
+          ? porTecnico.map((p, idx) => construirLinhaInstalacoesTecnico(p, idx)).join("")
+          : `<div class="sem-atividade">Nenhum técnico cadastrado.</div>`;
+
+        const overlay = document.getElementById("modalInstalacoesMesOverlay");
+        overlay.style.display = "flex";
+        setTimeout(() => overlay.classList.add("aberto"), 10);
+      } catch (e) {
+        console.error("Erro ao calcular instalações do mês:", e);
+        mostrarErro("Erro ao calcular instalações do mês.");
+      } finally {
+        toggleLoading(false);
+      }
+    }
+
+    function fecharModalInstalacoesMes() {
+      const overlay = document.getElementById("modalInstalacoesMesOverlay");
+      overlay.classList.remove("aberto");
+      setTimeout(() => overlay.style.display = "none", 300);
+    }
+
+    // Mostra ao técnico logado quantas instalações ele já fez no mês corrente
+    async function atualizarContadorInstalacoesTecnico() {
+      if (perfilAtual !== 'tecnico') return;
+      try {
+        const resp = await fetch(API_URL);
+        const dados = await resp.json();
+        const registro = dados.find(d => d.tecnico === usuarioLogado);
+        let historico = [];
+        if (registro && registro.instalacoes) {
+          try { historico = JSON.parse(registro.instalacoes); } catch(e) {}
+        }
+        const qtd = historico.filter(i => i.mesAno === mesAnoAtual()).length;
+        document.getElementById("instalTecnicoTotal").textContent = qtd;
+        document.getElementById("instalTecnicoTitulo").innerHTML = `${ic('router', 'icon-sm')} Minhas Instalações — ${nomeMesAtual()}`;
+      } catch (e) {
+        console.warn("Erro ao carregar contador de instalações do técnico:", e);
+      }
+    }
+
+    // Abre/fecha o histórico detalhado de instalações do próprio técnico logado, carregando sob demanda
+    let instalacoesTecnicoCarregadas = false;
+    async function toggleDetalhesInstalacoesTecnico() {
+      const painel = document.getElementById("detalhesInstalTecnico");
+      const btn = document.getElementById("btnDetalhesInstalTecnico");
+      const vaiAbrir = !painel.classList.contains('aberto');
+
+      if (vaiAbrir && !instalacoesTecnicoCarregadas) {
+        toggleLoading(true, "Carregando histórico...");
+        try {
+          const resp = await fetch(API_URL);
+          const dados = await resp.json();
+          const registro = dados.find(d => d.tecnico === usuarioLogado);
+          let historico = [];
+          if (registro && registro.instalacoes) {
+            try { historico = JSON.parse(registro.instalacoes); } catch(e) {}
+          }
+          const doMes = historico.filter(i => i.mesAno === mesAnoAtual()).sort((a, b) => new Date(b.data) - new Date(a.data));
+
+          document.getElementById("listaInstalTecnico").innerHTML = doMes.length
+            ? doMes.map(construirLinhaHistoricoInstalacao).join("")
+            : `<div class="sem-atividade" style="padding:10px 0;">Nenhuma instalação neste mês ainda.</div>`;
+
+          instalacoesTecnicoCarregadas = true;
+        } catch (e) {
+          console.warn("Erro ao carregar histórico de instalações:", e);
+          mostrarErro("Erro ao carregar histórico de instalações.");
+        } finally {
+          toggleLoading(false);
+        }
+      }
+
+      painel.classList.toggle('aberto');
+      btn.classList.toggle('aberto');
+      const agoraAberto = painel.classList.contains('aberto');
+      btn.innerHTML = `<svg class="icon"><use href="#i-chevron-down"></use></svg> ${agoraAberto ? 'Recolher' : 'Ver histórico'}`;
     }
 
     const SINAL_LABELS = { verde: 'Instalação', vermelha: 'LOS / sem sinal', amarela: 'Lentidão', cinza: 'Tipo não identificado' };
@@ -3134,7 +3343,8 @@
           document.getElementById("modalObsExpressaOverlay").classList.contains("aberto") ||
           document.getElementById("modalConfigOverlay").classList.contains("aberto") ||
           document.getElementById("modalRelatorioOverlay").classList.contains("aberto") ||
-          document.getElementById("modalNovaInstalacaoOverlay").classList.contains("aberto")) {
+          document.getElementById("modalNovaInstalacaoOverlay").classList.contains("aberto") ||
+          document.getElementById("modalInstalacoesMesOverlay").classList.contains("aberto")) {
          return; 
       }
       
