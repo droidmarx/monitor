@@ -2854,7 +2854,7 @@
         endereco:  bloco.match(/Endereço:\s*(.*)/i)?.[1]?.trim()               || "",
         login:     bloco.match(/Login:\s*(.*)/i)?.[1]?.trim()                  || "",
         senha:     bloco.match(/Senha\s*(?:do\s*)?(?:PPPoE)?:\s*(.*)/i)?.[1]?.trim() || "",
-        contato:   bloco.match(/Contato:\s*(.*)/i)?.[1]?.trim()                || "",
+        contato:   bloco.match(/(?:Contato|Whatsapp)\s*:\s*(.*)/i)?.[1]?.trim() || "",
         assunto:   bloco.match(/Assunto:\s*(.*)/i)?.[1]?.trim()                || "Sem assunto"
       }));
     }
