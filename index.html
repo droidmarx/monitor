@@ -2988,7 +2988,57 @@ Contato: (11) 99347-3587"></textarea>
       }
     }
 
+    // Parser para o formato "Ativo Telecom" (usa "OS:" em vez de "ID:", "Serviço:" em vez de "Assunto:",
+    // e o(s) telefone(s) de contato aparecem em linha(s) separada(s) após "Contato:"/"Contatos:")
+    function parsearAgendaFormatoAtivo(texto) {
+      const marcador = /OS\s*:\s*(\d+)/gi;
+      const posicoes = [];
+      let m;
+      while ((m = marcador.exec(texto)) !== null) {
+        posicoes.push({ id: m[1], inicio: m.index, fimMarcador: m.index + m[0].length });
+      }
+      if (posicoes.length === 0) return [];
+
+      return posicoes.map((atual, i) => {
+        const proximo = posicoes[i + 1];
+        const fimBloco = proximo ? proximo.inicio : texto.length;
+        const corpoBloco = texto.slice(atual.fimMarcador, fimBloco);
+
+        // O horário fica ANTES do "OS:" (ex: "🕗 08h00 às 09h00"), então olhamos o trecho anterior a este marcador
+        const inicioTrecho = i === 0 ? 0 : posicoes[i - 1].fimMarcador;
+        const trechoAntes = texto.slice(inicioTrecho, atual.inicio);
+        const horarioMatch = trechoAntes.match(/(\d{1,2}h\d{2})\s*(?:às|as|-|até)\s*(\d{1,2}h\d{2})/i);
+        const horario = horarioMatch ? `${horarioMatch[1].replace('h', ':')} - ${horarioMatch[2].replace('h', ':')}` : "";
+
+        // Contato(s): pode vir um ou mais números nas linhas seguintes ao rótulo
+        let contato = "";
+        const posContato = corpoBloco.search(/(?:📞\s*)?Contatos?:/i);
+        if (posContato !== -1) {
+          const numeros = corpoBloco.slice(posContato).match(/\(?\d{2}\)?\s*\d{4,5}-?\d{4}/g);
+          if (numeros) contato = numeros.join(' / ');
+        }
+
+        return {
+          id: atual.id,
+          cliente:  corpoBloco.match(/Cliente:\s*(.*)/i)?.[1]?.trim()                  || "Cliente não informado",
+          horario:  horario,
+          endereco: corpoBloco.match(/(?:📍\s*)?Endereço:\s*(.*)/i)?.[1]?.trim()        || "",
+          login:    corpoBloco.match(/Login:\s*(.*)/i)?.[1]?.trim()                    || "",
+          senha:    corpoBloco.match(/Senha\s*(?:do\s*)?(?:PPPoE)?:\s*(.*)/i)?.[1]?.trim() || "",
+          contato:  contato,
+          assunto:  corpoBloco.match(/Serviço:\s*(.*)/i)?.[1]?.trim()                  || "Sem assunto"
+        };
+      });
+    }
+
     function parsearAgenda(texto) {
+      // Detecta o formato pelo marcador de cada OS: "ID:" (padrão clássico) ou "OS:" (padrão Ativo Telecom)
+      const temId = /\bID\s*:\s*\d+/i.test(texto);
+      const temOS = /\bOS\s*:\s*\d+/i.test(texto);
+      if (!temId && temOS) {
+        return parsearAgendaFormatoAtivo(texto);
+      }
+
       const blocks = texto.split(/ID:\s*/i).slice(1);
       return blocks.map(bloco => ({
         id:        bloco.match(/^(\d+)/)?.[1]?.trim()                          || "Sem ID",
