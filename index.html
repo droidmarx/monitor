@@ -982,6 +982,35 @@
       background: linear-gradient(135deg, #25d366, #128c7e);
     }
 
+    .importador-acoes-topo {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .btn-minimizar-campo, .btn-limpar-campo {
+      flex: 1;
+      border: none;
+      padding: 10px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-minimizar-campo {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #cbd5e1;
+    }
+    .btn-limpar-campo {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: #f87171;
+    }
+
     /* Resumo Geral (gráfico no topo da tela inicial) */
     .resumo-geral-card {
       max-width: 650px;
@@ -1318,7 +1347,12 @@
   <!-- Gerar/atualizar agenda — exclusivo do técnico logado, para colar a própria agenda do dia -->
   <div class="resumo-geral-card oculto" id="importadorTecnicoCard">
     <button class="btn-mostrar" id="btnMostrarImportadorTecnico" onclick="mostrarImportadorTecnico()" style="margin-bottom:0; display:flex;"><svg class="icon"><use href="#i-clipboard-list"></use></svg> Colar / Atualizar minha agenda</button>
+    <button class="btn-mostrar" onclick="abrirModalNovaOSAvulsa()" style="margin-top:10px; margin-bottom:0; display:flex; background: rgba(139,92,246,0.14); border:1px solid rgba(139,92,246,0.3); color:#c4b5fd;"><svg class="icon"><use href="#i-plus"></use></svg> Adicionar OS Avulsa</button>
     <div class="importador oculto" id="importadorTecnico" style="margin:14px 0 0; padding:0; background:none; border:none;">
+      <div class="importador-acoes-topo">
+        <button class="btn-minimizar-campo" onclick="mostrarImportadorTecnico()"><svg class="icon icon-sm"><use href="#i-chevron-down"></use></svg> Minimizar</button>
+        <button class="btn-limpar-campo" onclick="limparImportadorTecnico()"><svg class="icon icon-sm"><use href="#i-trash-2"></use></svg> Limpar</button>
+      </div>
       <textarea id="entradaTecnico" placeholder="Cole aqui a sua agenda do dia..."></textarea>
       <button class="btn-gerar" onclick="gerarAgendaTecnico()"><svg class="icon"><use href="#i-zap"></use></svg> Gerar Agenda Inteligente</button>
     </div>
@@ -1334,9 +1368,15 @@
     <button class="btn-mostrar" id="btnMostrar" onclick="mostrarImportador()"><svg class="icon"><use href="#i-clipboard-list"></use></svg> Mostrar campo da agenda</button>
 
     <div class="importador" id="importador">
+      <div class="importador-acoes-topo">
+        <button class="btn-minimizar-campo" onclick="minimizarImportador()"><svg class="icon icon-sm"><use href="#i-chevron-down"></use></svg> Minimizar</button>
+        <button class="btn-limpar-campo" onclick="limparImportador()"><svg class="icon icon-sm"><use href="#i-trash-2"></use></svg> Limpar</button>
+      </div>
       <textarea id="entrada" placeholder="Cole aqui a agenda completa..."></textarea>
       <button class="btn-gerar" onclick="gerarAgenda()"><svg class="icon"><use href="#i-zap"></use></svg> Gerar Agenda Inteligente</button>
     </div>
+
+    <button class="btn-gerar" onclick="abrirModalNovaOSAvulsa()" style="background: linear-gradient(135deg, #8b5cf6, #6366f1); margin-bottom:16px;"><svg class="icon"><use href="#i-plus"></use></svg> Adicionar OS Avulsa</button>
 
     <div class="cards" id="cards"></div>
   </div>
@@ -1413,6 +1453,26 @@
       <div class="modal-titulo"><svg class="icon icon-lg"><use href="#i-file-text"></use></svg> Relatório Diário</div>
       <textarea id="relatorio-texto" class="campo-textarea-modal" style="height: 350px; font-family: monospace; font-size: 12px; line-height: 1.4;" readonly></textarea>
       <button class="btn-salvar-modal" onclick="copiarRelatorio()"><svg class="icon"><use href="#i-copy"></use></svg> Copiar Relatório Completo</button>
+    </div>
+  </div>
+
+  <!-- Modal Nova OS Avulsa -->
+  <div class="modal-overlay" id="modalNovaOSAvulsaOverlay">
+    <div class="modal">
+      <button class="modal-fechar" onclick="fecharModalNovaOSAvulsa()" aria-label="Fechar"><svg class="icon"><use href="#i-x"></use></svg></button>
+      <div class="modal-titulo"><svg class="icon icon-lg"><use href="#i-plus"></use></svg> Adicionar OS Avulsa</div>
+      <p style="font-size:12.5px; color:#64748b; margin:-12px 0 16px;">Cole a OS no mesmo formato da agenda. Ela é somada às que já existem — não apaga nada do que já está colado. Se o ID já existir, essa OS atualiza a existente.</p>
+
+      <textarea class="campo-textarea-modal" id="avulsa-texto" style="min-height:220px; font-family:monospace; font-size:12.5px; line-height:1.5;" placeholder="ID: 16649
+Horário: 15:30 - 16:30
+Cliente: FELIPE ALCAZAR CARVALHO
+Assunto: REPARAR: INTERNET LENTA
+Endereço: SP Indaiatuba 13331-173 Jardim Laguna - SÉRGIO MONARO, 48
+Login: alcazarc
+Senha: 356988
+Contato: (11) 99347-3587"></textarea>
+
+      <button class="btn-salvar-modal" onclick="salvarNovaOSAvulsa()"><svg class="icon"><use href="#i-plus"></use></svg> Adicionar à Agenda</button>
     </div>
   </div>
 
@@ -1678,6 +1738,7 @@
     document.getElementById("modalObsExpressaOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalObsExpressa(); });
     document.getElementById("modalRelatorioOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalRelatorio(); });
     document.getElementById("modalNovaInstalacaoOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalNovaInstalacao(); });
+    document.getElementById("modalNovaOSAvulsaOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalNovaOSAvulsa(); });
     document.getElementById("modalInstalacoesMesOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalInstalacoesMes(); });
 
     function toggleDropdown(tec, event) {
@@ -2831,6 +2892,14 @@
       }
     }
 
+    // Limpa o texto colado para o técnico colar a agenda nova do dia (não afeta a agenda já salva até clicar em "Gerar")
+    function limparImportadorTecnico() {
+      const textarea = document.getElementById("entradaTecnico");
+      if (textarea.value.trim() && !confirm("Limpar o texto colado para colar uma agenda nova?")) return;
+      textarea.value = "";
+      textarea.focus();
+    }
+
     // Gera/atualiza a própria agenda a partir do texto colado pelo técnico logado
     async function gerarAgendaTecnico() {
       const texto = document.getElementById("entradaTecnico").value.trim();
@@ -2843,6 +2912,80 @@
 
       mostrarToast(ic('zap') + ' Agenda atualizada!');
       recarregarPagina();
+    }
+
+    function abrirModalNovaOSAvulsa() {
+      document.getElementById("avulsa-texto").value = "";
+
+      const overlay = document.getElementById("modalNovaOSAvulsaOverlay");
+      overlay.style.display = "flex";
+      setTimeout(() => overlay.classList.add("aberto"), 10);
+    }
+
+    function fecharModalNovaOSAvulsa() {
+      const overlay = document.getElementById("modalNovaOSAvulsaOverlay");
+      overlay.classList.remove("aberto");
+      setTimeout(() => overlay.style.display = "none", 300);
+    }
+
+    // Soma OS's novas a uma lista existente: se o ID já existir, atualiza a OS; senão, adiciona
+    function mesclarOSAvulsa(listaAtual, novasOS) {
+      novasOS.forEach(nova => {
+        const idxExistente = listaAtual.findIndex(os => os.id === nova.id);
+        if (idxExistente !== -1) {
+          listaAtual[idxExistente] = nova;
+        } else {
+          listaAtual.push(nova);
+        }
+      });
+      return listaAtual;
+    }
+
+    // Adiciona uma (ou mais) OS avulsa colada no mesmo formato da agenda — soma às já existentes, sem apagar nada
+    async function salvarNovaOSAvulsa() {
+      const texto = document.getElementById("avulsa-texto").value.trim();
+      if (!texto) {
+        alert("Cole os dados da OS avulsa antes de adicionar.");
+        return;
+      }
+
+      const novasOS = parsearAgenda(texto);
+      if (novasOS.length === 0) {
+        alert("Não foi possível reconhecer a OS nesse texto. Confira se o formato está correto (ID:, Cliente:, etc.).");
+        return;
+      }
+
+      fecharModalNovaOSAvulsa();
+      toggleLoading(true, "Adicionando OS...");
+
+      try {
+        if (perfilAtual === 'tecnico') {
+          // Técnico: busca a própria agenda salva, soma a(s) OS nova(s) e salva
+          const resp = await fetch(API_URL);
+          const dados = await resp.json();
+          const registro = dados.find(d => d.tecnico === usuarioLogado);
+          let listaAtual = (registro && registro.agenda) ? parsearAgenda(registro.agenda) : [];
+          listaAtual = mesclarOSAvulsa(listaAtual, novasOS);
+
+          const novoTexto = serializarAgenda(listaAtual);
+          tecnicoAtual = usuarioLogado;
+          if (registro) registroAtualId = registro.id;
+          await salvarAgendaNaApi(novoTexto);
+        } else {
+          // Admin/Master: soma no array em memória da agenda do técnico atualmente aberto
+          dadosOS = mesclarOSAvulsa(dadosOS, novasOS);
+          const novoTexto = serializarAgenda(dadosOS);
+          document.getElementById("entrada").value = novoTexto;
+          await salvarAgendaNaApi(novoTexto);
+        }
+
+        mostrarToast(ic('plus') + ` ${novasOS.length > 1 ? novasOS.length + ' OS adicionadas' : 'OS avulsa adicionada'}!`);
+        recarregarPagina();
+      } catch (e) {
+        console.error("Erro ao adicionar OS avulsa:", e);
+        mostrarErro("Erro ao adicionar OS avulsa.");
+        toggleLoading(false);
+      }
     }
 
     function parsearAgenda(texto) {
@@ -3263,6 +3406,19 @@
       document.getElementById("btnMostrar").style.display = "none";
     }
 
+    function minimizarImportador() {
+      document.getElementById("importador").classList.add("oculto");
+      document.getElementById("btnMostrar").style.display = "block";
+    }
+
+    // Limpa o texto colado para o usuário colar a agenda nova do dia (não afeta o que já está salvo até clicar em "Gerar")
+    function limparImportador() {
+      const textarea = document.getElementById("entrada");
+      if (textarea.value.trim() && !confirm("Limpar o texto colado para colar uma agenda nova?")) return;
+      textarea.value = "";
+      textarea.focus();
+    }
+
     function gerarRelatorioDiario() {
       fecharModalConfig();
       toggleLoading(true, "Gerando relatório...");
@@ -3344,7 +3500,8 @@
           document.getElementById("modalConfigOverlay").classList.contains("aberto") ||
           document.getElementById("modalRelatorioOverlay").classList.contains("aberto") ||
           document.getElementById("modalNovaInstalacaoOverlay").classList.contains("aberto") ||
-          document.getElementById("modalInstalacoesMesOverlay").classList.contains("aberto")) {
+          document.getElementById("modalInstalacoesMesOverlay").classList.contains("aberto") ||
+          document.getElementById("modalNovaOSAvulsaOverlay").classList.contains("aberto")) {
          return; 
       }
       
