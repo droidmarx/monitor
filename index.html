@@ -181,23 +181,23 @@
       background: rgba(34, 197, 94, 0.12);
       border: 1px solid rgba(34, 197, 94, 0.25);
       color: #4ade80;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
-      padding: 8px 4px;
+      padding: 8px 2px;
       border-radius: 8px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
     }
 
     .btn-editar-tec-lista {
       background: rgba(96, 165, 250, 0.12);
       border: 1px solid rgba(96, 165, 250, 0.25);
       color: #60a5fa;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
-      padding: 8px 4px;
+      padding: 8px 2px;
       border-radius: 8px;
       cursor: pointer;
       display: inline-flex;
@@ -208,14 +208,14 @@
       background: rgba(239, 68, 68, 0.12);
       border: 1px solid rgba(239, 68, 68, 0.25);
       color: #f87171;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
-      padding: 8px 4px;
+      padding: 8px 2px;
       border-radius: 8px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
     }
 
     .seletor-tecnico {
@@ -1348,6 +1348,7 @@
   <div class="resumo-geral-card oculto" id="importadorTecnicoCard">
     <button class="btn-mostrar" id="btnMostrarImportadorTecnico" onclick="mostrarImportadorTecnico()" style="margin-bottom:0; display:flex;"><svg class="icon"><use href="#i-clipboard-list"></use></svg> Colar / Atualizar minha agenda</button>
     <button class="btn-mostrar" onclick="abrirModalNovaOSAvulsa()" style="margin-top:10px; margin-bottom:0; display:flex; background: rgba(139,92,246,0.14); border:1px solid rgba(139,92,246,0.3); color:#c4b5fd;"><svg class="icon"><use href="#i-plus"></use></svg> Adicionar OS Avulsa</button>
+    <button class="btn-mostrar" onclick="gerarMeuRelatorio()" style="margin-top:10px; margin-bottom:0; display:flex; background: rgba(16,185,129,0.14); border:1px solid rgba(16,185,129,0.3); color:#34d399;"><svg class="icon"><use href="#i-file-text"></use></svg> Gerar Meu Relatório do Dia</button>
     <div class="importador oculto" id="importadorTecnico" style="margin:14px 0 0; padding:0; background:none; border:none;">
       <div class="importador-acoes-topo">
         <button class="btn-minimizar-campo" onclick="mostrarImportadorTecnico()"><svg class="icon icon-sm"><use href="#i-chevron-down"></use></svg> Minimizar</button>
@@ -1450,7 +1451,7 @@
   <div class="modal-overlay" id="modalRelatorioOverlay">
     <div class="modal">
       <button class="modal-fechar" onclick="fecharModalRelatorio()" aria-label="Fechar"><svg class="icon"><use href="#i-x"></use></svg></button>
-      <div class="modal-titulo"><svg class="icon icon-lg"><use href="#i-file-text"></use></svg> Relatório Diário</div>
+      <div class="modal-titulo"><svg class="icon icon-lg"><use href="#i-file-text"></use></svg> <span id="relatorio-titulo-texto">Relatório Diário</span></div>
       <textarea id="relatorio-texto" class="campo-textarea-modal" style="height: 350px; font-family: monospace; font-size: 12px; line-height: 1.4;" readonly></textarea>
       <button class="btn-salvar-modal" onclick="copiarRelatorio()"><svg class="icon"><use href="#i-copy"></use></svg> Copiar Relatório Completo</button>
     </div>
@@ -1791,8 +1792,9 @@ Contato: (11) 99347-3587"></textarea>
         return `
           <div class="item-gerenciar">
             <span class="item-gerenciar-nome">${ic("user","icon-sm")} ${escapeHtml(tec)}</span>
-            <div class="acoes-gerenciar-tec">
+            <div class="acoes-gerenciar-tec" style="grid-template-columns: repeat(5, 1fr);">
               <button class="btn-agenda-tec-lista" onclick="abrirAgendaAdmin('${tecEscapado}')">${ic("clipboard-list","icon-sm")} Agenda</button>
+              <button class="btn-editar-tec-lista" onclick="gerarRelatorioTecnicoIndividual('${tecEscapado}')" aria-label="Relatório do técnico" style="background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.25); color:#34d399;">${ic("file-text","icon-sm")}</button>
               <button class="btn-editar-tec-lista" onclick="alterarSenhaTecnico('${tecEscapado}')" aria-label="Trocar senha do técnico" style="background: rgba(251,191,36,0.12); border-color: rgba(251,191,36,0.25); color:#fbbf24;">${ic("key","icon-sm")}</button>
               <button class="btn-editar-tec-lista" onclick="editarNomeTecnico('${tecEscapado}')" aria-label="Editar nome do técnico">${ic("edit-2","icon-sm")}</button>
               <button class="btn-deletar-tec" onclick="removerTecnico('${tecEscapado}')">Excluir</button>
@@ -3469,9 +3471,134 @@ Contato: (11) 99347-3587"></textarea>
       textarea.focus();
     }
 
+    // Converte "HH:MM" (ou um intervalo "HH:MM - HH:MM") para o padrão "HHhMM" usado no relatório individual
+    function formatarHoraSimples(hora) {
+      if (!hora || hora === '--:--') return "";
+      return hora.replace(/(\d{1,2}):(\d{2})/, (_, h, m) => `${h.padStart(2, '0')}h${m}`);
+    }
+
+    // Converte o horário da OS (ex: "08:00 - 09:00") para "08h00 às 09h00", como usado no relatório
+    function formatarJanela(horario) {
+      if (!horario) return "Sem horário definido";
+      return horario
+        .replace(/(\d{1,2}):(\d{2})/g, (_, h, m) => `${h.padStart(2, '0')}h${m}`)
+        .replace(/\s*-\s*/g, ' às ');
+    }
+
+    // Monta o texto do relatório individual de um técnico, no formato solicitado (resumo + cada OS concluída/não concluída)
+    async function construirRelatorioTecnico(tecnico) {
+      const resp = await fetch(API_URL);
+      const dados = await resp.json();
+      const registro = dados.find(d => d.tecnico === tecnico);
+      if (!registro) return null;
+
+      const listaOS = registro.agenda ? parsearAgenda(registro.agenda) : [];
+      let statusSalvo = {};
+      try { statusSalvo = JSON.parse(registro.status || "{}"); } catch (e) {}
+
+      const itens = [];
+      listaOS.forEach(os => {
+        const info = statusSalvo[os.id];
+        if (!info) return;
+        const status = typeof info === 'object' ? info.status : info;
+        if (status !== 'concluido' && status !== 'nao-concluido') return;
+        const obs = typeof info === 'object' ? (info.obs || '') : '';
+        const timestamp = typeof info === 'object' ? (info.timestamp || '--:--') : '--:--';
+        itens.push({ os, status, obs, timestamp });
+      });
+
+      // Ordena cronologicamente pelo horário de conclusão
+      itens.sort((a, b) => {
+        if (a.timestamp === '--:--') return 1;
+        if (b.timestamp === '--:--') return -1;
+        return a.timestamp.localeCompare(b.timestamp);
+      });
+
+      const concluidas = itens.filter(i => i.status === 'concluido').length;
+      const naoConcluidas = itens.filter(i => i.status === 'nao-concluido').length;
+
+      let texto = `📋 RELATÓRIO TÉCNICO – ${tecnico.toUpperCase()}\n\n`;
+      texto += `📊 Resumo do dia\n\n`;
+      texto += `- ✅ Concluídas: ${concluidas}\n`;
+      texto += `- ❌ Não concluídas: ${naoConcluidas}\n\n`;
+      texto += `---\n\n`;
+
+      if (itens.length === 0) {
+        texto += `Nenhuma OS concluída ou não concluída registrada hoje.\n`;
+      } else {
+        itens.forEach((item, idx) => {
+          const emoji = item.status === 'concluido' ? '🟢' : '🔴';
+          const horaConclusao = formatarHoraSimples(item.timestamp) || '--h--';
+          const janela = formatarJanela(item.os.horario);
+
+          texto += `${emoji} ${horaConclusao} | Janela: ${janela}\n\n`;
+          texto += `👤 ${item.os.cliente}\n`;
+          texto += `🔧 Serviço: ${item.os.assunto}\n\n`;
+          texto += item.status === 'concluido' ? `📝 Atendimento:\n` : `📝 Motivo da não conclusão:\n`;
+
+          const linhasObs = (item.obs || '').split('\n').map(l => l.trim()).filter(l => l.length > 0);
+          if (linhasObs.length > 0) {
+            linhasObs.forEach(linha => { texto += `• ${linha}\n`; });
+          } else {
+            texto += `• Sem observações registradas.\n`;
+          }
+
+          if (idx < itens.length - 1) texto += `\n---\n\n`;
+        });
+      }
+
+      return texto;
+    }
+
+    // Abre o modal de relatório já com o texto individual de um técnico específico (usado pelo master/admin)
+    async function gerarRelatorioTecnicoIndividual(tecnico) {
+      fecharModalConfig();
+      toggleLoading(true, `Gerando relatório de ${tecnico}...`);
+      try {
+        const texto = await construirRelatorioTecnico(tecnico);
+        if (!texto) {
+          mostrarErro("Técnico não encontrado.");
+          return;
+        }
+        document.getElementById("relatorio-titulo-texto").textContent = `Relatório — ${tecnico}`;
+        document.getElementById("relatorio-texto").value = texto;
+        const overlay = document.getElementById("modalRelatorioOverlay");
+        overlay.style.display = "flex";
+        setTimeout(() => overlay.classList.add("aberto"), 10);
+      } catch (e) {
+        console.error("Erro ao gerar relatório do técnico:", e);
+        mostrarErro("Erro ao gerar relatório do técnico.");
+      } finally {
+        toggleLoading(false);
+      }
+    }
+
+    // Abre o modal de relatório com o texto individual do próprio técnico logado
+    async function gerarMeuRelatorio() {
+      toggleLoading(true, "Gerando seu relatório...");
+      try {
+        const texto = await construirRelatorioTecnico(usuarioLogado);
+        if (!texto) {
+          mostrarErro("Não foi possível gerar o relatório.");
+          return;
+        }
+        document.getElementById("relatorio-titulo-texto").textContent = `Meu Relatório do Dia`;
+        document.getElementById("relatorio-texto").value = texto;
+        const overlay = document.getElementById("modalRelatorioOverlay");
+        overlay.style.display = "flex";
+        setTimeout(() => overlay.classList.add("aberto"), 10);
+      } catch (e) {
+        console.error("Erro ao gerar relatório:", e);
+        mostrarErro("Erro ao gerar relatório.");
+      } finally {
+        toggleLoading(false);
+      }
+    }
+
     function gerarRelatorioDiario() {
       fecharModalConfig();
       toggleLoading(true, "Gerando relatório...");
+      document.getElementById("relatorio-titulo-texto").textContent = "Relatório Diário";
       
       fetch(API_URL).then(r => r.json()).then(dados => {
          let relatorio = `📊 RELATÓRIO DIÁRIO - ${new Date().toLocaleDateString('pt-BR')}\n\n`;
