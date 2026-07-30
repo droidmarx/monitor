@@ -733,19 +733,6 @@
     .btn-ativo-mob { background: linear-gradient(135deg, #64748b, #475569); }
     .btn-instalacao-mob { width: 100%; margin-top: 10px; background: linear-gradient(135deg, #8b5cf6, #6366f1); }
 
-    .sinal-dot {
-      display: inline-block;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      vertical-align: middle;
-      flex-shrink: 0;
-    }
-    .sinal-dot.sinal-verde { background: #22c55e; box-shadow: 0 0 6px rgba(34,197,94,0.7); }
-    .sinal-dot.sinal-vermelha { background: #ef4444; box-shadow: 0 0 6px rgba(239,68,68,0.7); }
-    .sinal-dot.sinal-amarela { background: #eab308; box-shadow: 0 0 6px rgba(234,179,8,0.7); }
-    .sinal-dot.sinal-cinza { background: #64748b; }
-
     .seletor-status-container {
       position: relative;
       width: 100%;
@@ -1110,6 +1097,34 @@
       font-size: 14.5px;
     }
 
+    .resumo-tipos-lista {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .chip-tipo-os {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      color: #cbd5e1;
+      font-weight: 600;
+    }
+    .chip-tipo-os strong {
+      color: #f8fafc;
+      font-weight: 800;
+    }
+    .chip-tipo-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
     /* Tela de Login */
     .tela-login {
       position: fixed;
@@ -1344,6 +1359,12 @@
     </div>
   </div>
 
+  <!-- Contagem por tipo de O.S. (Instalação, LOS/Sem sinal, Lentidão, Não identificado) -->
+  <div class="resumo-geral-card" id="resumoTiposCard">
+    <div class="resumo-titulo"><svg class="icon icon-sm"><use href="#i-tag"></use></svg> O.S.'s por Tipo</div>
+    <div class="resumo-tipos-lista" id="resumoTiposLista"></div>
+  </div>
+
   <!-- Gerar/atualizar agenda — exclusivo do técnico logado, para colar a própria agenda do dia -->
   <div class="resumo-geral-card oculto" id="importadorTecnicoCard">
     <button class="btn-mostrar" id="btnMostrarImportadorTecnico" onclick="mostrarImportadorTecnico()" style="margin-bottom:0; display:flex;"><svg class="icon"><use href="#i-clipboard-list"></use></svg> Colar / Atualizar minha agenda</button>
@@ -1497,6 +1518,30 @@ Contato: (11) 99347-3587"></textarea>
         <label style="color: #cbd5e1; font-size: 13.5px; display:flex; align-items:center; gap:6px;"><svg class="icon icon-sm"><use href="#i-plug"></use></svg> Porta</label>
         <div class="select-wrapper">
           <select class="campo-select" id="inst-porta"></select>
+        </div>
+      </div>
+
+      <div class="campo-grupo">
+        <label style="color: #cbd5e1; font-size: 13.5px; display:flex; align-items:center; gap:6px;"><svg class="icon icon-sm"><use href="#i-hash"></use></svg> Drop (metros)</label>
+        <input class="campo-input" id="inst-drop" type="number" min="0" inputmode="numeric" placeholder="Ex: 30" />
+      </div>
+
+      <div class="campo-grupo">
+        <label style="color: #cbd5e1; font-size: 13.5px; display:flex; align-items:center; gap:6px;"><svg class="icon icon-sm"><use href="#i-hash"></use></svg> APC (unidades)</label>
+        <input class="campo-input" id="inst-apc" type="number" min="0" inputmode="numeric" placeholder="Ex: 2" />
+      </div>
+
+      <div class="campo-grupo">
+        <label style="color: #cbd5e1; font-size: 13.5px; display:flex; align-items:center; gap:6px;"><svg class="icon icon-sm"><use href="#i-router"></use></svg> Equipamento</label>
+        <div class="select-wrapper">
+          <select class="campo-select" id="inst-equipamento">
+            <option value="">Selecione o equipamento...</option>
+            <option value="Sheroline">Sheroline</option>
+            <option value="TPlink">TPlink</option>
+            <option value="2flex">2flex</option>
+            <option value="ONU+Router">ONU+Router</option>
+            <option value="Multilaser">Multilaser</option>
+          </select>
         </div>
       </div>
 
@@ -2061,6 +2106,9 @@ Contato: (11) 99347-3587"></textarea>
       document.getElementById("inst-cliente").value = nomeCliente || "";
       document.getElementById("inst-cto").value = "";
       document.getElementById("inst-obs").value = "";
+      document.getElementById("inst-drop").value = "";
+      document.getElementById("inst-apc").value = "";
+      document.getElementById("inst-equipamento").value = "";
       popularPortasInstalacao();
       document.getElementById("inst-porta").value = "";
 
@@ -2141,6 +2189,9 @@ Contato: (11) 99347-3587"></textarea>
       const cliente = document.getElementById("inst-cliente").value.trim();
       const cto = document.getElementById("inst-cto").value.trim();
       const porta = document.getElementById("inst-porta").value;
+      const drop = document.getElementById("inst-drop").value.trim();
+      const apc = document.getElementById("inst-apc").value.trim();
+      const equipamento = document.getElementById("inst-equipamento").value;
       const obs = document.getElementById("inst-obs").value.trim();
 
       if (!cliente) {
@@ -2157,7 +2208,10 @@ Contato: (11) 99347-3587"></textarea>
       let script = `🔧 NOVA INSTALAÇÃO\n\n`;
       script += `Cliente: ${cliente}\n`;
       script += `CTO: ${cto || "—"}\n`;
-      script += `Porta: ${porta ? "Porta " + porta : "—"}\n\n`;
+      script += `Porta: ${porta ? "Porta " + porta : "—"}\n`;
+      script += `Drop: ${drop ? drop + "m" : "—"}\n`;
+      script += `APC: ${apc ? apc + " un" : "—"}\n`;
+      script += `Equipamento: ${equipamento || "—"}\n\n`;
       script += `📍 Localização: ${linhaLocalizacao}\n`;
       if (obs) {
         script += `\n📝 Observações:\n${obs}\n`;
@@ -2180,7 +2234,7 @@ Contato: (11) 99347-3587"></textarea>
       if (tecnicoContexto && osIdContexto) {
         toggleLoading(true, "Finalizando OS...");
         await finalizarInstalacaoComoConcluida(tecnicoContexto, osIdContexto, script);
-        await registrarInstalacao(tecnicoContexto, { cliente, cto, porta });
+        await registrarInstalacao(tecnicoContexto, { cliente, cto, porta, drop, apc, equipamento });
         mostrarToast(ic('check-circle') + ' OS marcada como concluída!');
         recarregarPagina(1200);
       }
@@ -2243,7 +2297,10 @@ Contato: (11) 99347-3587"></textarea>
           mesAno: mesAnoAtual(),
           cliente: dadosInstalacao.cliente || "",
           cto: dadosInstalacao.cto || "",
-          porta: dadosInstalacao.porta || ""
+          porta: dadosInstalacao.porta || "",
+          drop: dadosInstalacao.drop || "",
+          apc: dadosInstalacao.apc || "",
+          equipamento: dadosInstalacao.equipamento || ""
         });
 
         await fetch(`${API_URL}/${registro.id}`, {
@@ -2256,14 +2313,19 @@ Contato: (11) 99347-3587"></textarea>
       }
     }
 
-    // Calcula e exibe, para o master/admin, o total de instalações do mês por técnico
-    // Formata uma instalação individual em uma linha de histórico (data + cliente + CTO + porta)
+    // Formata uma instalação individual em uma linha de histórico (data + cliente + CTO + porta + drop + APC + equipamento)
     function construirLinhaHistoricoInstalacao(item) {
       const dataFormatada = new Date(item.data).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+      const detalhesExtra = [
+        item.drop ? `Drop ${escapeHtml(String(item.drop))}m` : null,
+        item.apc ? `APC ${escapeHtml(String(item.apc))}un` : null,
+        item.equipamento ? escapeHtml(item.equipamento) : null
+      ].filter(Boolean).join(' · ');
+
       return `
         <div class="detalhe-linha">
           <span class="rotulo">${ic('clock', 'icon-sm')} ${dataFormatada}</span>
-          <span class="valor">${escapeHtml(item.cliente || '—')} · CTO ${escapeHtml(item.cto || '—')} · Porta ${escapeHtml(String(item.porta || '—'))}</span>
+          <span class="valor">${escapeHtml(item.cliente || '—')} · CTO ${escapeHtml(item.cto || '—')} · Porta ${escapeHtml(String(item.porta || '—'))}${detalhesExtra ? ' · ' + detalhesExtra : ''}</span>
         </div>
       `;
     }
@@ -2392,7 +2454,8 @@ Contato: (11) 99347-3587"></textarea>
       btn.innerHTML = `<svg class="icon"><use href="#i-chevron-down"></use></svg> ${agoraAberto ? 'Recolher' : 'Ver histórico'}`;
     }
 
-    const SINAL_LABELS = { verde: 'Instalação', vermelha: 'LOS / sem sinal', amarela: 'Lentidão', cinza: 'Tipo não identificado' };
+    const SINAL_LABELS = { verde: 'Instalação', vermelha: 'LOS / Sem sinal', amarela: 'Lentidão', cinza: 'Não identificado' };
+    const SINAL_CORES = { verde: '#22c55e', vermelha: '#ef4444', amarela: '#eab308', cinza: '#64748b' };
 
     // Classifica automaticamente o tipo da O.S. a partir do texto do Assunto.
     // Sempre retorna uma cor: verde (instalação), vermelha (LOS), amarela (lentidão) ou cinza (não reconhecido).
@@ -2409,12 +2472,6 @@ Contato: (11) 99347-3587"></textarea>
         return 'verde';
       }
       return 'cinza';
-    }
-
-    // Monta o dot indicador (bolinha) com base na classificação automática — sempre visível
-    function construirDotSinal(idSeguro, assunto) {
-      const cor = classificarSinalOS(assunto);
-      return `<span class="sinal-dot sinal-${cor}" id="sinaldot-${idSeguro}" title="${SINAL_LABELS[cor]}"></span>`;
     }
 
 
@@ -2583,7 +2640,7 @@ Contato: (11) 99347-3587"></textarea>
     };
 
     // Monta o HTML de um item do log de atividades (substitui os 4 blocos quase idênticos que existiam antes)
-    function construirLogItemHtml(tec, itemOS, statusChave, osSalva, idSeguro, detalhesHtml, sinalDotHtml, horarioOs, atraso) {
+    function construirLogItemHtml(tec, itemOS, statusChave, osSalva, idSeguro, detalhesHtml, horarioOs, atraso) {
       const cfg = LOG_STATUS_CONFIG[statusChave] || LOG_STATUS_CONFIG['aguardando'];
       return `
         <div class="log-item-wrap" style="animation-delay:${atraso}ms;">
@@ -2592,7 +2649,7 @@ Contato: (11) 99347-3587"></textarea>
               <span class="log-badge ${cfg.badgeClass}">${cfg.badgeHtml()}</span>
               <div class="log-hora">${cfg.horaHtml(tec, itemOS.id)} ${horarioOs} <span class="log-chevron" id="chevron-${idSeguro}">${ic('chevron-down')}</span></div>
             </div>
-            <div class="log-info"><strong>${escapeHtml(itemOS.cliente)}</strong> ${sinalDotHtml}<span class="tipo-servico">${ic('tag', 'icon-sm')} ${escapeHtml(itemOS.assunto)}</span>${cfg.obsHtml(osSalva)}</div>
+            <div class="log-info"><strong>${escapeHtml(itemOS.cliente)}</strong> <span class="tipo-servico">${ic('tag', 'icon-sm')} ${escapeHtml(itemOS.assunto)}</span>${cfg.obsHtml(osSalva)}</div>
           </div>
           ${detalhesHtml}
         </div>
@@ -2603,6 +2660,7 @@ Contato: (11) 99347-3587"></textarea>
       const tecnicosParaExibir = listaTecnicosVisiveis();
       if(!tecnicosParaExibir) return;
       const totalGeral = { rota: 0, concluido: 0, naoConcluido: 0, aguardando: 0 };
+      const totalTipos = { verde: 0, vermelha: 0, amarela: 0, cinza: 0 };
       tecnicosParaExibir.forEach(tec => {
         const dados = todosDados.filter(d => d.tecnico === tec);
         let emRota = 0, concluidas = 0, naoConcluidas = 0, aguardando = 0;
@@ -2634,8 +2692,9 @@ Contato: (11) 99347-3587"></textarea>
             const idSeguro = gerarIdSeguro(tec, itemOS.id);
             const atraso = (cascataIdx++) * 70;
             const detalhesHtml = construirDetalhesInlineOS(tec, itemOS, statusAtual, osSalva);
-            const sinalDotHtml = construirDotSinal(idSeguro, itemOS.assunto);
             const horarioOs = itemOS.horario ? `<span style="color:#94a3b8; font-weight:500;">| ${ic('clock','icon-sm')} ${escapeHtml(itemOS.horario)}</span>` : '';
+
+            totalTipos[classificarSinalOS(itemOS.assunto)]++;
 
             // Normaliza para uma das 4 chaves conhecidas (qualquer valor não reconhecido cai em "aguardando")
             const statusChave = (statusAtual === 'rota' || statusAtual === 'concluido' || statusAtual === 'nao-concluido') ? statusAtual : 'aguardando';
@@ -2645,7 +2704,7 @@ Contato: (11) 99347-3587"></textarea>
             else if (statusChave === 'nao-concluido') naoConcluidas++;
             else aguardando++;
 
-            logsHtml += construirLogItemHtml(tec, itemOS, statusChave, osSalva, idSeguro, detalhesHtml, sinalDotHtml, horarioOs, atraso);
+            logsHtml += construirLogItemHtml(tec, itemOS, statusChave, osSalva, idSeguro, detalhesHtml, horarioOs, atraso);
           });
         }
 
@@ -2674,6 +2733,23 @@ Contato: (11) 99347-3587"></textarea>
       });
 
       renderizarResumoGeral(totalGeral);
+      renderizarResumoTipos(totalTipos);
+    }
+
+    // Renderiza a contagem de O.S.'s por tipo (Instalação, LOS/Sem sinal, Lentidão, Não identificado) no topo
+    function renderizarResumoTipos(totais) {
+      const container = document.getElementById("resumoTiposLista");
+      if (!container) return;
+
+      const ordem = ['verde', 'vermelha', 'amarela', 'cinza'];
+      const chips = ordem.map(cor => `
+        <div class="chip-tipo-os">
+          <span class="chip-tipo-dot" style="background:${SINAL_CORES[cor]};"></span>
+          ${SINAL_LABELS[cor]}: <strong>${totais[cor] || 0}</strong>
+        </div>
+      `).join("");
+
+      container.innerHTML = chips;
     }
 
     // Renderiza o gráfico donut + legenda com o total de O.S.'s de todos os técnicos
@@ -2748,6 +2824,7 @@ Contato: (11) 99347-3587"></textarea>
       document.getElementById("subtitulo").textContent = `Agenda: ${nome}`;
       document.getElementById("seletorTecnico").classList.add("oculto");
       document.getElementById("resumoGeralCard").classList.add("oculto");
+      document.getElementById("resumoTiposCard").classList.add("oculto");
       document.getElementById("painelTecnico").classList.remove("oculto");
 
       // Adapta o painel conforme o perfil: técnico não vê "voltar ao painel geral" nem o campo de colar agenda
@@ -2815,6 +2892,7 @@ Contato: (11) 99347-3587"></textarea>
       document.getElementById("subtitulo").textContent = "Toque em uma O.S. para ver detalhes e alterar o status";
       document.getElementById("seletorTecnico").classList.remove("oculto");
       document.getElementById("resumoGeralCard").classList.remove("oculto");
+      document.getElementById("resumoTiposCard").classList.remove("oculto");
       document.getElementById("painelTecnico").classList.add("oculto");
       carregarDashboardGeral();
     }
@@ -3104,16 +3182,12 @@ Contato: (11) 99347-3587"></textarea>
           obsHtmlExpressa = `<div class="card-obs-preview${extraClass}" id="obs-preview-${os.id}">${ic('file-text','icon-sm')} Obs: ${escapeHtml(obsSalva)}</div>`;
         }
 
-        const idSeguroCard = gerarIdSeguro(tecnicoAtual, os.id);
-        const sinalDotCard = construirDotSinal(idSeguroCard, os.assunto);
-
         cardsContainer.innerHTML += `
           <div class="card" data-idx="${idx}" data-id="${os.id}">
             <button class="btn-editar-os" onclick="abrirModal(${idx})" aria-label="Editar ordem de serviço">${ic('edit-2','icon-sm')}</button>
             
             <div class="card-top-header">
               <div class="horario">${ic('clock','icon-sm')} ${escapeHtml(os.horario)}</div>
-              ${sinalDotCard}
               <div class="card-status-topo ${statusClass}" id="topo-status-badge-${os.id}">${statusTxt}</div>
             </div>
 
