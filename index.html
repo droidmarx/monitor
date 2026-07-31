@@ -1255,6 +1255,21 @@
       margin-bottom: 10px;
     }
 
+    .resumo-instalacoes-bloco.oculto { display: none !important; }
+    .resumo-instalacoes-topo {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .resumo-instalacoes-total {
+      font-size: 34px;
+      font-weight: 800;
+      color: #4ade80;
+      line-height: 1;
+      margin-top: 6px;
+    }
+
     #topoUsuarioBox, #btnConfigTecnicos { display: none; }
   </style>
 </head>
@@ -1403,21 +1418,10 @@
       <hr class="modal-divider" />
       <div class="modal-secao">Relatório</div>
       <button class="btn-mostrar" onclick="fecharModalMenuTecnico(); gerarMeuRelatorio();" style="margin-bottom:0; display:flex; background: rgba(16,185,129,0.14); border:1px solid rgba(16,185,129,0.3); color:#34d399;"><svg class="icon"><use href="#i-file-text"></use></svg> Gerar Meu Relatório do Dia</button>
-
-      <hr class="modal-divider" />
-      <div class="modal-secao">Instalações do Mês</div>
-      <div style="text-align:center;">
-        <div class="resumo-titulo" style="justify-content:center;" id="instalTecnicoTitulo"><svg class="icon icon-sm"><use href="#i-router"></use></svg> Minhas Instalações</div>
-        <div style="font-size:38px; font-weight:800; color:#4ade80; line-height:1; margin-top:4px;" id="instalTecnicoTotal">0</div>
-        <button class="btn-dropdown" id="btnDetalhesInstalTecnico" onclick="toggleDetalhesInstalacoesTecnico()" style="margin-top:12px;"><svg class="icon"><use href="#i-chevron-down"></use></svg> Ver histórico</button>
-        <div class="log-detalhes" id="detalhesInstalTecnico" style="text-align:left;">
-          <div class="log-detalhes-inner" id="listaInstalTecnico"></div>
-        </div>
-      </div>
     </div>
   </div>
 
-  <!-- Resumo: status das O.S.'s (donut) + contagem por tipo — em evidência para todos os perfis -->
+  <!-- Resumo: status das O.S.'s (donut) + contagem por tipo + instalações do mês — em evidência para todos os perfis -->
   <div class="resumo-geral-card" id="resumoGeralCard">
     <div class="resumo-titulo" id="resumoTitulo"><svg class="icon icon-sm"><use href="#i-pie-chart"></use></svg> Resumo Geral de O.S.'s</div>
     <div class="resumo-conteudo">
@@ -1432,6 +1436,18 @@
     <div class="resumo-tipos-divider"></div>
     <div class="resumo-tipos-rotulo"><svg class="icon icon-sm"><use href="#i-tag"></use></svg> Por tipo de serviço</div>
     <div class="resumo-tipos-lista" id="resumoTiposLista"></div>
+
+    <div class="resumo-tipos-divider oculto" id="dividerInstalacoesTecnico"></div>
+    <div class="resumo-instalacoes-bloco oculto" id="blocoInstalacoesTecnico">
+      <div class="resumo-instalacoes-topo">
+        <span class="resumo-tipos-rotulo" style="margin-bottom:0;" id="instalTecnicoTitulo"><svg class="icon icon-sm"><use href="#i-router"></use></svg> Minhas Instalações</span>
+        <button class="btn-dropdown" id="btnDetalhesInstalTecnico" onclick="toggleDetalhesInstalacoesTecnico()"><svg class="icon"><use href="#i-chevron-down"></use></svg> Histórico</button>
+      </div>
+      <div class="resumo-instalacoes-total" id="instalTecnicoTotal">0</div>
+      <div class="log-detalhes" id="detalhesInstalTecnico">
+        <div class="log-detalhes-inner" id="listaInstalTecnico"></div>
+      </div>
+    </div>
   </div>
 
   <!-- Rota do técnico — o mais importante, sempre em evidência -->
@@ -1591,7 +1607,7 @@ Contato: (11) 99347-3587"></textarea>
         <div class="select-wrapper">
           <select class="campo-select" id="inst-equipamento">
             <option value="">Selecione o equipamento...</option>
-            <option value="Sheroline">Sheroline</option>
+            <option value="Shoreline">Shoreline</option>
             <option value="TPlink">TPlink</option>
             <option value="2flex">2flex</option>
             <option value="ONU+Router">ONU+Router</option>
@@ -1782,6 +1798,8 @@ Contato: (11) 99347-3587"></textarea>
         document.getElementById("resumoTitulo").innerHTML = `${ic('pie-chart', 'icon-sm')} Meu Resumo de O.S.'s`;
         document.getElementById("btnMenuTecnico").classList.remove("oculto");
         document.getElementById("tituloRotaTecnico").classList.remove("oculto");
+        document.getElementById("dividerInstalacoesTecnico").classList.remove("oculto");
+        document.getElementById("blocoInstalacoesTecnico").classList.remove("oculto");
         tecnicoAtual = usuario;
       }
 
