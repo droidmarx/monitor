@@ -2580,7 +2580,7 @@ Contato: (11) 99347-3587"></textarea>
       return `EM ROTA 🚀\n\nCliente: \n${cliente}\n\nEndereço: \n${endereco}`;
     }
 
-    async function salvarStatusInline(tecnico, osId, idSeguro, clienteOS, enderecoOS) {
+    async function salvarStatusInline(tecnico, osId, idSeguro, clienteOS, enderecoOS, horarioOS, assuntoOS) {
       const novoStatus = document.getElementById(`det-status-${idSeguro}`).value;
       const novaObs = document.getElementById(`det-obs-${idSeguro}`).value.trim();
 
@@ -2599,10 +2599,11 @@ Contato: (11) 99347-3587"></textarea>
         let statusObj = {};
         try { statusObj = JSON.parse(registro.status || "{}"); } catch(e) {}
 
+        const horaConclusao = novoStatus ? obtenerHoraAtual() : "--:--";
         statusObj[osId] = {
           status: novoStatus || "",
           obs: novaObs || "",
-          timestamp: novoStatus ? obtenerHoraAtual() : "--:--"
+          timestamp: horaConclusao
         };
 
         await fetch(`${API_URL}/${registro.id}`, {
@@ -2613,7 +2614,7 @@ Contato: (11) 99347-3587"></textarea>
 
         if (novoStatus) {
           localStorage.setItem(`status_${tecnico}_${osId}`, novoStatus);
-          localStorage.setItem(`timestamp_${tecnico}_${osId}_${novoStatus}`, obtenerHoraAtual());
+          localStorage.setItem(`timestamp_${tecnico}_${osId}_${novoStatus}`, horaConclusao);
         } else {
           localStorage.removeItem(`status_${tecnico}_${osId}`);
         }
@@ -2630,6 +2631,16 @@ Contato: (11) 99347-3587"></textarea>
           try {
             await navigator.clipboard.writeText(script);
             setTimeout(() => mostrarToast(ic('check-circle') + ' Rota copiada!'), 600);
+            recarregarPagina(1400);
+          } catch(e) {
+            console.warn('Não foi possível copiar automaticamente:', e);
+            recarregarPagina(800);
+          }
+        } else if (novoStatus === "concluido" || novoStatus === "nao-concluido") {
+          const script = construirScriptStatusOS(clienteOS, assuntoOS, horarioOS, novoStatus, novaObs, horaConclusao);
+          try {
+            await navigator.clipboard.writeText(script);
+            setTimeout(() => mostrarToast(ic('check-circle') + ' Script copiado!'), 600);
             recarregarPagina(1400);
           } catch(e) {
             console.warn('Não foi possível copiar automaticamente:', e);
@@ -2691,7 +2702,7 @@ Contato: (11) 99347-3587"></textarea>
                 </select>
               </div>
               <textarea class="campo-textarea-minimo" id="det-obs-${idSeguro}" placeholder="Observações / motivo...">${escapeHtml(osSalva)}</textarea>
-              <button class="btn-salvar-minimo" onclick="salvarStatusInline('${tec.replace(/'/g,"\\'")}', '${String(itemOS.id).replace(/'/g,"\\'")}', '${idSeguro}', '${(itemOS.cliente||'').replace(/'/g,"\\'")}', '${enderecoJs}')">${ic('save','icon-sm')} Salvar Status</button>
+              <button class="btn-salvar-minimo" onclick="salvarStatusInline('${tec.replace(/'/g,"\\'")}', '${String(itemOS.id).replace(/'/g,"\\'")}', '${idSeguro}', '${(itemOS.cliente||'').replace(/'/g,"\\'")}', '${enderecoJs}', '${(itemOS.horario||'').replace(/'/g,"\\'")}', '${(itemOS.assunto||'').replace(/'/g,"\\'")}')">${ic('save','icon-sm')} Salvar Status</button>
             </div>
           </div>
         </div>
@@ -3412,7 +3423,8 @@ Contato: (11) 99347-3587"></textarea>
       }
 
       localStorage.setItem(`status_${tecnicoAtual}_${os.id}`, statusTemporarioExpressado);
-      localStorage.setItem(`timestamp_${tecnicoAtual}_${os.id}_${statusTemporarioExpressado}`, obtenerHoraAtual());
+      const horaConclusao = obtenerHoraAtual();
+      localStorage.setItem(`timestamp_${tecnicoAtual}_${os.id}_${statusTemporarioExpressado}`, horaConclusao);
 
       if(obsTexto) {
         localStorage.setItem(`obs_${tecnicoAtual}_${os.id}`, obsTexto);
@@ -3422,8 +3434,15 @@ Contato: (11) 99347-3587"></textarea>
 
       fecharModalObsExpressa();
       await salvarAgendaNaApi(document.getElementById("entrada").value, false);
-      
-      mostrarToast(ic('save') + ' Status atualizado!');
+
+      const script = construirScriptStatusOS(os.cliente, os.assunto, os.horario, statusTemporarioExpressado, obsTexto, horaConclusao);
+      try {
+        await navigator.clipboard.writeText(script);
+        mostrarToast(ic('check-circle') + ' Status atualizado e script copiado!');
+      } catch(e) {
+        console.warn('Não foi possível copiar automaticamente:', e);
+        mostrarToast(ic('save') + ' Status atualizado!');
+      }
       recarregarPagina(800);
     }
 
@@ -3569,6 +3588,7 @@ Contato: (11) 99347-3587"></textarea>
 
       // Edição Normal da OS (Mesmo Técnico)
       const os = dadosOS[osEditandoIndex];
+      const statusAnterior = localStorage.getItem(`status_${tecnicoAtual}_${os.id}`) || "";
       os.horario  = document.getElementById("edit-horario").value.trim();
       os.cliente  = document.getElementById("edit-cliente").value.trim();
       os.assunto  = document.getElementById("edit-assunto").value.trim();
@@ -3582,9 +3602,10 @@ Contato: (11) 99347-3587"></textarea>
       else { localStorage.removeItem(`obs_${tecnicoAtual}_${os.id}`); }
 
       const novoStatus = document.getElementById("edit-status").value;
+      const horaConclusao = obtenerHoraAtual();
       if (novoStatus) {
         localStorage.setItem(`status_${tecnicoAtual}_${os.id}`, novoStatus);
-        localStorage.setItem(`timestamp_${tecnicoAtual}_${os.id}_${novoStatus}`, obtenerHoraAtual());
+        localStorage.setItem(`timestamp_${tecnicoAtual}_${os.id}_${novoStatus}`, horaConclusao);
       } else { localStorage.removeItem(`status_${tecnicoAtual}_${os.id}`); }
 
       const novoTexto = serializarAgenda(dadosOS);
@@ -3592,7 +3613,21 @@ Contato: (11) 99347-3587"></textarea>
       
       fecharModal();
       await salvarAgendaNaApi(novoTexto);
-      
+
+      // Só copia o script quando o status MUDOU para concluído/não concluído nesta edição
+      if ((novoStatus === 'concluido' || novoStatus === 'nao-concluido') && novoStatus !== statusAnterior) {
+        const script = construirScriptStatusOS(os.cliente, os.assunto, os.horario, novoStatus, novaObs, horaConclusao);
+        try {
+          await navigator.clipboard.writeText(script);
+          mostrarToast(ic('check-circle') + ' OS atualizada e script copiado!');
+        } catch(e) {
+          console.warn('Não foi possível copiar automaticamente:', e);
+          mostrarToast(ic('save') + ' OS Atualizada!');
+        }
+        recarregarPagina();
+        return;
+      }
+
       mostrarToast(ic('save') + ' OS Atualizada!');
       recarregarPagina(800);
     }
@@ -3644,6 +3679,27 @@ Contato: (11) 99347-3587"></textarea>
       return horario
         .replace(/(\d{1,2}):(\d{2})/g, (_, h, m) => `${h.padStart(2, '0')}h${m}`)
         .replace(/\s*-\s*/g, ' às ');
+    }
+
+    // Monta o script de uma única OS ao ser marcada como concluída/não concluída, no mesmo padrão do relatório
+    function construirScriptStatusOS(cliente, assunto, horario, statusChave, obsTexto, horaConclusao) {
+      const emoji = statusChave === 'concluido' ? '🟢' : '🔴';
+      const hora = formatarHoraSimples(horaConclusao) || '--h--';
+      const janela = formatarJanela(horario);
+
+      let texto = `${emoji} ${hora} | Janela: ${janela}\n`;
+      texto += `👤 ${cliente || 'Cliente não informado'}\n`;
+      texto += `🔧 Serviço: ${assunto || 'Sem assunto'}\n`;
+      texto += statusChave === 'concluido' ? `📝 Atendimento:\n` : `📝 Motivo da não conclusão:\n`;
+
+      const linhas = (obsTexto || '').split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      if (linhas.length > 0) {
+        linhas.forEach(l => { texto += `• ${l}\n`; });
+      } else {
+        texto += `• Sem observações registradas.\n`;
+      }
+
+      return texto.trimEnd();
     }
 
     // Monta o texto do relatório individual de um técnico, no formato solicitado (resumo + cada OS concluída/não concluída)
