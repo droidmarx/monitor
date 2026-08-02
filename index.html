@@ -1640,6 +1640,8 @@
       gap: 8px;
     }
     .chip-tipo-os {
+      appearance: none;
+      -webkit-appearance: none;
       display: inline-flex;
       align-items: center;
       gap: 7px;
@@ -1650,6 +1652,21 @@
       font-size: 12.5px;
       color: var(--text-2);
       font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: background 0.18s, border-color 0.18s, transform 0.12s, box-shadow 0.18s;
+    }
+    .chip-tipo-os:hover {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(255, 255, 255, 0.16);
+    }
+    .chip-tipo-os:active { transform: scale(0.97); }
+    .chip-tipo-os.ativo {
+      background: rgba(34, 211, 238, 0.12);
+      border-color: rgba(34, 211, 238, 0.4);
+      color: var(--text);
+      box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.12);
     }
     .chip-tipo-os strong {
       color: var(--text);
@@ -1662,6 +1679,18 @@
       border-radius: 50%;
       flex-shrink: 0;
     }
+    .filtro-tipo-dica {
+      width: 100%;
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+      display: none;
+      align-items: center;
+      gap: 6px;
+    }
+    .filtro-tipo-dica.visivel { display: flex; }
+    .card-monitor.filtro-oculto { display: none !important; }
 
     /* ===== LOGIN ===== */
     .tela-login {
@@ -1988,6 +2017,7 @@
     <div class="resumo-tipos-divider"></div>
     <div class="resumo-tipos-rotulo"><svg class="icon icon-sm"><use href="#i-tag"></use></svg> Por tipo de serviço</div>
     <div class="resumo-tipos-lista" id="resumoTiposLista"></div>
+    <div class="filtro-tipo-dica" id="filtroTipoDica"><svg class="icon icon-sm"><use href="#i-tag"></use></svg> Filtro ativo — toque fora para ver todas as O.S.</div>
 
     <div class="resumo-tipos-divider oculto" id="dividerInstalacoesTecnico"></div>
     <div class="resumo-instalacoes-bloco oculto" id="blocoInstalacoesTecnico">
@@ -3125,6 +3155,39 @@ Contato: (11) 99347-3587"></textarea>
     const SINAL_LABELS = { verde: 'Instalação', vermelha: 'LOS / Sem sinal', amarela: 'Lentidão', cinza: 'Não identificado' };
     const SINAL_CORES = { verde: '#22c55e', vermelha: '#ef4444', amarela: '#eab308', cinza: '#64748b' };
 
+    // Filtro por tipo de serviço nos chips do resumo (null = todas)
+    let filtroTipoSinal = null;
+    let ultimoDashboardDados = null;
+
+    function aplicarFiltroTipoSinal(tipo, event) {
+      if (event) event.stopPropagation();
+      filtroTipoSinal = (filtroTipoSinal === tipo) ? null : tipo;
+      if (ultimoDashboardDados) {
+        atualizarDashboardGeralComDados(ultimoDashboardDados);
+      } else {
+        carregarDashboardGeral();
+      }
+    }
+
+    function limparFiltroTipoSinal() {
+      if (!filtroTipoSinal) return;
+      filtroTipoSinal = null;
+      if (ultimoDashboardDados) {
+        atualizarDashboardGeralComDados(ultimoDashboardDados);
+      } else {
+        carregarDashboardGeral();
+      }
+    }
+
+    // Clique fora dos chips limpa o filtro
+    document.addEventListener('click', function(e) {
+      if (!filtroTipoSinal) return;
+      if (e.target.closest('.chip-tipo-os')) return;
+      if (e.target.closest('.modal-overlay')) return;
+      if (e.target.closest('.filtro-tipo-dica')) return;
+      limparFiltroTipoSinal();
+    });
+
     // Classifica automaticamente o tipo da O.S. a partir do texto do Assunto.
     // Sempre retorna uma cor: verde (instalação), vermelha (LOS), amarela (lentidão) ou cinza (não reconhecido).
     function classificarSinalOS(assunto) {
@@ -3365,6 +3428,7 @@ Contato: (11) 99347-3587"></textarea>
     }
 
     function atualizarDashboardGeralComDados(todosDados) {
+      ultimoDashboardDados = todosDados;
       const tecnicosParaExibir = listaTecnicosVisiveis();
       if(!tecnicosParaExibir) return;
       const totalGeral = { rota: 0, concluido: 0, naoConcluido: 0, aguardando: 0 };
@@ -3395,14 +3459,18 @@ Contato: (11) 99347-3587"></textarea>
           });
 
           listaOS.forEach(itemOS => {
+            const tipoSinal = classificarSinalOS(itemOS.assunto);
+            totalTipos[tipoSinal]++;
+
+            // Filtro por tipo: só exibe O.S. do chip selecionado
+            if (filtroTipoSinal && tipoSinal !== filtroTipoSinal) return;
+
             const statusAtual = localStorage.getItem(`status_${tec}_${itemOS.id}`);
             const osSalva = localStorage.getItem(`obs_${tec}_${itemOS.id}`) || "";
             const idSeguro = gerarIdSeguro(tec, itemOS.id);
             const atraso = (cascataIdx++) * 70;
             const detalhesHtml = construirDetalhesInlineOS(tec, itemOS, statusAtual, osSalva);
             const horarioOs = itemOS.horario ? `<span style="color:#94a3b8; font-weight:500;">| ${ic('clock','icon-sm')} ${escapeHtml(itemOS.horario)}</span>` : '';
-
-            totalTipos[classificarSinalOS(itemOS.assunto)]++;
 
             // Normaliza para uma das 4 chaves conhecidas (qualquer valor não reconhecido cai em "aguardando")
             const statusChave = (statusAtual === 'rota' || statusAtual === 'concluido' || statusAtual === 'nao-concluido') ? statusAtual : 'aguardando';
@@ -3416,6 +3484,13 @@ Contato: (11) 99347-3587"></textarea>
           });
         }
 
+        const cardMonitor = document.getElementById(`card-monitor-${escapeHtml(tec)}`);
+        if (cardMonitor) {
+          // Com filtro ativo, oculta técnicos sem O.S. do tipo selecionado
+          if (filtroTipoSinal && !logsHtml) cardMonitor.classList.add('filtro-oculto');
+          else cardMonitor.classList.remove('filtro-oculto');
+        }
+
         const preview = document.getElementById(`preview-${tec}`);
         if(preview) {
           let htmlContador = '';
@@ -3426,12 +3501,24 @@ Contato: (11) 99347-3587"></textarea>
           preview.innerHTML = htmlContador || '<span style="color:#64748b">Sem atividades</span>';
         }
 
-        const conteudoFinal = logsHtml || `<div class="sem-atividade">Nenhuma O.S. configurada no sistema.</div>`;
+        const conteudoFinal = logsHtml
+          ? logsHtml
+          : (filtroTipoSinal
+              ? `<div class="sem-atividade">Nenhuma O.S. deste tipo para este técnico.</div>`
+              : `<div class="sem-atividade">Nenhuma O.S. configurada no sistema.</div>`);
         const containerAtividades = document.getElementById(`atividades-${tec}`);
+        const btnDrop = document.getElementById(`btn-drop-${tec}`);
         // Evita reescrever o DOM (e reiniciar animações/fechar dropdowns abertos) quando nada mudou
         if(containerAtividades && containerAtividades.dataset.conteudoAtual !== conteudoFinal) {
           containerAtividades.innerHTML = conteudoFinal;
           containerAtividades.dataset.conteudoAtual = conteudoFinal;
+        }
+
+        // Com filtro ativo, expande automaticamente quem tem resultado
+        if (filtroTipoSinal && logsHtml && containerAtividades && btnDrop) {
+          containerAtividades.classList.add('visivel');
+          btnDrop.classList.add('aberto');
+          btnDrop.innerHTML = `${ic('chevron-down')} Recolher`;
         }
 
         totalGeral.rota += emRota;
@@ -3450,14 +3537,26 @@ Contato: (11) 99347-3587"></textarea>
       if (!container) return;
 
       const ordem = ['verde', 'vermelha', 'amarela', 'cinza'];
-      const chips = ordem.map(cor => `
-        <div class="chip-tipo-os">
+      const chips = ordem.map(cor => {
+        const ativo = filtroTipoSinal === cor ? ' ativo' : '';
+        return `
+        <button type="button" class="chip-tipo-os${ativo}" data-tipo="${cor}" onclick="aplicarFiltroTipoSinal('${cor}', event)" aria-pressed="${filtroTipoSinal === cor ? 'true' : 'false'}">
           <span class="chip-tipo-dot" style="background:${SINAL_CORES[cor]};"></span>
           ${SINAL_LABELS[cor]}: <strong>${totais[cor] || 0}</strong>
-        </div>
-      `).join("");
+        </button>`;
+      }).join("");
 
       container.innerHTML = chips;
+
+      const dica = document.getElementById("filtroTipoDica");
+      if (dica) {
+        if (filtroTipoSinal) {
+          dica.classList.add("visivel");
+          dica.innerHTML = `${ic('tag','icon-sm')} Mostrando: <strong style="color:var(--text)">${SINAL_LABELS[filtroTipoSinal]}</strong> — toque fora para limpar`;
+        } else {
+          dica.classList.remove("visivel");
+        }
+      }
     }
 
     // Renderiza o gráfico donut + legenda com o total de O.S.'s de todos os técnicos
