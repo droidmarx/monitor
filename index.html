@@ -1692,6 +1692,66 @@
     .filtro-tipo-dica.visivel { display: flex; }
     .card-monitor.filtro-oculto { display: none !important; }
 
+    .instal-mes-card {
+      appearance: none;
+      -webkit-appearance: none;
+      font-family: inherit;
+      flex: 1;
+      text-align: center;
+      border-radius: 16px;
+      padding: 14px 8px;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: transform 0.12s, box-shadow 0.18s, border-color 0.18s, background 0.18s, opacity 0.18s;
+      border: 1px solid transparent;
+    }
+    .instal-mes-card:active { transform: scale(0.97); }
+    .instal-mes-card.atual {
+      background: rgba(34,197,94,0.08);
+      border-color: rgba(34,197,94,0.2);
+    }
+    .instal-mes-card.anterior {
+      background: rgba(167,139,250,0.08);
+      border-color: rgba(167,139,250,0.2);
+    }
+    .instal-mes-card.ativo.atual {
+      border-color: rgba(34,197,94,0.55);
+      box-shadow: 0 0 0 2px rgba(34,197,94,0.2);
+      background: rgba(34,197,94,0.16);
+    }
+    .instal-mes-card.ativo.anterior {
+      border-color: rgba(167,139,250,0.55);
+      box-shadow: 0 0 0 2px rgba(167,139,250,0.2);
+      background: rgba(167,139,250,0.16);
+    }
+    .instal-mes-card.dim {
+      opacity: 0.45;
+    }
+    .instal-mes-card-tec {
+      appearance: none;
+      -webkit-appearance: none;
+      font-family: inherit;
+      background: transparent;
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+      user-select: none;
+      border-radius: 12px;
+      padding: 6px 10px;
+      border: 1px solid transparent;
+      transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, opacity 0.15s;
+    }
+    .instal-mes-card-tec:active { transform: scale(0.97); }
+    .instal-mes-card-tec.ativo {
+      border-color: rgba(34, 211, 238, 0.35);
+      background: rgba(34, 211, 238, 0.08);
+      box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.1);
+    }
+    .instal-mes-card-tec.dim { opacity: 0.45; }
+    .instal-mes-bloco.oculto-filtro { display: none !important; }
+
+
     /* ===== LOGIN ===== */
     .tela-login {
       position: fixed;
@@ -1957,24 +2017,40 @@
 
       <div class="modal-divider"></div>
       <button class="btn-salvar-modal" onclick="gerarRelatorioDiario()" style="margin-top: 0; background: linear-gradient(135deg, #10b981, #059669);"><svg class="icon"><use href="#i-file-text"></use></svg> Gerar Relatório do Dia</button>
-      <button class="btn-salvar-modal" onclick="abrirModalInstalacoesMes()" style="margin-top: 10px; background: linear-gradient(135deg, #8b5cf6, #6366f1);"><svg class="icon"><use href="#i-router"></use></svg> Ver Instalações do Mês</button>
+      <button class="btn-salvar-modal" onclick="abrirModalInstalacoesMes()" style="margin-top: 10px; background: linear-gradient(135deg, #8b5cf6, #6366f1);"><svg class="icon"><use href="#i-router"></use></svg> Ver Instalações (mês atual e anterior)</button>
     </div>
   </div>
 
-  <!-- Modal Instalações do Mês -->
+  <!-- Modal Instalações do Mês (atual + anterior) -->
   <div class="modal-overlay" id="modalInstalacoesMesOverlay">
     <div class="modal">
       <button class="modal-fechar" onclick="fecharModalInstalacoesMes()" aria-label="Fechar"><svg class="icon"><use href="#i-x"></use></svg></button>
-      <div class="modal-titulo"><svg class="icon icon-lg"><use href="#i-router"></use></svg> <span id="instalMesTitulo">Instalações do Mês</span></div>
+      <div class="modal-titulo"><svg class="icon icon-lg"><use href="#i-router"></use></svg> <span id="instalMesTitulo">Instalações</span></div>
 
-      <div style="text-align:center; margin-bottom:22px;">
-        <div style="font-size:44px; font-weight:800; color:#f8fafc; line-height:1;" id="instalMesTotal">0</div>
-        <div style="font-size:11px; color:#64748b; text-transform:uppercase; letter-spacing:0.05em; font-weight:700; margin-top:4px;">Total no mês</div>
+      <div style="display:flex; gap:10px; margin-bottom:10px;">
+        <button type="button" class="instal-mes-card atual" id="cardMesAtual" onclick="filtrarMesInstalAdmin('atual', event)" aria-pressed="false">
+          <div style="font-size:32px; font-weight:800; color:#4ade80; line-height:1;" id="instalMesTotal">0</div>
+          <div style="font-size:10.5px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.04em; font-weight:700; margin-top:6px;" id="instalMesLabelAtual">Mês atual</div>
+        </button>
+        <button type="button" class="instal-mes-card anterior" id="cardMesAnterior" onclick="filtrarMesInstalAdmin('anterior', event)" aria-pressed="false">
+          <div style="font-size:32px; font-weight:800; color:#c4b5fd; line-height:1;" id="instalMesTotalAnterior">0</div>
+          <div style="font-size:10.5px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.04em; font-weight:700; margin-top:6px;" id="instalMesLabelAnterior">Mês anterior</div>
+        </button>
+      </div>
+      <p id="instalMesFiltroDica" style="font-size:12px; color:#94a3b8; margin:-2px 0 14px; display:none;">Toque novamente no mês ou fora para ver os dois períodos.</p>
+
+      <div id="blocoMesAtualAdmin">
+        <div class="modal-secao" id="instalMesSecaoAtual">Mês atual — por técnico</div>
+        <div class="resumo-legenda" id="instalMesLista" style="margin-bottom:4px;"></div>
       </div>
 
-      <div class="modal-secao">Por Técnico</div>
-      <div class="resumo-legenda" id="instalMesLista" style="margin-bottom:4px;"></div>
-      <p style="font-size:11.5px; color:#64748b; margin-top:16px;">A contagem reinicia automaticamente a cada novo mês — o histórico completo continua salvo.</p>
+      <div class="modal-divider" id="instalMesDivider"></div>
+      <div id="blocoMesAnteriorAdmin">
+        <div class="modal-secao" id="instalMesSecaoAnterior">Mês anterior — por técnico</div>
+        <div class="resumo-legenda" id="instalMesListaAnterior" style="margin-bottom:4px;"></div>
+      </div>
+
+      <p style="font-size:11.5px; color:#64748b; margin-top:16px;">A contagem do mês reinicia automaticamente — o histórico completo continua salvo na nuvem.</p>
     </div>
   </div>
 
@@ -2025,7 +2101,17 @@
         <span class="resumo-tipos-rotulo" style="margin-bottom:0;" id="instalTecnicoTitulo"><svg class="icon icon-sm"><use href="#i-router"></use></svg> Minhas Instalações</span>
         <button class="btn-dropdown" id="btnDetalhesInstalTecnico" onclick="toggleDetalhesInstalacoesTecnico()"><svg class="icon"><use href="#i-chevron-down"></use></svg> Histórico</button>
       </div>
-      <div class="resumo-instalacoes-total" id="instalTecnicoTotal">0</div>
+      <div style="display:flex; gap:10px; align-items:stretch; margin-top:8px; flex-wrap:wrap;">
+        <button type="button" class="instal-mes-card-tec" id="cardTecMesAtual" onclick="filtrarMesInstalTecnico('atual', event)" aria-pressed="false">
+          <div class="resumo-instalacoes-total" id="instalTecnicoTotal" style="margin-top:0;">0</div>
+          <div style="font-size:11px; color:#64748b; font-weight:600;" id="instalTecnicoLabelAtual">neste mês</div>
+        </button>
+        <button type="button" class="instal-mes-card-tec" id="cardTecMesAnterior" onclick="filtrarMesInstalTecnico('anterior', event)" aria-pressed="false">
+          <div style="font-size:22px; font-weight:800; color:#c4b5fd; line-height:1;" id="instalTecnicoTotalAnterior">0</div>
+          <div style="font-size:11px; color:#64748b; font-weight:600;" id="instalTecnicoLabelAnterior">mês passado</div>
+        </button>
+      </div>
+      <p id="instalTecFiltroDica" style="font-size:11.5px; color:#94a3b8; margin:8px 0 0; display:none;">Toque novamente no mês para limpar o filtro.</p>
       <div class="log-detalhes" id="detalhesInstalTecnico">
         <div class="log-detalhes-inner" id="listaInstalTecnico"></div>
       </div>
@@ -2974,10 +3060,139 @@ Contato: (11) 99347-3587"></textarea>
       return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
     }
 
+    // Chave "AAAA-MM" do mês anterior
+    function mesAnoAnterior() {
+      const d = new Date();
+      d.setDate(1);
+      d.setMonth(d.getMonth() - 1);
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    }
+
     // Nome do mês atual por extenso, para exibição (ex: "julho de 2026")
     function nomeMesAtual() {
       return new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
     }
+
+    // Nome do mês anterior por extenso
+    function nomeMesAnterior() {
+      const d = new Date();
+      d.setDate(1);
+      d.setMonth(d.getMonth() - 1);
+      return d.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+    }
+
+    // Filtra e ordena instalações de um mês específico
+    function filtrarInstalacoesDoMes(historico, mesAno) {
+      return (historico || [])
+        .filter(i => i.mesAno === mesAno)
+        .sort((a, b) => new Date(b.data) - new Date(a.data));
+    }
+
+    // Filtro de mês nas instalações: null | 'atual' | 'anterior'
+    let filtroMesInstalAdmin = null;
+    let filtroMesInstalTec = null;
+    let cacheInstalacoesAdmin = null; // { porAtual, porAnterior, totalAtual, totalAnterior, nomeAtual, nomeAnt }
+    let cacheHistoricoInstalTec = null; // array bruto do histórico do técnico
+
+    function aplicarUIFiltroMesAdmin() {
+      const cardAtual = document.getElementById("cardMesAtual");
+      const cardAnt = document.getElementById("cardMesAnterior");
+      const blocoAtual = document.getElementById("blocoMesAtualAdmin");
+      const blocoAnt = document.getElementById("blocoMesAnteriorAdmin");
+      const divider = document.getElementById("instalMesDivider");
+      const dica = document.getElementById("instalMesFiltroDica");
+
+      if (cardAtual) {
+        cardAtual.classList.toggle("ativo", filtroMesInstalAdmin === "atual");
+        cardAtual.classList.toggle("dim", filtroMesInstalAdmin === "anterior");
+        cardAtual.setAttribute("aria-pressed", filtroMesInstalAdmin === "atual" ? "true" : "false");
+      }
+      if (cardAnt) {
+        cardAnt.classList.toggle("ativo", filtroMesInstalAdmin === "anterior");
+        cardAnt.classList.toggle("dim", filtroMesInstalAdmin === "atual");
+        cardAnt.setAttribute("aria-pressed", filtroMesInstalAdmin === "anterior" ? "true" : "false");
+      }
+
+      const showAtual = !filtroMesInstalAdmin || filtroMesInstalAdmin === "atual";
+      const showAnt = !filtroMesInstalAdmin || filtroMesInstalAdmin === "anterior";
+      if (blocoAtual) blocoAtual.style.display = showAtual ? "" : "none";
+      if (blocoAnt) blocoAnt.style.display = showAnt ? "" : "none";
+      if (divider) divider.style.display = (showAtual && showAnt) ? "" : "none";
+      if (dica) dica.style.display = filtroMesInstalAdmin ? "block" : "none";
+    }
+
+    function filtrarMesInstalAdmin(periodo, event) {
+      if (event) event.stopPropagation();
+      filtroMesInstalAdmin = (filtroMesInstalAdmin === periodo) ? null : periodo;
+      aplicarUIFiltroMesAdmin();
+    }
+
+    function aplicarUIFiltroMesTecnico() {
+      const cardAtual = document.getElementById("cardTecMesAtual");
+      const cardAnt = document.getElementById("cardTecMesAnterior");
+      const dica = document.getElementById("instalTecFiltroDica");
+      if (cardAtual) {
+        cardAtual.classList.toggle("ativo", filtroMesInstalTec === "atual");
+        cardAtual.classList.toggle("dim", filtroMesInstalTec === "anterior");
+        cardAtual.setAttribute("aria-pressed", filtroMesInstalTec === "atual" ? "true" : "false");
+      }
+      if (cardAnt) {
+        cardAnt.classList.toggle("ativo", filtroMesInstalTec === "anterior");
+        cardAnt.classList.toggle("dim", filtroMesInstalTec === "atual");
+        cardAnt.setAttribute("aria-pressed", filtroMesInstalTec === "anterior" ? "true" : "false");
+      }
+      if (dica) dica.style.display = filtroMesInstalTec ? "block" : "none";
+      renderizarHistoricoInstalTecnico();
+    }
+
+    async function filtrarMesInstalTecnico(periodo, event) {
+      if (event) event.stopPropagation();
+      filtroMesInstalTec = (filtroMesInstalTec === periodo) ? null : periodo;
+      const painel = document.getElementById("detalhesInstalTecnico");
+      if (painel && !painel.classList.contains("aberto")) {
+        await toggleDetalhesInstalacoesTecnico();
+      } else if (!instalacoesTecnicoCarregadas) {
+        await toggleDetalhesInstalacoesTecnico();
+        // toggle may have closed if it was open logic - ensure open
+        if (painel && !painel.classList.contains("aberto")) {
+          painel.classList.add("aberto");
+          const btn = document.getElementById("btnDetalhesInstalTecnico");
+          if (btn) {
+            btn.classList.add("aberto");
+            btn.innerHTML = `<svg class="icon"><use href="#i-chevron-down"></use></svg> Recolher`;
+          }
+        }
+      }
+      aplicarUIFiltroMesTecnico();
+    }
+
+    function renderizarHistoricoInstalTecnico() {
+      const lista = document.getElementById("listaInstalTecnico");
+      if (!lista) return;
+      const historico = cacheHistoricoInstalTec || [];
+      const doMesAtual = filtrarInstalacoesDoMes(historico, mesAnoAtual());
+      const doMesAnt = filtrarInstalacoesDoMes(historico, mesAnoAnterior());
+
+      let htmlHist = "";
+      const showAtual = !filtroMesInstalTec || filtroMesInstalTec === "atual";
+      const showAnt = !filtroMesInstalTec || filtroMesInstalTec === "anterior";
+
+      if (showAtual) {
+        htmlHist += `<div class="modal-secao" style="margin-top:4px;">${escapeHtml(nomeMesAtual())} (${doMesAtual.length})</div>`;
+        htmlHist += doMesAtual.length
+          ? doMesAtual.map(construirLinhaHistoricoInstalacao).join("")
+          : `<div class="sem-atividade" style="padding:8px 0 12px;">Nenhuma instalação neste mês ainda.</div>`;
+      }
+      if (showAnt) {
+        htmlHist += `<div class="modal-secao" style="margin-top:12px;">${escapeHtml(nomeMesAnterior())} (${doMesAnt.length})</div>`;
+        htmlHist += doMesAnt.length
+          ? doMesAnt.map(construirLinhaHistoricoInstalacao).join("")
+          : `<div class="sem-atividade" style="padding:8px 0;">Nenhuma instalação no mês passado.</div>`;
+      }
+      lista.innerHTML = htmlHist;
+    }
+
+
 
     // Adiciona um registro permanente de instalação ao histórico do técnico (usado para a contagem mensal)
     async function registrarInstalacao(tecnico, dadosInstalacao) {
@@ -3030,7 +3245,7 @@ Contato: (11) 99347-3587"></textarea>
 
     // Monta a linha expansível de um técnico dentro do modal de Instalações do Mês (clique para ver o histórico)
     function construirLinhaInstalacoesTecnico(p, idx) {
-      const idSeguro = `instalmes-${idx}`;
+      const idSeguro = `instalmes-${String(idx).replace(/[^a-zA-Z0-9_-]/g, '_')}`;
       const itensHtml = p.itens.length
         ? p.itens.map(construirLinhaHistoricoInstalacao).join("")
         : `<div class="sem-atividade" style="padding:10px 0;">Nenhuma instalação neste mês.</div>`;
@@ -3054,29 +3269,67 @@ Contato: (11) 99347-3587"></textarea>
 
     async function abrirModalInstalacoesMes() {
       fecharModalConfig();
-      toggleLoading(true, "Calculando instalações do mês...");
+      toggleLoading(true, "Calculando instalações...");
       try {
         const resp = await fetch(API_URL);
         const dados = await resp.json();
         const mesAtual = mesAnoAtual();
+        const mesAnt = mesAnoAnterior();
 
-        let totalGeral = 0;
-        const porTecnico = listaTecnicos.map(tec => {
+        let totalAtual = 0;
+        let totalAnterior = 0;
+
+        const porTecnicoAtual = listaTecnicos.map(tec => {
           const registro = dados.find(d => d.tecnico === tec);
           let historico = [];
           if (registro && registro.instalacoes) {
             try { historico = JSON.parse(registro.instalacoes); } catch(e) {}
           }
-          const doMes = historico.filter(i => i.mesAno === mesAtual).sort((a, b) => new Date(b.data) - new Date(a.data));
-          totalGeral += doMes.length;
+          const doMes = filtrarInstalacoesDoMes(historico, mesAtual);
+          totalAtual += doMes.length;
           return { tec, qtd: doMes.length, itens: doMes };
         }).sort((a, b) => b.qtd - a.qtd);
 
-        document.getElementById("instalMesTitulo").textContent = `Instalações — ${nomeMesAtual()}`;
-        document.getElementById("instalMesTotal").textContent = totalGeral;
-        document.getElementById("instalMesLista").innerHTML = porTecnico.length
-          ? porTecnico.map((p, idx) => construirLinhaInstalacoesTecnico(p, idx)).join("")
+        const porTecnicoAnterior = listaTecnicos.map(tec => {
+          const registro = dados.find(d => d.tecnico === tec);
+          let historico = [];
+          if (registro && registro.instalacoes) {
+            try { historico = JSON.parse(registro.instalacoes); } catch(e) {}
+          }
+          const doMes = filtrarInstalacoesDoMes(historico, mesAnt);
+          totalAnterior += doMes.length;
+          return { tec, qtd: doMes.length, itens: doMes };
+        }).sort((a, b) => b.qtd - a.qtd);
+
+        const nomeAtual = nomeMesAtual();
+        const nomeAnt = nomeMesAnterior();
+
+        document.getElementById("instalMesTitulo").textContent = "Instalações";
+        document.getElementById("instalMesTotal").textContent = totalAtual;
+        document.getElementById("instalMesTotalAnterior").textContent = totalAnterior;
+        document.getElementById("instalMesLabelAtual").textContent = nomeAtual;
+        document.getElementById("instalMesLabelAnterior").textContent = nomeAnt;
+        document.getElementById("instalMesSecaoAtual").textContent = `${nomeAtual} — por técnico`;
+        document.getElementById("instalMesSecaoAnterior").textContent = `${nomeAnt} — por técnico`;
+
+        document.getElementById("instalMesLista").innerHTML = porTecnicoAtual.length
+          ? porTecnicoAtual.map((p, idx) => construirLinhaInstalacoesTecnico(p, `atual-${idx}`)).join("")
           : `<div class="sem-atividade">Nenhum técnico cadastrado.</div>`;
+
+        document.getElementById("instalMesListaAnterior").innerHTML = porTecnicoAnterior.length
+          ? porTecnicoAnterior.map((p, idx) => construirLinhaInstalacoesTecnico(p, `ant-${idx}`)).join("")
+          : `<div class="sem-atividade">Nenhum técnico cadastrado.</div>`;
+
+        cacheInstalacoesAdmin = {
+          porAtual: porTecnicoAtual,
+          porAnterior: porTecnicoAnterior,
+          totalAtual,
+          totalAnterior,
+          nomeAtual,
+          nomeAnt
+        };
+        filtroMesInstalAdmin = null;
+        aplicarUIFiltroMesAdmin();
 
         const overlay = document.getElementById("modalInstalacoesMesOverlay");
         overlay.style.display = "flex";
@@ -3106,9 +3359,16 @@ Contato: (11) 99347-3587"></textarea>
         if (registro && registro.instalacoes) {
           try { historico = JSON.parse(registro.instalacoes); } catch(e) {}
         }
-        const qtd = historico.filter(i => i.mesAno === mesAnoAtual()).length;
-        document.getElementById("instalTecnicoTotal").textContent = qtd;
-        document.getElementById("instalTecnicoTitulo").innerHTML = `${ic('router', 'icon-sm')} Minhas Instalações — ${nomeMesAtual()}`;
+        const qtdAtual = filtrarInstalacoesDoMes(historico, mesAnoAtual()).length;
+        const qtdAnt = filtrarInstalacoesDoMes(historico, mesAnoAnterior()).length;
+        document.getElementById("instalTecnicoTotal").textContent = qtdAtual;
+        const elAnt = document.getElementById("instalTecnicoTotalAnterior");
+        if (elAnt) elAnt.textContent = qtdAnt;
+        document.getElementById("instalTecnicoTitulo").innerHTML = `${ic('router', 'icon-sm')} Minhas Instalações`;
+        const labAtual = document.getElementById("instalTecnicoLabelAtual");
+        const labAnt = document.getElementById("instalTecnicoLabelAnterior");
+        if (labAtual) labAtual.textContent = nomeMesAtual();
+        if (labAnt) labAnt.textContent = nomeMesAnterior();
       } catch (e) {
         console.warn("Erro ao carregar contador de instalações do técnico:", e);
       }
@@ -3131,12 +3391,8 @@ Contato: (11) 99347-3587"></textarea>
           if (registro && registro.instalacoes) {
             try { historico = JSON.parse(registro.instalacoes); } catch(e) {}
           }
-          const doMes = historico.filter(i => i.mesAno === mesAnoAtual()).sort((a, b) => new Date(b.data) - new Date(a.data));
-
-          document.getElementById("listaInstalTecnico").innerHTML = doMes.length
-            ? doMes.map(construirLinhaHistoricoInstalacao).join("")
-            : `<div class="sem-atividade" style="padding:10px 0;">Nenhuma instalação neste mês ainda.</div>`;
-
+          cacheHistoricoInstalTec = historico;
+          renderizarHistoricoInstalTecnico();
           instalacoesTecnicoCarregadas = true;
         } catch (e) {
           console.warn("Erro ao carregar histórico de instalações:", e);
