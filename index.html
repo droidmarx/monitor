@@ -110,57 +110,244 @@
     .icon-sm { width: 13px; height: 13px; vertical-align: -2px; }
     .icon-lg { width: 22px; height: 22px; vertical-align: -5px; }
 
-    /* ===== TOPO ===== */
+    /* ===== TOPO / APP BAR ===== */
     .topo {
-      margin-bottom: 18px;
-      text-align: center;
-      padding-top: 4px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      margin: -12px -14px 18px;
+      padding: max(10px, var(--safe-t)) 14px 12px;
+      background: rgba(8, 12, 22, 0.72);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+    }
+
+    .topo-barra {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .topo-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .topo-brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(34, 211, 238, 0.22), rgba(99, 102, 241, 0.22));
+      border: 1px solid rgba(34, 211, 238, 0.28);
+      color: var(--cyan-2);
+      box-shadow: 0 4px 14px rgba(34, 211, 238, 0.12);
+    }
+    .topo-brand-icon .icon { width: 20px; height: 20px; }
+
+    .topo-brand-text {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
     }
 
     .topo h1 {
-      font-size: clamp(1.35rem, 5vw, 1.65rem);
+      font-size: 15.5px;
       font-weight: 800;
       letter-spacing: -0.02em;
-      background: linear-gradient(105deg, #22d3ee 0%, #60a5fa 45%, #a78bfa 100%);
+      line-height: 1.2;
+      margin: 0;
+      background: linear-gradient(105deg, #22d3ee 0%, #60a5fa 50%, #a78bfa 100%);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      justify-content: center;
-    }
-    .topo h1 .icon {
-      -webkit-text-fill-color: initial;
-      color: var(--cyan-2);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .topo p {
       color: var(--muted);
-      font-size: 13.5px;
-      margin-top: 6px;
+      font-size: 11.5px;
+      margin: 0;
       font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 42vw;
     }
 
-    .btn-config {
-      background: var(--surface-2);
-      border: 1px solid var(--border-2);
+    .topo-acoes {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .topo-usuario {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: nowrap;
+    }
+
+    .topo-usuario-nome {
+      font-size: 12.5px;
       color: var(--text-2);
-      font-size: 13px;
       font-weight: 600;
-      padding: 11px 18px;
-      min-height: var(--touch);
-      border-radius: 999px;
-      cursor: pointer;
-      margin: 14px auto 0;
       display: none;
       align-items: center;
       gap: 7px;
-      width: fit-content;
-      transition: background 0.2s var(--ease), border-color 0.2s, transform 0.15s;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 6px 10px 6px 6px;
+      border-radius: 999px;
+      max-width: 160px;
     }
-    .btn-config:active { transform: scale(0.97); }
-    .btn-config:hover { background: var(--surface-3); border-color: rgba(103, 232, 249, 0.25); }
+
+    .topo-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      background: rgba(167, 139, 250, 0.2);
+      color: #c4b5fd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .topo-usuario-nome .nome-texto {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .badge-perfil {
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(167, 139, 250, 0.18);
+      color: #c4b5fd;
+      letter-spacing: 0.04em;
+      flex-shrink: 0;
+    }
+
+    .btn-topo-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text-2);
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.12s;
+    }
+    .btn-topo-icon:active { transform: scale(0.94); }
+    .btn-topo-icon:hover {
+      background: var(--surface-3);
+      color: var(--text);
+      border-color: var(--border-2);
+    }
+    .btn-topo-icon .icon { width: 18px; height: 18px; }
+
+    .btn-config {
+      background: rgba(34, 211, 238, 0.1);
+      border: 1px solid rgba(34, 211, 238, 0.28);
+      color: var(--cyan-2);
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 0 12px;
+      height: 40px;
+      border-radius: 12px;
+      cursor: pointer;
+      margin: 0;
+      display: none;
+      align-items: center;
+      gap: 6px;
+      width: auto;
+      transition: background 0.2s, transform 0.12s;
+    }
+    .btn-config:active { transform: scale(0.96); }
+    .btn-config:hover { background: rgba(34, 211, 238, 0.16); }
+
+    .btn-hamburguer {
+      background: rgba(139, 92, 246, 0.14);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      color: #c4b5fd;
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 0 12px;
+      height: 40px;
+      border-radius: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s, transform 0.12s;
+    }
+    .btn-hamburguer:active { transform: scale(0.96); }
+    .btn-hamburguer.oculto { display: none !important; }
+
+    .btn-sair {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: var(--red);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      transition: background 0.15s, transform 0.12s;
+    }
+    .btn-sair:active { transform: scale(0.94); background: rgba(239, 68, 68, 0.18); }
+    .btn-sair .btn-sair-texto { display: none; }
+
+    @media (min-width: 480px) {
+      .topo-usuario-nome { display: inline-flex; }
+      .btn-sair {
+        width: auto;
+        padding: 0 12px;
+        gap: 5px;
+      }
+      .btn-sair .btn-sair-texto { display: inline; }
+      .topo p { max-width: 280px; }
+    }
+
+    @media (min-width: 720px) {
+      .topo {
+        margin-left: -24px;
+        margin-right: -24px;
+        padding-left: 24px;
+        padding-right: 24px;
+      }
+    }
 
     /* ===== FORMS / INPUTS ===== */
     .form-add-tecnico {
@@ -1537,69 +1724,6 @@
       letter-spacing: 0.05em;
     }
 
-    /* Usuário logado */
-    .topo-usuario {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-top: 12px;
-      flex-wrap: wrap;
-    }
-    .topo-usuario-nome {
-      font-size: 13px;
-      color: var(--text-2);
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 7px 12px;
-      border-radius: 999px;
-    }
-    .badge-perfil {
-      font-size: 9.5px;
-      font-weight: 800;
-      text-transform: uppercase;
-      padding: 2px 7px;
-      border-radius: 999px;
-      background: rgba(167, 139, 250, 0.18);
-      color: #c4b5fd;
-      letter-spacing: 0.04em;
-    }
-    .btn-sair {
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.25);
-      color: var(--red);
-      font-size: 12px;
-      font-weight: 700;
-      padding: 8px 12px;
-      min-height: 36px;
-      border-radius: 999px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      transition: background 0.15s;
-    }
-    .btn-sair:active { background: rgba(239, 68, 68, 0.18); }
-
-    .btn-hamburguer {
-      background: rgba(139, 92, 246, 0.12);
-      border: 1px solid rgba(139, 92, 246, 0.28);
-      color: #c4b5fd;
-      font-size: 12px;
-      font-weight: 700;
-      padding: 8px 12px;
-      min-height: 36px;
-      border-radius: 999px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .btn-hamburguer.oculto { display: none !important; }
 
     .secao-titulo-rota {
       display: flex;
@@ -1649,7 +1773,18 @@
       font-variant-numeric: tabular-nums;
     }
 
-    #topoUsuarioBox, #btnConfigTecnicos { display: none; }
+
+    @media (max-width: 380px) {
+      .btn-config .btn-config-texto { display: none; }
+      .btn-config { width: 40px; padding: 0; justify-content: center; }
+      .btn-hamburguer { width: 40px; padding: 0; justify-content: center; font-size: 0; gap: 0; }
+      .btn-hamburguer .icon { margin: 0; }
+    }
+
+    #topoUsuarioBox { display: none; }
+    #btnConfigTecnicos { display: none; }
+    body.topo-pronta .btn-sair { display: inline-flex; }
+
 
     /* Acessibilidade / performance */
     @media (prefers-reduced-motion: reduce) {
@@ -1664,371 +1799,6 @@
     @media (min-width: 720px) {
       body { padding: 24px 24px calc(28px + var(--safe-b)); }
       .cards, .seletor-tecnico, .resumo-geral-card { max-width: 720px; }
-    }
-
-    /* ===== MINIMAL ICON SIDEBAR (Notion/Linear style) ===== */
-    .app-shell {
-      display: none;
-    }
-    body.app-logado .app-shell {
-      display: block;
-    }
-    body.app-logado {
-      padding-left: calc(64px + 14px);
-      padding-bottom: calc(20px + var(--safe-b));
-      transition: padding-left 0.28s var(--ease);
-    }
-    body.app-logado.sidebar-expanded {
-      padding-left: calc(200px + 14px);
-    }
-
-    .app-sidebar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      width: 64px;
-      z-index: 80;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      padding: calc(10px + var(--safe-t)) 8px calc(12px + var(--safe-b));
-      background: rgba(8, 12, 22, 0.92);
-      border-right: 1px solid var(--border);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      transition: width 0.28s var(--ease);
-      overflow: hidden;
-    }
-    body.sidebar-expanded .app-sidebar {
-      width: 200px;
-    }
-
-    .sidebar-brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      height: 48px;
-      padding: 0 10px;
-      margin-bottom: 12px;
-      flex-shrink: 0;
-      color: var(--cyan-2);
-    }
-    .sidebar-brand-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, rgba(34,211,238,0.2), rgba(99,102,241,0.2));
-      border: 1px solid rgba(34, 211, 238, 0.25);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    .sidebar-brand-icon .icon { width: 18px; height: 18px; }
-    .sidebar-brand-text {
-      font-size: 13.5px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      white-space: nowrap;
-      opacity: 0;
-      transform: translateX(-6px);
-      transition: opacity 0.2s, transform 0.2s;
-      background: linear-gradient(105deg, #22d3ee, #a78bfa);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    body.sidebar-expanded .sidebar-brand-text {
-      opacity: 1;
-      transform: translateX(0);
-    }
-
-    .sidebar-nav {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      flex: 1;
-      min-height: 0;
-      overflow-y: auto;
-      overflow-x: hidden;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .sidebar-item {
-      position: relative;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      width: 100%;
-      height: 44px;
-      padding: 0 12px;
-      border: none;
-      border-radius: 12px;
-      background: transparent;
-      color: var(--muted);
-      cursor: pointer;
-      font-size: 13.5px;
-      font-weight: 600;
-      white-space: nowrap;
-      transition: background 0.18s, color 0.18s;
-      text-align: left;
-    }
-    .sidebar-item:hover,
-    .sidebar-item:focus-visible {
-      background: var(--surface-2);
-      color: var(--text);
-      outline: none;
-    }
-    .sidebar-item:active { background: var(--surface-3); }
-    .sidebar-item.ativo {
-      background: rgba(34, 211, 238, 0.12);
-      color: var(--cyan-2);
-    }
-    .sidebar-item.ativo::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 10px;
-      bottom: 10px;
-      width: 3px;
-      border-radius: 0 3px 3px 0;
-      background: var(--cyan);
-    }
-    .sidebar-item .sb-icon {
-      width: 20px;
-      height: 20px;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .sidebar-item .sb-icon .icon {
-      width: 20px;
-      height: 20px;
-    }
-    .sidebar-item .sb-label {
-      opacity: 0;
-      transform: translateX(-6px);
-      transition: opacity 0.2s, transform 0.2s;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    body.sidebar-expanded .sidebar-item .sb-label {
-      opacity: 1;
-      transform: translateX(0);
-    }
-
-    /* Tooltip quando colapsada */
-    .sidebar-item[data-tip]::after {
-      content: attr(data-tip);
-      position: absolute;
-      left: calc(100% + 10px);
-      top: 50%;
-      transform: translateY(-50%) translateX(-4px);
-      background: #1e293b;
-      color: var(--text);
-      font-size: 12px;
-      font-weight: 600;
-      padding: 6px 10px;
-      border-radius: 8px;
-      border: 1px solid var(--border-2);
-      white-space: nowrap;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.15s, transform 0.15s;
-      z-index: 90;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
-    }
-    body:not(.sidebar-expanded) .sidebar-item:hover::after,
-    body:not(.sidebar-expanded) .sidebar-item:focus-visible::after {
-      opacity: 1;
-      transform: translateY(-50%) translateX(0);
-    }
-    body.sidebar-expanded .sidebar-item[data-tip]::after {
-      display: none;
-    }
-
-    .sidebar-spacer { flex: 1; min-height: 8px; }
-
-    .sidebar-footer {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      padding-top: 8px;
-      border-top: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-
-    .sidebar-toggle {
-      color: var(--muted-2);
-    }
-    .sidebar-toggle .sb-icon {
-      transition: transform 0.28s var(--ease);
-    }
-    body.sidebar-expanded .sidebar-toggle .sb-icon {
-      transform: rotate(90deg) !important;
-    }
-
-    .sidebar-user {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 10px;
-      margin-top: 4px;
-      border-radius: 12px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      min-height: 48px;
-      overflow: hidden;
-    }
-    .sidebar-user-avatar {
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
-      background: rgba(167, 139, 250, 0.18);
-      color: #c4b5fd;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      font-size: 11px;
-      font-weight: 800;
-    }
-    .sidebar-user-meta {
-      min-width: 0;
-      opacity: 0;
-      transform: translateX(-6px);
-      transition: opacity 0.2s, transform 0.2s;
-    }
-    body.sidebar-expanded .sidebar-user-meta {
-      opacity: 1;
-      transform: translateX(0);
-    }
-    .sidebar-user-name {
-      font-size: 12.5px;
-      font-weight: 700;
-      color: var(--text);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .sidebar-user-role {
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    /* Esconde controles legados do topo quando sidebar ativa */
-    body.app-logado #topoUsuarioBox,
-    body.app-logado #btnConfigTecnicos {
-      display: none !important;
-    }
-
-    /* ===== Mobile: barra inferior de ícones ===== */
-    @media (max-width: 767px) {
-      body.app-logado {
-        padding-left: 14px !important;
-        padding-bottom: calc(72px + var(--safe-b));
-      }
-      body.app-logado.sidebar-expanded {
-        padding-left: 14px !important;
-      }
-
-      .app-sidebar {
-        top: auto;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        width: 100% !important;
-        height: calc(60px + var(--safe-b));
-        flex-direction: row;
-        align-items: center;
-        padding: 6px 10px var(--safe-b);
-        border-right: none;
-        border-top: 1px solid var(--border);
-        background: rgba(8, 12, 22, 0.94);
-      }
-
-      .sidebar-brand,
-      .sidebar-user,
-      .sidebar-toggle,
-      .sidebar-spacer {
-        display: none !important;
-      }
-
-      .sidebar-nav,
-      .sidebar-footer {
-        flex-direction: row;
-        border: none;
-        padding: 0;
-        gap: 2px;
-        justify-content: space-evenly;
-        align-items: center;
-        overflow: visible;
-      }
-      .sidebar-nav { flex: 3; }
-      .sidebar-footer { flex: 1; }
-
-      .sidebar-item {
-        flex-direction: column;
-        justify-content: center;
-        width: auto;
-        min-width: 56px;
-        height: 48px;
-        padding: 4px 8px;
-        gap: 2px;
-        border-radius: 12px;
-      }
-      .sidebar-item.ativo::before {
-        left: 50%;
-        top: 0;
-        bottom: auto;
-        width: 18px;
-        height: 3px;
-        transform: translateX(-50%);
-        border-radius: 0 0 3px 3px;
-      }
-      .sidebar-item .sb-label {
-        opacity: 1 !important;
-        transform: none !important;
-        font-size: 9.5px;
-        font-weight: 700;
-        max-width: 64px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      .sidebar-item[data-tip]::after { display: none !important; }
-      .sidebar-item .sb-icon .icon { width: 20px; height: 20px; }
-
-      .sidebar-item-sair {
-        color: var(--red);
-      }
-    }
-
-    /* Desktop hover expand (opcional, sem pin) */
-    @media (min-width: 768px) {
-      .app-sidebar:hover {
-        width: 200px;
-      }
-      body:not(.sidebar-expanded) .app-sidebar:hover .sidebar-brand-text,
-      body:not(.sidebar-expanded) .app-sidebar:hover .sidebar-item .sb-label,
-      body:not(.sidebar-expanded) .app-sidebar:hover .sidebar-user-meta {
-        opacity: 1;
-        transform: translateX(0);
-      }
-      body:not(.sidebar-expanded) .app-sidebar:hover .sidebar-item[data-tip]::after {
-        display: none;
-      }
-      /* Não empurra layout no hover — overlay */
-      body.app-logado:not(.sidebar-expanded) {
-        padding-left: calc(64px + 14px);
-      }
-      body.app-logado:not(.sidebar-expanded) .app-sidebar:hover {
-        box-shadow: 12px 0 40px rgba(0,0,0,0.35);
-      }
     }
 
   </style>
@@ -2078,62 +1848,36 @@
   </svg>
 
 
-  <!-- Minimal Icon Sidebar -->
-  <aside class="app-sidebar" id="appSidebar" aria-label="Navegação principal">
-    <div class="sidebar-brand">
-      <div class="sidebar-brand-icon"><svg class="icon"><use href="#i-radio"></use></svg></div>
-      <span class="sidebar-brand-text">Agenda Técnico</span>
-    </div>
-
-    <nav class="sidebar-nav" id="sidebarNav">
-      <button type="button" class="sidebar-item ativo" id="sbHome" data-tip="Início" onclick="navIrInicio()" aria-label="Início">
-        <span class="sb-icon"><svg class="icon"><use href="#i-pie-chart"></use></svg></span>
-        <span class="sb-label">Início</span>
-      </button>
-      <button type="button" class="sidebar-item" id="sbConfig" data-tip="Técnicos" onclick="navAbrirConfig()" aria-label="Gerenciar técnicos" style="display:none;">
-        <span class="sb-icon"><svg class="icon"><use href="#i-settings"></use></svg></span>
-        <span class="sb-label">Técnicos</span>
-      </button>
-      <button type="button" class="sidebar-item" id="sbMenuTec" data-tip="Menu" onclick="navAbrirMenuTec()" aria-label="Menu do técnico" style="display:none;">
-        <span class="sb-icon"><svg class="icon"><use href="#i-menu"></use></svg></span>
-        <span class="sb-label">Menu</span>
-      </button>
-      <button type="button" class="sidebar-item" id="sbRelatorio" data-tip="Relatório" onclick="navAbrirRelatorio()" aria-label="Relatório do dia" style="display:none;">
-        <span class="sb-icon"><svg class="icon"><use href="#i-file-text"></use></svg></span>
-        <span class="sb-label">Relatório</span>
-      </button>
-    </nav>
-
-    <div class="sidebar-spacer"></div>
-
-    <div class="sidebar-footer">
-      <button type="button" class="sidebar-item sidebar-toggle" id="sbToggle" data-tip="Expandir" onclick="toggleSidebar()" aria-label="Expandir ou recolher menu">
-        <span class="sb-icon" style="transform: rotate(-90deg);"><svg class="icon"><use href="#i-chevron-down"></use></svg></span>
-        <span class="sb-label">Recolher</span>
-      </button>
-      <button type="button" class="sidebar-item sidebar-item-sair" id="sbSair" data-tip="Sair" onclick="sairDaConta()" aria-label="Sair da conta">
-        <span class="sb-icon"><svg class="icon"><use href="#i-log-out"></use></svg></span>
-        <span class="sb-label">Sair</span>
-      </button>
-      <div class="sidebar-user" id="sidebarUserBox">
-        <div class="sidebar-user-avatar" id="sidebarUserAvatar">?</div>
-        <div class="sidebar-user-meta">
-          <div class="sidebar-user-name" id="sidebarUserName">—</div>
-          <div class="sidebar-user-role" id="sidebarUserRole">—</div>
+  <div class="topo" id="appTopo">
+    <div class="topo-barra">
+      <div class="topo-brand">
+        <div class="topo-brand-icon" aria-hidden="true"><svg class="icon"><use href="#i-radio"></use></svg></div>
+        <div class="topo-brand-text">
+          <h1>Monitoramento Técnico</h1>
+          <p id="subtitulo">Toque em uma O.S. para ver detalhes e alterar o status</p>
+        </div>
+      </div>
+      <div class="topo-acoes">
+        <div class="topo-usuario" id="topoUsuarioBox">
+          <span class="topo-usuario-nome">
+            <span class="topo-avatar" id="topoAvatar">?</span>
+            <span class="nome-texto" id="nomeUsuarioLogado"></span>
+            <span class="badge-perfil" id="badgePerfilLogado"></span>
+          </span>
+          <button class="btn-hamburguer oculto" id="btnMenuTecnico" onclick="abrirModalMenuTecnico()" aria-label="Menu rápido">
+            <svg class="icon icon-sm"><use href="#i-menu"></use></svg> Menu
+          </button>
+          <button class="btn-config" id="btnConfigTecnicos" onclick="abrirModalConfig()" aria-label="Gerenciar técnicos">
+            <svg class="icon"><use href="#i-settings"></use></svg>
+            <span class="btn-config-texto">Técnicos</span>
+          </button>
+          <button class="btn-sair" onclick="sairDaConta()" aria-label="Sair">
+            <svg class="icon icon-sm"><use href="#i-log-out"></use></svg>
+            <span class="btn-sair-texto">Sair</span>
+          </button>
         </div>
       </div>
     </div>
-  </aside>
-
-  <div class="topo">
-    <h1><svg class="icon icon-lg"><use href="#i-radio"></use></svg> Monitoramento Técnico</h1>
-    <p id="subtitulo">Toque em uma O.S. para ver detalhes e alterar o status</p>
-    <div class="topo-usuario" id="topoUsuarioBox">
-      <span class="topo-usuario-nome"><svg class="icon icon-sm"><use href="#i-user"></use></svg> <span id="nomeUsuarioLogado"></span> <span class="badge-perfil" id="badgePerfilLogado"></span></span>
-      <button class="btn-hamburguer oculto" id="btnMenuTecnico" onclick="abrirModalMenuTecnico()" aria-label="Menu rápido"><svg class="icon icon-sm"><use href="#i-menu"></use></svg> Menu</button>
-      <button class="btn-sair" onclick="sairDaConta()"><svg class="icon icon-sm"><use href="#i-log-out"></use></svg> Sair</button>
-    </div>
-    <button class="btn-config" id="btnConfigTecnicos" onclick="abrirModalConfig()"><svg class="icon"><use href="#i-settings"></use></svg> Gerenciar Técnicos</button>
   </div>
 
   <!-- Tela de Login (obrigatória, substitui o acesso livre à tela inicial) -->
@@ -2613,23 +2357,18 @@ Contato: (11) 99347-3587"></textarea>
 
       document.getElementById("telaLogin").classList.add("oculto");
       document.getElementById("appConteudo").classList.remove("oculto");
-      document.body.classList.add("app-logado");
 
       const ehEquipe = (perfil === 'master' || perfil === 'admin');
       document.getElementById("nomeUsuarioLogado").textContent = usuario;
       document.getElementById("badgePerfilLogado").textContent = perfil === 'tecnico' ? 'Técnico' : (perfil === 'master' ? 'Master' : 'Admin');
+      const av = document.getElementById("topoAvatar");
+      if (av) av.textContent = (usuario || "?").trim().charAt(0).toUpperCase();
       document.getElementById("topoUsuarioBox").style.display = "flex";
       document.getElementById("btnConfigTecnicos").style.display = ehEquipe ? "flex" : "none";
-
-      // Sidebar: perfil e usuário
-      const roleLabel = perfil === 'tecnico' ? 'Técnico' : (perfil === 'master' ? 'Master' : 'Admin');
-      document.getElementById("sidebarUserName").textContent = usuario;
-      document.getElementById("sidebarUserRole").textContent = roleLabel;
-      document.getElementById("sidebarUserAvatar").textContent = (usuario || "?").trim().charAt(0).toUpperCase();
-      document.getElementById("sbConfig").style.display = ehEquipe ? "flex" : "none";
-      document.getElementById("sbMenuTec").style.display = perfil === 'tecnico' ? "flex" : "none";
-      document.getElementById("sbRelatorio").style.display = "flex";
-      setSidebarAtivo("sbHome");
+      const btnSair = document.querySelector(".btn-sair");
+      if (btnSair) btnSair.style.display = "inline-flex";
+      const btnMenu = document.getElementById("btnMenuTecnico");
+      // menu visibility handled below for técnico
 
       if (perfil === 'tecnico') {
         // Técnico fica na tela de monitoramento, mas filtrada para enxergar somente a própria agenda
@@ -2674,62 +2413,8 @@ Contato: (11) 99347-3587"></textarea>
       sessionStorage.removeItem('auth_perfil');
       sessionStorage.removeItem('auth_usuario');
       sessionStorage.removeItem('tecnicoAberto');
-      document.body.classList.remove("app-logado", "sidebar-expanded");
       window.location.reload();
     }
-
-    function toggleSidebar() {
-      if (window.matchMedia("(max-width: 767px)").matches) return;
-      document.body.classList.toggle("sidebar-expanded");
-      const expanded = document.body.classList.contains("sidebar-expanded");
-      const tip = document.getElementById("sbToggle");
-      if (tip) tip.setAttribute("data-tip", expanded ? "Recolher" : "Expandir");
-      try { localStorage.setItem("sidebar_expanded", expanded ? "1" : "0"); } catch(e) {}
-    }
-
-    function setSidebarAtivo(id) {
-      document.querySelectorAll(".sidebar-item.ativo").forEach(el => el.classList.remove("ativo"));
-      const el = document.getElementById(id);
-      if (el) el.classList.add("ativo");
-    }
-
-    function navIrInicio() {
-      setSidebarAtivo("sbHome");
-      // Se estiver na agenda de um técnico (admin), volta ao painel geral
-      const painel = document.getElementById("painelTecnico");
-      if (painel && !painel.classList.contains("oculto") && perfilAtual !== "tecnico") {
-        trocarTecnico();
-        return;
-      }
-      // Já no início: só rola pro topo
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    function navAbrirConfig() {
-      setSidebarAtivo("sbConfig");
-      abrirModalConfig();
-    }
-
-    function navAbrirMenuTec() {
-      setSidebarAtivo("sbMenuTec");
-      abrirModalMenuTecnico();
-    }
-
-    function navAbrirRelatorio() {
-      setSidebarAtivo("sbRelatorio");
-      if (perfilAtual === "tecnico") {
-        gerarMeuRelatorio();
-      } else {
-        gerarRelatorioDiario();
-      }
-    }
-
-    // Restaura preferência de sidebar expandida (desktop)
-    try {
-      if (localStorage.getItem("sidebar_expanded") === "1" && !window.matchMedia("(max-width: 767px)").matches) {
-        document.body.classList.add("sidebar-expanded");
-      }
-    } catch(e) {}
 
 
     function abrirModalConfig() {
@@ -2835,7 +2520,6 @@ Contato: (11) 99347-3587"></textarea>
     // (colar agenda, editar dados de OS/cliente, migrar ou excluir OS entre técnicos)
     async function abrirAgendaAdmin(nome) {
       fecharModalConfig();
-      setSidebarAtivo("sbHome");
       await selecionarTecnico(nome);
       mostrarImportador();
     }
@@ -3204,8 +2888,9 @@ Contato: (11) 99347-3587"></textarea>
       const osIdContexto = instalacaoOsIdAtual;
 
       try {
-        await navigator.clipboard.writeText(script);
-        mostrarToast(ic('check-circle') + ' Script copiado! Cole no WhatsApp.');
+        const okInst = await copiarTexto(script);
+        if (okInst) mostrarToast(ic('check-circle') + ' Script copiado! Cole no WhatsApp.');
+        else mostrarToast(ic('alert-triangle') + ' Abra o WhatsApp e cole manualmente se necessário');
         fecharModalNovaInstalacao();
         window.open(`https://wa.me/?text=${encodeURIComponent(script)}`, "_blank");
       } catch (e) {
@@ -3459,9 +3144,11 @@ Contato: (11) 99347-3587"></textarea>
 
 
     // Copia um valor de texto (usado pelos botões de copiar dentro do dropdown inline)
-    function copiarValorInline(valor) {
+    async function copiarValorInline(valor) {
       if (!valor) return;
-      navigator.clipboard.writeText(valor).then(() => mostrarToast(ic('check-circle') + ' Copiado com sucesso!'));
+      const ok = await copiarTexto(valor);
+      if (ok) mostrarToast(ic('check-circle') + ' Copiado com sucesso!');
+      else mostrarToast(ic('alert-triangle') + ' Não foi possível copiar');
     }
 
     // Abre o Maps a partir do endereço embutido no dropdown inline (busca por CEP quando disponível)
@@ -3472,6 +3159,41 @@ Contato: (11) 99347-3587"></textarea>
 
     // Salva o status + observação de uma OS a partir do dropdown inline (painel geral público)
     // Monta o texto padrão copiado para a área de transferência quando uma OS entra "Em Rota"
+
+    // Cópia robusta: Clipboard API + fallback execCommand (funciona após await/fetch)
+    async function copiarTexto(texto) {
+      if (texto == null || texto === "") return false;
+      const str = String(texto);
+
+      try {
+        if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+          await navigator.clipboard.writeText(str);
+          return true;
+        }
+      } catch (e) {
+        console.warn("Clipboard API falhou, tentando fallback:", e);
+      }
+
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = str;
+        ta.setAttribute("readonly", "");
+        ta.setAttribute("aria-hidden", "true");
+        ta.style.cssText = "position:fixed;top:0;left:0;width:1px;height:1px;padding:0;margin:0;border:0;opacity:0;";
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        ta.setSelectionRange(0, str.length);
+        const ok = document.execCommand("copy");
+        document.body.removeChild(ta);
+        if (ok) return true;
+      } catch (e) {
+        console.warn("Fallback de cópia falhou:", e);
+      }
+
+      return false;
+    }
+
     function montarScriptRota(cliente, endereco) {
       return `EM ROTA 🚀\n\nCliente: \n${cliente}\n\nEndereço: \n${endereco}`;
     }
@@ -3524,24 +3246,16 @@ Contato: (11) 99347-3587"></textarea>
 
         if (novoStatus === "rota") {
           const script = montarScriptRota(clienteOS || '', enderecoOS || '');
-          try {
-            await navigator.clipboard.writeText(script);
-            setTimeout(() => mostrarToast(ic('check-circle') + ' Rota copiada!'), 600);
-            recarregarPagina(1400);
-          } catch(e) {
-            console.warn('Não foi possível copiar automaticamente:', e);
-            recarregarPagina(800);
-          }
+          const ok = await copiarTexto(script);
+          if (ok) setTimeout(() => mostrarToast(ic('check-circle') + ' Rota copiada!'), 500);
+          else mostrarToast(ic('alert-triangle') + ' Status salvo — copie o script manualmente');
+          recarregarPagina(ok ? 1400 : 1000);
         } else if (novoStatus === "concluido" || novoStatus === "nao-concluido") {
           const script = construirScriptStatusOS(clienteOS, assuntoOS, horarioOS, novoStatus, novaObs, horaConclusao);
-          try {
-            await navigator.clipboard.writeText(script);
-            setTimeout(() => mostrarToast(ic('check-circle') + ' Script copiado!'), 600);
-            recarregarPagina(1400);
-          } catch(e) {
-            console.warn('Não foi possível copiar automaticamente:', e);
-            recarregarPagina(800);
-          }
+          const ok = await copiarTexto(script);
+          if (ok) setTimeout(() => mostrarToast(ic('check-circle') + ' Script copiado!'), 500);
+          else mostrarToast(ic('alert-triangle') + ' Status salvo — copie o script manualmente');
+          recarregarPagina(ok ? 1400 : 1000);
         } else {
           recarregarPagina(800);
         }
@@ -4231,12 +3945,12 @@ Contato: (11) 99347-3587"></textarea>
 
     function iniciarEventosCopiarNativos() {
       document.querySelectorAll(".btn-copiar").forEach(btn => {
-        btn.onclick = function() {
+        btn.onclick = async function() {
           const valor = btn.dataset.copiar || "";
           if (!valor) return;
-          navigator.clipboard.writeText(valor).then(() => {
-            mostrarToast(ic('check-circle') + ' Copiado com sucesso!');
-          });
+          const ok = await copiarTexto(valor);
+          if (ok) mostrarToast(ic('check-circle') + ' Copiado com sucesso!');
+          else mostrarToast(ic('alert-triangle') + ' Não foi possível copiar');
         };
       });
     }
@@ -4261,15 +3975,18 @@ Contato: (11) 99347-3587"></textarea>
         localStorage.setItem(`status_${tecnicoAtual}_${os.id}`, "rota");
         localStorage.setItem(`timestamp_${tecnicoAtual}_${os.id}_rota`, obtenerHoraAtual());
         atualizarLayoutCardStatus(os.id, "rota", ic('car','icon-sm') + " Em rota");
-        await salvarAgendaNaApi(document.getElementById("entrada").value, true);
-        mostrarToast(ic('save') + ' Status atualizado!');
 
         const script = montarScriptRota(os.cliente, os.endereco);
-        navigator.clipboard.writeText(script).then(() => {
-          setTimeout(() => mostrarToast(ic('check-circle') + ' Rota copiada!'), 600);
-          window.open("https://t.me/c/1989058391/167773", "_blank");
-          recarregarPagina(1600);
-        });
+        const okCopia = await copiarTexto(script);
+
+        await salvarAgendaNaApi(document.getElementById("entrada").value, true);
+        if (okCopia) {
+          mostrarToast(ic('check-circle') + ' Rota copiada!');
+          try { window.open("https://t.me/c/1989058391/167773", "_blank"); } catch(e) {}
+        } else {
+          mostrarToast(ic('alert-triangle') + ' Status salvo — script não copiado automaticamente');
+        }
+        recarregarPagina(okCopia ? 1600 : 1000);
       } 
       else if (novoStatus === "concluido" || novoStatus === "nao-concluido") {
         statusTemporarioExpressado = novoStatus;
@@ -4320,9 +4037,10 @@ Contato: (11) 99347-3587"></textarea>
         return;
       }
 
-      localStorage.setItem(`status_${tecnicoAtual}_${os.id}`, statusTemporarioExpressado);
+      const statusFinal = statusTemporarioExpressado;
+      localStorage.setItem(`status_${tecnicoAtual}_${os.id}`, statusFinal);
       const horaConclusao = obtenerHoraAtual();
-      localStorage.setItem(`timestamp_${tecnicoAtual}_${os.id}_${statusTemporarioExpressado}`, horaConclusao);
+      localStorage.setItem(`timestamp_${tecnicoAtual}_${os.id}_${statusFinal}`, horaConclusao);
 
       if(obsTexto) {
         localStorage.setItem(`obs_${tecnicoAtual}_${os.id}`, obsTexto);
@@ -4330,16 +4048,16 @@ Contato: (11) 99347-3587"></textarea>
         localStorage.removeItem(`obs_${tecnicoAtual}_${os.id}`);
       }
 
+      const script = construirScriptStatusOS(os.cliente, os.assunto, os.horario, statusFinal, obsTexto, horaConclusao);
+      const okCopia = await copiarTexto(script);
+
       fecharModalObsExpressa();
       await salvarAgendaNaApi(document.getElementById("entrada").value, false);
 
-      const script = construirScriptStatusOS(os.cliente, os.assunto, os.horario, statusTemporarioExpressado, obsTexto, horaConclusao);
-      try {
-        await navigator.clipboard.writeText(script);
+      if (okCopia) {
         mostrarToast(ic('check-circle') + ' Status atualizado e script copiado!');
-      } catch(e) {
-        console.warn('Não foi possível copiar automaticamente:', e);
-        mostrarToast(ic('save') + ' Status atualizado!');
+      } else {
+        mostrarToast(ic('alert-triangle') + ' Status salvo — script não copiado automaticamente');
       }
       recarregarPagina(800);
     }
@@ -4673,13 +4391,9 @@ Contato: (11) 99347-3587"></textarea>
       // Só copia o script quando o status MUDOU para concluído/não concluído nesta edição
       if ((novoStatus === 'concluido' || novoStatus === 'nao-concluido') && novoStatus !== statusAnterior) {
         const script = construirScriptStatusOS(os.cliente, os.assunto, os.horario, novoStatus, novaObs, horaConclusao);
-        try {
-          await navigator.clipboard.writeText(script);
-          mostrarToast(ic('check-circle') + ' OS atualizada e script copiado!');
-        } catch(e) {
-          console.warn('Não foi possível copiar automaticamente:', e);
-          mostrarToast(ic('save') + ' OS Atualizada!');
-        }
+        const okCopia = await copiarTexto(script);
+        if (okCopia) mostrarToast(ic('check-circle') + ' OS atualizada e script copiado!');
+        else mostrarToast(ic('alert-triangle') + ' OS atualizada — script não copiado automaticamente');
         recarregarPagina();
         return;
       }
@@ -4937,11 +4651,11 @@ Contato: (11) 99347-3587"></textarea>
       setTimeout(() => overlay.style.display = "none", 300);
     }
 
-    function copiarRelatorio() {
+    async function copiarRelatorio() {
       const txt = document.getElementById("relatorio-texto").value;
-      navigator.clipboard.writeText(txt).then(() => {
-         mostrarToast(ic('check-circle') + ' Relatório copiado para prancheta!');
-      });
+      const ok = await copiarTexto(txt);
+      if (ok) mostrarToast(ic('check-circle') + ' Relatório copiado para prancheta!');
+      else mostrarToast(ic('alert-triangle') + ' Não foi possível copiar automaticamente');
     }
 
     async function sincronizarSilencioso() {
