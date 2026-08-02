@@ -1665,6 +1665,372 @@
       body { padding: 24px 24px calc(28px + var(--safe-b)); }
       .cards, .seletor-tecnico, .resumo-geral-card { max-width: 720px; }
     }
+
+    /* ===== MINIMAL ICON SIDEBAR (Notion/Linear style) ===== */
+    .app-shell {
+      display: none;
+    }
+    body.app-logado .app-shell {
+      display: block;
+    }
+    body.app-logado {
+      padding-left: calc(64px + 14px);
+      padding-bottom: calc(20px + var(--safe-b));
+      transition: padding-left 0.28s var(--ease);
+    }
+    body.app-logado.sidebar-expanded {
+      padding-left: calc(200px + 14px);
+    }
+
+    .app-sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 64px;
+      z-index: 80;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      padding: calc(10px + var(--safe-t)) 8px calc(12px + var(--safe-b));
+      background: rgba(8, 12, 22, 0.92);
+      border-right: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: width 0.28s var(--ease);
+      overflow: hidden;
+    }
+    body.sidebar-expanded .app-sidebar {
+      width: 200px;
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      height: 48px;
+      padding: 0 10px;
+      margin-bottom: 12px;
+      flex-shrink: 0;
+      color: var(--cyan-2);
+    }
+    .sidebar-brand-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(34,211,238,0.2), rgba(99,102,241,0.2));
+      border: 1px solid rgba(34, 211, 238, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .sidebar-brand-icon .icon { width: 18px; height: 18px; }
+    .sidebar-brand-text {
+      font-size: 13.5px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      opacity: 0;
+      transform: translateX(-6px);
+      transition: opacity 0.2s, transform 0.2s;
+      background: linear-gradient(105deg, #22d3ee, #a78bfa);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    body.sidebar-expanded .sidebar-brand-text {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .sidebar-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      height: 44px;
+      padding: 0 12px;
+      border: none;
+      border-radius: 12px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 13.5px;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: background 0.18s, color 0.18s;
+      text-align: left;
+    }
+    .sidebar-item:hover,
+    .sidebar-item:focus-visible {
+      background: var(--surface-2);
+      color: var(--text);
+      outline: none;
+    }
+    .sidebar-item:active { background: var(--surface-3); }
+    .sidebar-item.ativo {
+      background: rgba(34, 211, 238, 0.12);
+      color: var(--cyan-2);
+    }
+    .sidebar-item.ativo::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10px;
+      bottom: 10px;
+      width: 3px;
+      border-radius: 0 3px 3px 0;
+      background: var(--cyan);
+    }
+    .sidebar-item .sb-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .sidebar-item .sb-icon .icon {
+      width: 20px;
+      height: 20px;
+    }
+    .sidebar-item .sb-label {
+      opacity: 0;
+      transform: translateX(-6px);
+      transition: opacity 0.2s, transform 0.2s;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    body.sidebar-expanded .sidebar-item .sb-label {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Tooltip quando colapsada */
+    .sidebar-item[data-tip]::after {
+      content: attr(data-tip);
+      position: absolute;
+      left: calc(100% + 10px);
+      top: 50%;
+      transform: translateY(-50%) translateX(-4px);
+      background: #1e293b;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border-2);
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s, transform 0.15s;
+      z-index: 90;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    }
+    body:not(.sidebar-expanded) .sidebar-item:hover::after,
+    body:not(.sidebar-expanded) .sidebar-item:focus-visible::after {
+      opacity: 1;
+      transform: translateY(-50%) translateX(0);
+    }
+    body.sidebar-expanded .sidebar-item[data-tip]::after {
+      display: none;
+    }
+
+    .sidebar-spacer { flex: 1; min-height: 8px; }
+
+    .sidebar-footer {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .sidebar-toggle {
+      color: var(--muted-2);
+    }
+    .sidebar-toggle .sb-icon {
+      transition: transform 0.28s var(--ease);
+    }
+    body.sidebar-expanded .sidebar-toggle .sb-icon {
+      transform: rotate(90deg) !important;
+    }
+
+    .sidebar-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      margin-top: 4px;
+      border-radius: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      min-height: 48px;
+      overflow: hidden;
+    }
+    .sidebar-user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: rgba(167, 139, 250, 0.18);
+      color: #c4b5fd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .sidebar-user-meta {
+      min-width: 0;
+      opacity: 0;
+      transform: translateX(-6px);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    body.sidebar-expanded .sidebar-user-meta {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .sidebar-user-name {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sidebar-user-role {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* Esconde controles legados do topo quando sidebar ativa */
+    body.app-logado #topoUsuarioBox,
+    body.app-logado #btnConfigTecnicos {
+      display: none !important;
+    }
+
+    /* ===== Mobile: barra inferior de ícones ===== */
+    @media (max-width: 767px) {
+      body.app-logado {
+        padding-left: 14px !important;
+        padding-bottom: calc(72px + var(--safe-b));
+      }
+      body.app-logado.sidebar-expanded {
+        padding-left: 14px !important;
+      }
+
+      .app-sidebar {
+        top: auto;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100% !important;
+        height: calc(60px + var(--safe-b));
+        flex-direction: row;
+        align-items: center;
+        padding: 6px 10px var(--safe-b);
+        border-right: none;
+        border-top: 1px solid var(--border);
+        background: rgba(8, 12, 22, 0.94);
+      }
+
+      .sidebar-brand,
+      .sidebar-user,
+      .sidebar-toggle,
+      .sidebar-spacer {
+        display: none !important;
+      }
+
+      .sidebar-nav,
+      .sidebar-footer {
+        flex-direction: row;
+        border: none;
+        padding: 0;
+        gap: 2px;
+        justify-content: space-evenly;
+        align-items: center;
+        overflow: visible;
+      }
+      .sidebar-nav { flex: 3; }
+      .sidebar-footer { flex: 1; }
+
+      .sidebar-item {
+        flex-direction: column;
+        justify-content: center;
+        width: auto;
+        min-width: 56px;
+        height: 48px;
+        padding: 4px 8px;
+        gap: 2px;
+        border-radius: 12px;
+      }
+      .sidebar-item.ativo::before {
+        left: 50%;
+        top: 0;
+        bottom: auto;
+        width: 18px;
+        height: 3px;
+        transform: translateX(-50%);
+        border-radius: 0 0 3px 3px;
+      }
+      .sidebar-item .sb-label {
+        opacity: 1 !important;
+        transform: none !important;
+        font-size: 9.5px;
+        font-weight: 700;
+        max-width: 64px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .sidebar-item[data-tip]::after { display: none !important; }
+      .sidebar-item .sb-icon .icon { width: 20px; height: 20px; }
+
+      .sidebar-item-sair {
+        color: var(--red);
+      }
+    }
+
+    /* Desktop hover expand (opcional, sem pin) */
+    @media (min-width: 768px) {
+      .app-sidebar:hover {
+        width: 200px;
+      }
+      body:not(.sidebar-expanded) .app-sidebar:hover .sidebar-brand-text,
+      body:not(.sidebar-expanded) .app-sidebar:hover .sidebar-item .sb-label,
+      body:not(.sidebar-expanded) .app-sidebar:hover .sidebar-user-meta {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      body:not(.sidebar-expanded) .app-sidebar:hover .sidebar-item[data-tip]::after {
+        display: none;
+      }
+      /* Não empurra layout no hover — overlay */
+      body.app-logado:not(.sidebar-expanded) {
+        padding-left: calc(64px + 14px);
+      }
+      body.app-logado:not(.sidebar-expanded) .app-sidebar:hover {
+        box-shadow: 12px 0 40px rgba(0,0,0,0.35);
+      }
+    }
+
   </style>
 </head>
 
@@ -1710,6 +2076,54 @@
       <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
     </defs>
   </svg>
+
+
+  <!-- Minimal Icon Sidebar -->
+  <aside class="app-sidebar" id="appSidebar" aria-label="Navegação principal">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-icon"><svg class="icon"><use href="#i-radio"></use></svg></div>
+      <span class="sidebar-brand-text">Agenda Técnico</span>
+    </div>
+
+    <nav class="sidebar-nav" id="sidebarNav">
+      <button type="button" class="sidebar-item ativo" id="sbHome" data-tip="Início" onclick="navIrInicio()" aria-label="Início">
+        <span class="sb-icon"><svg class="icon"><use href="#i-pie-chart"></use></svg></span>
+        <span class="sb-label">Início</span>
+      </button>
+      <button type="button" class="sidebar-item" id="sbConfig" data-tip="Técnicos" onclick="navAbrirConfig()" aria-label="Gerenciar técnicos" style="display:none;">
+        <span class="sb-icon"><svg class="icon"><use href="#i-settings"></use></svg></span>
+        <span class="sb-label">Técnicos</span>
+      </button>
+      <button type="button" class="sidebar-item" id="sbMenuTec" data-tip="Menu" onclick="navAbrirMenuTec()" aria-label="Menu do técnico" style="display:none;">
+        <span class="sb-icon"><svg class="icon"><use href="#i-menu"></use></svg></span>
+        <span class="sb-label">Menu</span>
+      </button>
+      <button type="button" class="sidebar-item" id="sbRelatorio" data-tip="Relatório" onclick="navAbrirRelatorio()" aria-label="Relatório do dia" style="display:none;">
+        <span class="sb-icon"><svg class="icon"><use href="#i-file-text"></use></svg></span>
+        <span class="sb-label">Relatório</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-spacer"></div>
+
+    <div class="sidebar-footer">
+      <button type="button" class="sidebar-item sidebar-toggle" id="sbToggle" data-tip="Expandir" onclick="toggleSidebar()" aria-label="Expandir ou recolher menu">
+        <span class="sb-icon" style="transform: rotate(-90deg);"><svg class="icon"><use href="#i-chevron-down"></use></svg></span>
+        <span class="sb-label">Recolher</span>
+      </button>
+      <button type="button" class="sidebar-item sidebar-item-sair" id="sbSair" data-tip="Sair" onclick="sairDaConta()" aria-label="Sair da conta">
+        <span class="sb-icon"><svg class="icon"><use href="#i-log-out"></use></svg></span>
+        <span class="sb-label">Sair</span>
+      </button>
+      <div class="sidebar-user" id="sidebarUserBox">
+        <div class="sidebar-user-avatar" id="sidebarUserAvatar">?</div>
+        <div class="sidebar-user-meta">
+          <div class="sidebar-user-name" id="sidebarUserName">—</div>
+          <div class="sidebar-user-role" id="sidebarUserRole">—</div>
+        </div>
+      </div>
+    </div>
+  </aside>
 
   <div class="topo">
     <h1><svg class="icon icon-lg"><use href="#i-radio"></use></svg> Monitoramento Técnico</h1>
@@ -2199,12 +2613,23 @@ Contato: (11) 99347-3587"></textarea>
 
       document.getElementById("telaLogin").classList.add("oculto");
       document.getElementById("appConteudo").classList.remove("oculto");
+      document.body.classList.add("app-logado");
 
       const ehEquipe = (perfil === 'master' || perfil === 'admin');
       document.getElementById("nomeUsuarioLogado").textContent = usuario;
       document.getElementById("badgePerfilLogado").textContent = perfil === 'tecnico' ? 'Técnico' : (perfil === 'master' ? 'Master' : 'Admin');
       document.getElementById("topoUsuarioBox").style.display = "flex";
       document.getElementById("btnConfigTecnicos").style.display = ehEquipe ? "flex" : "none";
+
+      // Sidebar: perfil e usuário
+      const roleLabel = perfil === 'tecnico' ? 'Técnico' : (perfil === 'master' ? 'Master' : 'Admin');
+      document.getElementById("sidebarUserName").textContent = usuario;
+      document.getElementById("sidebarUserRole").textContent = roleLabel;
+      document.getElementById("sidebarUserAvatar").textContent = (usuario || "?").trim().charAt(0).toUpperCase();
+      document.getElementById("sbConfig").style.display = ehEquipe ? "flex" : "none";
+      document.getElementById("sbMenuTec").style.display = perfil === 'tecnico' ? "flex" : "none";
+      document.getElementById("sbRelatorio").style.display = "flex";
+      setSidebarAtivo("sbHome");
 
       if (perfil === 'tecnico') {
         // Técnico fica na tela de monitoramento, mas filtrada para enxergar somente a própria agenda
@@ -2249,8 +2674,63 @@ Contato: (11) 99347-3587"></textarea>
       sessionStorage.removeItem('auth_perfil');
       sessionStorage.removeItem('auth_usuario');
       sessionStorage.removeItem('tecnicoAberto');
+      document.body.classList.remove("app-logado", "sidebar-expanded");
       window.location.reload();
     }
+
+    function toggleSidebar() {
+      if (window.matchMedia("(max-width: 767px)").matches) return;
+      document.body.classList.toggle("sidebar-expanded");
+      const expanded = document.body.classList.contains("sidebar-expanded");
+      const tip = document.getElementById("sbToggle");
+      if (tip) tip.setAttribute("data-tip", expanded ? "Recolher" : "Expandir");
+      try { localStorage.setItem("sidebar_expanded", expanded ? "1" : "0"); } catch(e) {}
+    }
+
+    function setSidebarAtivo(id) {
+      document.querySelectorAll(".sidebar-item.ativo").forEach(el => el.classList.remove("ativo"));
+      const el = document.getElementById(id);
+      if (el) el.classList.add("ativo");
+    }
+
+    function navIrInicio() {
+      setSidebarAtivo("sbHome");
+      // Se estiver na agenda de um técnico (admin), volta ao painel geral
+      const painel = document.getElementById("painelTecnico");
+      if (painel && !painel.classList.contains("oculto") && perfilAtual !== "tecnico") {
+        trocarTecnico();
+        return;
+      }
+      // Já no início: só rola pro topo
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function navAbrirConfig() {
+      setSidebarAtivo("sbConfig");
+      abrirModalConfig();
+    }
+
+    function navAbrirMenuTec() {
+      setSidebarAtivo("sbMenuTec");
+      abrirModalMenuTecnico();
+    }
+
+    function navAbrirRelatorio() {
+      setSidebarAtivo("sbRelatorio");
+      if (perfilAtual === "tecnico") {
+        gerarMeuRelatorio();
+      } else {
+        gerarRelatorioDiario();
+      }
+    }
+
+    // Restaura preferência de sidebar expandida (desktop)
+    try {
+      if (localStorage.getItem("sidebar_expanded") === "1" && !window.matchMedia("(max-width: 767px)").matches) {
+        document.body.classList.add("sidebar-expanded");
+      }
+    } catch(e) {}
+
 
     function abrirModalConfig() {
       const overlay = document.getElementById("modalConfigOverlay");
@@ -2355,6 +2835,7 @@ Contato: (11) 99347-3587"></textarea>
     // (colar agenda, editar dados de OS/cliente, migrar ou excluir OS entre técnicos)
     async function abrirAgendaAdmin(nome) {
       fecharModalConfig();
+      setSidebarAtivo("sbHome");
       await selecionarTecnico(nome);
       mostrarImportador();
     }
