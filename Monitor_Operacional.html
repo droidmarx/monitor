@@ -403,8 +403,13 @@
           return Promise.reject(new Error(erros.join(" | ") || "Falha ao buscar dados"));
         }
         var base = bases[i];
-        var url = base + (base.indexOf("?") >= 0 ? "&" : "?") + "t=" + Date.now();
-        return fetch(url, { method: "GET", cache: "no-store" })
+        // NÃO adicionar ?t= na MockAPI — ela trata query string como filtro e retorna 404
+        var url = base;
+        return fetch(url, {
+          method: "GET",
+          cache: "no-store",
+          headers: { "Accept": "application/json" }
+        })
           .then(function (resp) {
             if (!resp.ok) throw new Error("HTTP " + resp.status);
             return resp.json();
