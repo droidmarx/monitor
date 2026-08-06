@@ -2018,6 +2018,51 @@
       <div class="modal-divider"></div>
       <button class="btn-salvar-modal" onclick="gerarRelatorioDiario()" style="margin-top: 0; background: linear-gradient(135deg, #10b981, #059669);"><svg class="icon"><use href="#i-file-text"></use></svg> Gerar Relatório do Dia</button>
       <button class="btn-salvar-modal" onclick="abrirModalInstalacoesMes()" style="margin-top: 10px; background: linear-gradient(135deg, #8b5cf6, #6366f1);"><svg class="icon"><use href="#i-router"></use></svg> Ver Instalações (mês atual e anterior)</button>
+      <button class="btn-salvar-modal" onclick="abrirModalHistoricoData()" style="margin-top: 10px; background: linear-gradient(135deg, #0ea5e9, #2563eb);"><svg class="icon"><use href="#i-clock"></use></svg> Histórico por Data</button>
+    </div>
+  </div>
+
+
+  <!-- Modal Histórico por Data -->
+  <div class="modal-overlay" id="modalHistoricoDataOverlay">
+    <div class="modal">
+      <button class="modal-fechar" onclick="fecharModalHistoricoData()" aria-label="Fechar"><svg class="icon"><use href="#i-x"></use></svg></button>
+      <div class="modal-titulo"><svg class="icon icon-lg"><use href="#i-clock"></use></svg> Histórico por Data</div>
+      <p style="font-size:13px; color:#94a3b8; margin:-8px 0 16px;">Escolha uma data para ver instalações e atividades de O.S. registradas nesse dia.</p>
+
+      <div class="campo-grupo">
+        <label style="color:#cbd5e1; font-size:13px; font-weight:700;">Data</label>
+        <input type="date" class="campo-input" id="historico-data-input" />
+      </div>
+      <button class="btn-salvar-modal" onclick="buscarHistoricoPorData()" style="margin-top:4px;"><svg class="icon"><use href="#i-zap"></use></svg> Filtrar atividades</button>
+
+      <div id="historicoDataResultado" style="margin-top:18px; display:none;">
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;">
+          <div style="flex:1; min-width:100px; text-align:center; background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.2); border-radius:14px; padding:12px 8px;">
+            <div style="font-size:24px; font-weight:800; color:#4ade80;" id="histDataQtdInst">0</div>
+            <div style="font-size:10.5px; color:#94a3b8; font-weight:700; text-transform:uppercase; margin-top:4px;">Instalações</div>
+          </div>
+          <div style="flex:1; min-width:100px; text-align:center; background:rgba(250,204,21,0.08); border:1px solid rgba(250,204,21,0.2); border-radius:14px; padding:12px 8px;">
+            <div style="font-size:24px; font-weight:800; color:#facc15;" id="histDataQtdRota">0</div>
+            <div style="font-size:10.5px; color:#94a3b8; font-weight:700; text-transform:uppercase; margin-top:4px;">Em rota</div>
+          </div>
+          <div style="flex:1; min-width:100px; text-align:center; background:rgba(74,222,128,0.08); border:1px solid rgba(74,222,128,0.2); border-radius:14px; padding:12px 8px;">
+            <div style="font-size:24px; font-weight:800; color:#4ade80;" id="histDataQtdOk">0</div>
+            <div style="font-size:10.5px; color:#94a3b8; font-weight:700; text-transform:uppercase; margin-top:4px;">Concluídas</div>
+          </div>
+          <div style="flex:1; min-width:100px; text-align:center; background:rgba(248,113,113,0.08); border:1px solid rgba(248,113,113,0.2); border-radius:14px; padding:12px 8px;">
+            <div style="font-size:24px; font-weight:800; color:#f87171;" id="histDataQtdNao">0</div>
+            <div style="font-size:10.5px; color:#94a3b8; font-weight:700; text-transform:uppercase; margin-top:4px;">Não concluídas</div>
+          </div>
+        </div>
+
+        <div class="modal-secao" id="histDataSecaoInst">Instalações</div>
+        <div id="histDataListaInst"></div>
+
+        <div class="modal-divider"></div>
+        <div class="modal-secao" id="histDataSecaoOS">Atividades de O.S.</div>
+        <div id="histDataListaOS"></div>
+      </div>
     </div>
   </div>
 
@@ -2073,8 +2118,9 @@
       </div>
 
       <hr class="modal-divider" />
-      <div class="modal-secao">Relatório</div>
-      <button class="btn-mostrar" onclick="fecharModalMenuTecnico(); gerarMeuRelatorio();" style="margin-bottom:0; display:flex; background: rgba(16,185,129,0.14); border:1px solid rgba(16,185,129,0.3); color:#34d399;"><svg class="icon"><use href="#i-file-text"></use></svg> Gerar Meu Relatório do Dia</button>
+      <div class="modal-secao">Relatório e histórico</div>
+      <button class="btn-mostrar" onclick="fecharModalMenuTecnico(); gerarMeuRelatorio();" style="margin-bottom:10px; display:flex; background: rgba(16,185,129,0.14); border:1px solid rgba(16,185,129,0.3); color:#34d399;"><svg class="icon"><use href="#i-file-text"></use></svg> Gerar Meu Relatório do Dia</button>
+      <button class="btn-mostrar" onclick="fecharModalMenuTecnico(); abrirModalHistoricoData();" style="margin-bottom:0; display:flex; background: rgba(14,165,233,0.14); border:1px solid rgba(14,165,233,0.3); color:#38bdf8;"><svg class="icon"><use href="#i-clock"></use></svg> Histórico por Data</button>
     </div>
   </div>
 
@@ -2567,6 +2613,7 @@ Contato: (11) 99347-3587"></textarea>
     document.getElementById("modalNovaInstalacaoOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalNovaInstalacao(); });
     document.getElementById("modalNovaOSAvulsaOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalNovaOSAvulsa(); });
     document.getElementById("modalInstalacoesMesOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalInstalacoesMes(); });
+    document.getElementById("modalHistoricoDataOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalHistoricoData(); });
     document.getElementById("modalMigrarOSOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalMigrarOS(); });
 
     function toggleDropdown(tec, event) {
@@ -3040,7 +3087,7 @@ Contato: (11) 99347-3587"></textarea>
 
         let statusObj = {};
         try { statusObj = JSON.parse(registro.status || "{}"); } catch(e) {}
-        statusObj[osId] = { status: 'concluido', obs: obsTexto, timestamp: horaAtual };
+        statusObj[osId] = { status: 'concluido', obs: obsTexto, timestamp: horaAtual, data: dataISOLocal() };
 
         await fetch(`${API_URL}/${registro.id}`, {
           method: "PUT",
@@ -3087,6 +3134,198 @@ Contato: (11) 99347-3587"></textarea>
         .filter(i => i.mesAno === mesAno)
         .sort((a, b) => new Date(b.data) - new Date(a.data));
     }
+
+    // Data local no formato AAAA-MM-DD
+    function dataISOLocal(dateObj) {
+      const d = dateObj || new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function formatarDataBR(isoDate) {
+      if (!isoDate) return "";
+      const m = String(isoDate).match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (!m) return isoDate;
+      return `${m[3]}/${m[2]}/${m[1]}`;
+    }
+
+    // Extrai AAAA-MM-DD de um registro de instalação ou status
+    function extrairDataRegistro(item) {
+      if (!item) return null;
+      if (item.data && /^\d{4}-\d{2}-\d{2}/.test(item.data)) return item.data.slice(0, 10);
+      if (item.mesAno && item.data) {
+        try {
+          const d = new Date(item.data);
+          if (!isNaN(d.getTime())) return dataISOLocal(d);
+        } catch (e) {}
+      }
+      return null;
+    }
+
+    function extrairDataStatus(info) {
+      if (!info) return null;
+      if (typeof info === 'object') {
+        if (info.data && /^\d{4}-\d{2}-\d{2}/.test(info.data)) return info.data.slice(0, 10);
+        // timestamp ISO completo
+        if (info.timestamp && /^\d{4}-\d{2}-\d{2}/.test(String(info.timestamp))) {
+          return String(info.timestamp).slice(0, 10);
+        }
+      }
+      return null;
+    }
+
+    function abrirModalHistoricoData() {
+      try { fecharModalConfig(); } catch(e) {}
+      try { fecharModalMenuTecnico(); } catch(e) {}
+      const input = document.getElementById("historico-data-input");
+      if (input && !input.value) input.value = dataISOLocal();
+      document.getElementById("historicoDataResultado").style.display = "none";
+      const overlay = document.getElementById("modalHistoricoDataOverlay");
+      overlay.style.display = "flex";
+      setTimeout(() => overlay.classList.add("aberto"), 10);
+    }
+
+    function fecharModalHistoricoData() {
+      const overlay = document.getElementById("modalHistoricoDataOverlay");
+      overlay.classList.remove("aberto");
+      setTimeout(() => overlay.style.display = "none", 300);
+    }
+
+    async function buscarHistoricoPorData() {
+      const input = document.getElementById("historico-data-input");
+      const dataSel = (input && input.value) ? input.value : "";
+      if (!dataSel) {
+        alert("Selecione uma data.");
+        return;
+      }
+
+      toggleLoading(true, "Buscando histórico...");
+      try {
+        const resp = await fetch(API_URL);
+        const dados = await resp.json();
+        const ehTecnico = perfilAtual === 'tecnico';
+        const tecnicosAlvo = ehTecnico ? [usuarioLogado] : (listaTecnicos || []);
+
+        const instalacoesDia = [];
+        const osDia = [];
+
+        tecnicosAlvo.forEach(tec => {
+          const registro = dados.find(d => d.tecnico === tec);
+          if (!registro) return;
+
+          // Instalações na data
+          let historico = [];
+          try { historico = JSON.parse(registro.instalacoes || "[]"); } catch(e) {}
+          historico.forEach(item => {
+            const dItem = extrairDataRegistro(item);
+            if (dItem === dataSel) {
+              instalacoesDia.push({ ...item, tecnico: tec });
+            }
+          });
+
+          // Status de O.S. na data
+          let statusSalvo = {};
+          try { statusSalvo = JSON.parse(registro.status || "{}"); } catch(e) {}
+          const listaOS = registro.agenda ? parsearAgenda(registro.agenda) : [];
+          const mapaOS = {};
+          listaOS.forEach(os => { mapaOS[os.id] = os; });
+
+          Object.keys(statusSalvo).forEach(osId => {
+            const info = statusSalvo[osId];
+            let st = "", obs = "", time = "", dataStatus = null;
+            if (typeof info === 'object') {
+              st = info.status || "";
+              obs = info.obs || "";
+              time = info.timestamp || "";
+              dataStatus = extrairDataStatus(info);
+            } else {
+              st = info;
+            }
+            if (!st) return;
+
+            // Registros antigos sem campo data: só entram se a data escolhida for hoje
+            if (!dataStatus) {
+              if (dataSel !== dataISOLocal()) return;
+            } else if (dataStatus !== dataSel) {
+              return;
+            }
+
+            const osInfo = mapaOS[osId] || { id: osId, cliente: "O.S. " + osId, assunto: "", horario: "" };
+            osDia.push({
+              tecnico: tec,
+              osId,
+              status: st,
+              obs,
+              timestamp: time,
+              cliente: osInfo.cliente,
+              assunto: osInfo.assunto,
+              horario: osInfo.horario
+            });
+          });
+        });
+
+        // Ordena
+        instalacoesDia.sort((a, b) => new Date(b.data) - new Date(a.data));
+        const ordemStatus = { rota: 0, concluido: 1, 'nao-concluido': 2 };
+        osDia.sort((a, b) => (ordemStatus[a.status] ?? 9) - (ordemStatus[b.status] ?? 9) || String(a.timestamp).localeCompare(String(b.timestamp)));
+
+        const qtdRota = osDia.filter(o => o.status === 'rota').length;
+        const qtdOk = osDia.filter(o => o.status === 'concluido').length;
+        const qtdNao = osDia.filter(o => o.status === 'nao-concluido').length;
+
+        document.getElementById("histDataQtdInst").textContent = instalacoesDia.length;
+        document.getElementById("histDataQtdRota").textContent = qtdRota;
+        document.getElementById("histDataQtdOk").textContent = qtdOk;
+        document.getElementById("histDataQtdNao").textContent = qtdNao;
+
+        const labelData = formatarDataBR(dataSel);
+        document.getElementById("histDataSecaoInst").textContent = `Instalações — ${labelData}`;
+        document.getElementById("histDataSecaoOS").textContent = `Atividades de O.S. — ${labelData}`;
+
+        document.getElementById("histDataListaInst").innerHTML = instalacoesDia.length
+          ? instalacoesDia.map(item => {
+              const hora = item.data ? new Date(item.data).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '--:--';
+              const tecLabel = ehTecnico ? '' : ` · <span style="color:#67e8f9">${escapeHtml(item.tecnico)}</span>`;
+              return `
+                <div class="detalhe-linha" style="flex-wrap:wrap; gap:6px;">
+                  <span class="rotulo">${ic('clock','icon-sm')} ${hora}${tecLabel}</span>
+                  <span class="valor">${escapeHtml(item.cliente || '—')} · CTO ${escapeHtml(item.cto || '—')} · Porta ${escapeHtml(String(item.porta || '—'))}${item.equipamento ? ' · ' + escapeHtml(item.equipamento) : ''}</span>
+                </div>`;
+            }).join("")
+          : `<div class="sem-atividade" style="padding:10px 0;">Nenhuma instalação nesta data.</div>`;
+
+        document.getElementById("histDataListaOS").innerHTML = osDia.length
+          ? osDia.map(item => {
+              const cfg = {
+                rota: { cor: '#facc15', label: 'Em rota', icon: 'car' },
+                concluido: { cor: '#4ade80', label: 'Concluído', icon: 'check-circle' },
+                'nao-concluido': { cor: '#f87171', label: 'Não concluído', icon: 'x-circle' }
+              }[item.status] || { cor: '#94a3b8', label: item.status, icon: 'clock' };
+              const hora = formatarHoraSimples(item.timestamp) || (item.timestamp && item.timestamp !== '--:--' ? item.timestamp : '--h--');
+              const tecLabel = ehTecnico ? '' : ` · ${escapeHtml(item.tecnico)}`;
+              const obs = item.obs ? `<div style="font-size:12px; color:#94a3b8; margin-top:4px; font-style:italic;">${escapeHtml(item.obs)}</div>` : '';
+              return `
+                <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:10px 12px; margin-bottom:8px;">
+                  <div style="display:flex; justify-content:space-between; gap:8px; align-items:center; flex-wrap:wrap;">
+                    <span style="font-size:11px; font-weight:800; color:${cfg.cor}; display:inline-flex; align-items:center; gap:4px;">${ic(cfg.icon,'icon-sm')} ${cfg.label}</span>
+                    <span style="font-size:12px; color:#cbd5e1; font-weight:600;">${escapeHtml(String(hora))}${tecLabel}</span>
+                  </div>
+                  <div style="font-size:14px; font-weight:700; color:#f1f5f9; margin-top:6px;">${escapeHtml(item.cliente || '—')}</div>
+                  <div style="font-size:12.5px; color:#94a3b8; margin-top:2px;">OS ${escapeHtml(String(item.osId))} · ${escapeHtml(item.assunto || 'Sem assunto')}</div>
+                  ${obs}
+                </div>`;
+            }).join("")
+          : `<div class="sem-atividade" style="padding:10px 0;">Nenhuma atividade de O.S. registrada nesta data.${dataSel !== dataISOLocal() ? ' (Registros antigos sem data só aparecem no dia de hoje.)' : ''}</div>`;
+
+        document.getElementById("historicoDataResultado").style.display = "block";
+      } catch (e) {
+        console.error("Erro ao buscar histórico por data:", e);
+        mostrarErro("Erro ao buscar histórico por data.");
+      } finally {
+        toggleLoading(false);
+      }
+    }
+
+
 
     // Filtro de mês nas instalações: null | 'atual' | 'anterior'
     let filtroMesInstalAdmin = null;
@@ -3540,7 +3779,8 @@ Contato: (11) 99347-3587"></textarea>
         statusObj[osId] = {
           status: novoStatus || "",
           obs: novaObs || "",
-          timestamp: horaConclusao
+          timestamp: horaConclusao,
+          data: dataISOLocal()
         };
 
         await fetch(`${API_URL}/${registro.id}`, {
@@ -3970,7 +4210,7 @@ Contato: (11) 99347-3587"></textarea>
           const obsVal = localStorage.getItem(`obs_${tecnicoAtual}_${osId}`) || "";
           const timeVal = localStorage.getItem(`timestamp_${tecnicoAtual}_${osId}_${statusVal}`) || "--:--";
 
-          statusParaSalvar[osId] = { status: statusVal, obs: obsVal, timestamp: timeVal };
+          statusParaSalvar[osId] = { status: statusVal, obs: obsVal, timestamp: timeVal, data: dataISOLocal() };
         }
       }
 
@@ -4508,7 +4748,8 @@ Contato: (11) 99347-3587"></textarea>
       statusObjNovo[osId] = {
         status: statusAtual || "",
         obs: obsAtual || "",
-        timestamp: timeAtual
+        timestamp: timeAtual,
+        data: dataISOLocal()
       };
 
       await fetch(`${API_URL}/${registroNovo.id}`, {
@@ -4681,7 +4922,8 @@ Contato: (11) 99347-3587"></textarea>
               statusObjNovo[os.id] = {
                  status: novoStatus || "",
                  obs: novaObs || "",
-                 timestamp: novoStatus ? obtenerHoraAtual() : "--:--"
+                 timestamp: novoStatus ? obtenerHoraAtual() : "--:--",
+                 data: dataISOLocal()
               };
 
               // Atualiza o novo técnico na API
@@ -5020,6 +5262,7 @@ Contato: (11) 99347-3587"></textarea>
           document.getElementById("modalRelatorioOverlay").classList.contains("aberto") ||
           document.getElementById("modalNovaInstalacaoOverlay").classList.contains("aberto") ||
           document.getElementById("modalInstalacoesMesOverlay").classList.contains("aberto") ||
+          document.getElementById("modalHistoricoDataOverlay").classList.contains("aberto") ||
           document.getElementById("modalNovaOSAvulsaOverlay").classList.contains("aberto") ||
           document.getElementById("modalMigrarOSOverlay").classList.contains("aberto") ||
           document.getElementById("modalMenuTecnicoOverlay").classList.contains("aberto")) {
