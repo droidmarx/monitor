@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/galeria",
+      "destination": "/api/galeria"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store" }
+      ]
+    }
+  ]
+}
