@@ -1,4 +1,4 @@
-// Vercel Serverless — proxy same-origin para a MockAPI (evita bloqueios no navegador)
+// Vercel Serverless — proxy same-origin para a MockAPI
 const UPSTREAM = "https://68f458d8b16eb6f46834542c.mockapi.io/Rexord/Galeria";
 
 module.exports = async function handler(req, res) {
@@ -21,8 +21,8 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const q = req.url && req.url.includes("?") ? req.url.slice(req.url.indexOf("?")) : "";
-    const upstream = await fetch(UPSTREAM + q, {
+    // Sem query string — MockAPI retorna 404 com parâmetros desconhecidos
+    const upstream = await fetch(UPSTREAM, {
       headers: { Accept: "application/json" },
       cache: "no-store"
     });
