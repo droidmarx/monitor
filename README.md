@@ -5,7 +5,7 @@
 Aplicação web mobile-first com login por perfil, sincronização em nuvem, agendamento por dia, histórico em calendário e fluxo completo de status das O.S.
 
 <p align="center">
-  <img src="docs/demo-agenda-tecnico.gif" alt="Demo animada do Agenda Técnico Inteligente" width="320" />
+  <img src="https://raw.githubusercontent.com/droidmarx/monitor/main/demo-agenda-tecnico.gif" alt="Demo animada do Agenda Técnico Inteligente" width="320" />
 </p>
 
 <p align="center">
@@ -29,37 +29,37 @@ Aplicação web mobile-first com login por perfil, sincronização em nuvem, age
 
 ### Login
 <p align="center">
-  <img src="docs/screenshots/01-login.png" alt="Tela de login" width="280" />
+  <img src="https://raw.githubusercontent.com/droidmarx/monitor/main/01-login.png" alt="Tela de login" width="280" />
 </p>
 
 Acesso por perfil (**master**, **admin** ou **técnico**), com validação de credenciais e sessão persistente na aba.
 
 ### Dashboard de monitoramento
 <p align="center">
-  <img src="docs/screenshots/02-dashboard.png" alt="Dashboard mobile" width="280" />
+  <img src="https://raw.githubusercontent.com/droidmarx/monitor/main/02-dashboard.png" alt="Dashboard mobile" width="280" />
   &nbsp;
-  <img src="docs/screenshots/06-dashboard-desktop.png" alt="Dashboard desktop" width="480" />
+  <img src="https://raw.githubusercontent.com/droidmarx/monitor/main/06-dashboard-desktop.png" alt="Dashboard desktop" width="480" />
 </p>
 
 Resumo geral com gráfico donut, filtros por tipo de serviço (instalação, LOS, lentidão…) e cards por técnico com status quase em tempo real.
 
 ### Histórico geral (calendário)
 <p align="center">
-  <img src="docs/screenshots/03-historico-calendario.png" alt="Histórico em calendário" width="280" />
+  <img src="https://raw.githubusercontent.com/droidmarx/monitor/main/03-historico-calendario.png" alt="Histórico em calendário" width="280" />
 </p>
 
 Calendário mensal em que **dias com agendamento** aparecem com **indicador verde**. Toque no dia para ver instalações, O.S. em rota, concluídas e não concluídas.
 
 ### Gestão de técnicos
 <p align="center">
-  <img src="docs/screenshots/04-gerenciar-tecnicos.png" alt="Gerenciar técnicos" width="280" />
+  <img src="https://raw.githubusercontent.com/droidmarx/monitor/main/04-gerenciar-tecnicos.png" alt="Gerenciar técnicos" width="280" />
 </p>
 
 Cadastro, senhas, abertura de agenda, relatórios e atalhos de histórico/instalações (perfil admin/master).
 
 ### Agenda por dia
 <p align="center">
-  <img src="docs/screenshots/05-agenda-por-dia.png" alt="Agenda por dia com chips" width="280" />
+  <img src="https://raw.githubusercontent.com/droidmarx/monitor/main/05-agenda-por-dia.png" alt="Agenda por dia com chips" width="280" />
 </p>
 
 Chips **Hoje / Amanhã / +2 / +3** para colar e planejar a agenda. Ponto verde = dia já preenchido. Na virada do dia, o plano futuro é promovido ou o dia inicia limpo.
@@ -102,7 +102,7 @@ instalacoes[]                    → CTO, porta, lat/lng, etc.
 
 ## Como rodar
 
-1. Abra `agenda-tecnico.html` no navegador (ou sirva via HTTP estático).
+1. Abra `index.html` no navegador (ou o deploy na Vercel).
 2. Logins de demonstração:
    - **master** / `master123`
    - **admin** / `mike`
@@ -115,17 +115,18 @@ A URL da API está no início do `<script>` (`API_URL`).
 ## Estrutura
 
 ```text
-├── agenda-tecnico.html
+├── index.html
 ├── README.md
-└── docs/
-    ├── demo-agenda-tecnico.gif      # demo animada
-    └── screenshots/
-        ├── 01-login.png
-        ├── 02-dashboard.png
-        ├── 03-historico-calendario.png
-        ├── 04-gerenciar-tecnicos.png
-        ├── 05-agenda-por-dia.png
-        └── 06-dashboard-desktop.png
+├── demo-agenda-tecnico.gif
+├── 01-login.png
+├── 02-dashboard.png
+├── 03-historico-calendario.png
+├── 04-gerenciar-tecnicos.png
+├── 05-agenda-por-dia.png
+├── 06-dashboard-desktop.png
+├── manifest.json / sw.js / icon-*.png
+├── api/
+└── vercel.json
 ```
 
 ---
