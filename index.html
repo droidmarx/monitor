@@ -1751,6 +1751,135 @@
     .instal-mes-card-tec.dim { opacity: 0.45; }
     .instal-mes-bloco.oculto-filtro { display: none !important; }
 
+    .cto-link {
+      appearance: none;
+      -webkit-appearance: none;
+      font-family: inherit;
+      background: rgba(34, 211, 238, 0.1);
+      border: 1px solid rgba(34, 211, 238, 0.28);
+      color: var(--cyan-2);
+      font-size: inherit;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      line-height: 1.3;
+      transition: background 0.15s, border-color 0.15s, transform 0.12s;
+    }
+    .cto-link:hover {
+      background: rgba(34, 211, 238, 0.18);
+      border-color: rgba(34, 211, 238, 0.45);
+    }
+    .cto-link:active { transform: scale(0.97); }
+
+    .cliente-maps-link {
+      appearance: none;
+      -webkit-appearance: none;
+      font-family: inherit;
+      background: none;
+      border: none;
+      color: #f1f5f9;
+      font-size: inherit;
+      font-weight: 800;
+      padding: 0;
+      margin: 0;
+      cursor: pointer;
+      text-align: left;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      line-height: 1.3;
+      text-decoration: underline;
+      text-decoration-color: rgba(34, 211, 238, 0.35);
+      text-underline-offset: 3px;
+      transition: color 0.15s, text-decoration-color 0.15s;
+    }
+    .cliente-maps-link:hover {
+      color: var(--cyan-2);
+      text-decoration-color: rgba(34, 211, 238, 0.7);
+    }
+    .cliente-maps-link .icon { color: var(--cyan-2); flex-shrink: 0; }
+
+    .seletor-data-agenda {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 14px;
+      max-width: 680px;
+    }
+    .chip-data-agenda {
+      appearance: none;
+      -webkit-appearance: none;
+      font-family: inherit;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text-2);
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 10px 12px;
+      min-height: 42px;
+      border-radius: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+      transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.12s;
+      flex: 1;
+      min-width: 72px;
+    }
+    .chip-data-agenda:active { transform: scale(0.97); }
+    .chip-data-agenda .chip-data-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted-2);
+      font-weight: 700;
+    }
+    .chip-data-agenda .chip-data-dia {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .chip-data-agenda.ativo {
+      border-color: rgba(34, 211, 238, 0.45);
+      background: rgba(34, 211, 238, 0.12);
+      box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.12);
+    }
+    .chip-data-agenda.ativo .chip-data-label { color: var(--cyan-2); }
+    .chip-data-agenda.tem-agenda:not(.ativo) {
+      border-color: rgba(74, 222, 128, 0.28);
+    }
+    .chip-data-agenda .chip-data-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #4ade80;
+      display: none;
+      margin-top: 2px;
+    }
+    .chip-data-agenda.tem-agenda .chip-data-dot { display: inline-block; }
+    .badge-data-agenda {
+      display: none;
+      text-align: center;
+      margin: 0 auto 12px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--cyan-2);
+      background: rgba(34, 211, 238, 0.1);
+      border: 1px solid rgba(34, 211, 238, 0.22);
+      padding: 7px 14px;
+      border-radius: 999px;
+      width: fit-content;
+    }
+    .badge-data-agenda.visivel { display: flex; align-items: center; gap: 6px; }
+
+
+
+
 
     /* ===== LOGIN ===== */
     .tela-login {
@@ -1890,6 +2019,121 @@
       .cards, .seletor-tecnico, .resumo-geral-card { max-width: 720px; }
     }
 
+
+    .cal-hist {
+      background: rgba(0, 0, 0, 0.22);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .cal-hist-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .cal-hist-nav button {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text-2);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cal-hist-nav button:active { transform: scale(0.94); }
+    .cal-hist-mes {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .cal-hist-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+    .cal-hist-dow {
+      text-align: center;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted-2);
+      text-transform: uppercase;
+      padding: 4px 0 8px;
+    }
+    .cal-hist-dia {
+      appearance: none;
+      -webkit-appearance: none;
+      font-family: inherit;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-2);
+      min-height: 40px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 4px 2px;
+      transition: background 0.15s, border-color 0.15s, transform 0.12s;
+    }
+    .cal-hist-dia:disabled {
+      opacity: 0.25;
+      cursor: default;
+    }
+    .cal-hist-dia:not(:disabled):active { transform: scale(0.95); }
+    .cal-hist-dia.outro-mes { opacity: 0.35; }
+    .cal-hist-dia.hoje {
+      border-color: rgba(34, 211, 238, 0.35);
+      color: var(--cyan-2);
+    }
+    .cal-hist-dia.tem-agenda {
+      background: rgba(34, 197, 94, 0.1);
+      border-color: rgba(34, 197, 94, 0.28);
+      color: #86efac;
+    }
+    .cal-hist-dia.tem-agenda .cal-dot {
+      display: block;
+    }
+    .cal-hist-dia.selecionado {
+      background: rgba(34, 211, 238, 0.16);
+      border-color: rgba(34, 211, 238, 0.5);
+      color: var(--text);
+      box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.12);
+    }
+    .cal-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #4ade80;
+      display: none;
+      box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.15);
+    }
+    .cal-hist-legenda {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      font-size: 11.5px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .cal-hist-legenda span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
   </style>
 </head>
 
@@ -2018,25 +2262,33 @@
       <div class="modal-divider"></div>
       <button class="btn-salvar-modal" onclick="gerarRelatorioDiario()" style="margin-top: 0; background: linear-gradient(135deg, #10b981, #059669);"><svg class="icon"><use href="#i-file-text"></use></svg> Gerar Relatório do Dia</button>
       <button class="btn-salvar-modal" onclick="abrirModalInstalacoesMes()" style="margin-top: 10px; background: linear-gradient(135deg, #8b5cf6, #6366f1);"><svg class="icon"><use href="#i-router"></use></svg> Ver Instalações (mês atual e anterior)</button>
-      <button class="btn-salvar-modal" onclick="abrirModalHistoricoData()" style="margin-top: 10px; background: linear-gradient(135deg, #0ea5e9, #2563eb);"><svg class="icon"><use href="#i-clock"></use></svg> Histórico por Data</button>
+      <button class="btn-salvar-modal" onclick="abrirModalHistoricoData()" style="margin-top: 10px; background: linear-gradient(135deg, #0ea5e9, #2563eb);"><svg class="icon"><use href="#i-clock"></use></svg> Histórico Geral</button>
     </div>
   </div>
 
 
-  <!-- Modal Histórico por Data -->
+  <!-- Modal Histórico por Data (calendário) -->
   <div class="modal-overlay" id="modalHistoricoDataOverlay">
     <div class="modal">
       <button class="modal-fechar" onclick="fecharModalHistoricoData()" aria-label="Fechar"><svg class="icon"><use href="#i-x"></use></svg></button>
-      <div class="modal-titulo"><svg class="icon icon-lg"><use href="#i-clock"></use></svg> Histórico por Data</div>
-      <p style="font-size:13px; color:#94a3b8; margin:-8px 0 16px;">Escolha uma data para ver instalações e atividades de O.S. registradas nesse dia.</p>
+      <div class="modal-titulo"><svg class="icon icon-lg"><use href="#i-clock"></use></svg> Histórico Geral</div>
 
-      <div class="campo-grupo">
-        <label style="color:#cbd5e1; font-size:13px; font-weight:700;">Data</label>
-        <input type="date" class="campo-input" id="historico-data-input" />
+      <div class="cal-hist" id="calHistContainer">
+        <div class="cal-hist-nav">
+          <button type="button" onclick="navegarCalendarioHist(-1)" aria-label="Mês anterior"><svg class="icon"><use href="#i-arrow-left"></use></svg></button>
+          <div class="cal-hist-mes" id="calHistMesLabel">—</div>
+          <button type="button" onclick="navegarCalendarioHist(1)" aria-label="Próximo mês"><svg class="icon" style="transform:rotate(180deg)"><use href="#i-arrow-left"></use></svg></button>
+        </div>
+        <div class="cal-hist-grid" id="calHistGrid"></div>
+        <div class="cal-hist-legenda">
+          <span><span class="cal-dot" style="display:block"></span> Dia com agendamento</span>
+          <span style="border:1px solid rgba(34,211,238,0.35); border-radius:6px; padding:2px 8px; color:#67e8f9;">Hoje</span>
+        </div>
       </div>
-      <button class="btn-salvar-modal" onclick="buscarHistoricoPorData()" style="margin-top:4px;"><svg class="icon"><use href="#i-zap"></use></svg> Filtrar atividades</button>
 
-      <div id="historicoDataResultado" style="margin-top:18px; display:none;">
+      <input type="hidden" id="historico-data-input" value="" />
+
+      <div id="historicoDataResultado" style="margin-top:14px; display:none;">
         <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;">
           <div style="flex:1; min-width:100px; text-align:center; background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.2); border-radius:14px; padding:12px 8px;">
             <div style="font-size:24px; font-weight:800; color:#4ade80;" id="histDataQtdInst">0</div>
@@ -2105,22 +2357,23 @@
       <button class="modal-fechar" onclick="fecharModalMenuTecnico()" aria-label="Fechar"><svg class="icon"><use href="#i-x"></use></svg></button>
       <div class="modal-titulo"><svg class="icon icon-lg"><use href="#i-menu"></use></svg> Menu Rápido</div>
 
-      <div class="modal-secao">Agenda</div>
-      <button class="btn-mostrar" id="btnMostrarImportadorTecnico" onclick="mostrarImportadorTecnico()" style="margin-bottom:10px; display:flex;"><svg class="icon"><use href="#i-clipboard-list"></use></svg> Colar / Atualizar minha agenda</button>
+      <div class="modal-secao">Agenda por dia</div>
+      <div class="seletor-data-agenda" id="seletorDataAgendaTecnico" style="margin-bottom:10px;"></div>
+      <button class="btn-mostrar" id="btnMostrarImportadorTecnico" onclick="mostrarImportadorTecnico()" style="margin-bottom:10px; display:flex;"><svg class="icon"><use href="#i-clipboard-list"></use></svg> Colar / Atualizar agenda do dia</button>
       <button class="btn-mostrar" onclick="fecharModalMenuTecnico(); abrirModalNovaOSAvulsa();" style="margin-bottom:10px; display:flex; background: rgba(139,92,246,0.14); border:1px solid rgba(139,92,246,0.3); color:#c4b5fd;"><svg class="icon"><use href="#i-plus"></use></svg> Adicionar OS Avulsa</button>
       <div class="importador oculto" id="importadorTecnico" style="margin:0 0 10px; padding:0; background:none; border:none;">
         <div class="importador-acoes-topo">
           <button class="btn-minimizar-campo" onclick="mostrarImportadorTecnico()"><svg class="icon icon-sm"><use href="#i-chevron-down"></use></svg> Minimizar</button>
           <button class="btn-limpar-campo" onclick="limparImportadorTecnico()"><svg class="icon icon-sm"><use href="#i-trash-2"></use></svg> Limpar</button>
         </div>
-        <textarea id="entradaTecnico" placeholder="Cole aqui a sua agenda do dia..."></textarea>
+        <textarea id="entradaTecnico" placeholder="Cole a agenda do dia selecionado (hoje ou até +3 dias)..."></textarea>
         <button class="btn-gerar" onclick="gerarAgendaTecnico()"><svg class="icon"><use href="#i-zap"></use></svg> Gerar Agenda Inteligente</button>
       </div>
 
       <hr class="modal-divider" />
       <div class="modal-secao">Relatório e histórico</div>
       <button class="btn-mostrar" onclick="fecharModalMenuTecnico(); gerarMeuRelatorio();" style="margin-bottom:10px; display:flex; background: rgba(16,185,129,0.14); border:1px solid rgba(16,185,129,0.3); color:#34d399;"><svg class="icon"><use href="#i-file-text"></use></svg> Gerar Meu Relatório do Dia</button>
-      <button class="btn-mostrar" onclick="fecharModalMenuTecnico(); abrirModalHistoricoData();" style="margin-bottom:0; display:flex; background: rgba(14,165,233,0.14); border:1px solid rgba(14,165,233,0.3); color:#38bdf8;"><svg class="icon"><use href="#i-clock"></use></svg> Histórico por Data</button>
+      <button class="btn-mostrar" onclick="fecharModalMenuTecnico(); abrirModalHistoricoData();" style="margin-bottom:0; display:flex; background: rgba(14,165,233,0.14); border:1px solid rgba(14,165,233,0.3); color:#38bdf8;"><svg class="icon"><use href="#i-clock"></use></svg> Histórico Geral</button>
     </div>
   </div>
 
@@ -2172,6 +2425,10 @@
   <div class="painel-tecnico oculto" id="painelTecnico">
     <button class="btn-trocar" id="btnVoltarPainel" onclick="trocarTecnico()">↩️ Voltar ao Painel Geral</button>
     <div class="badge-admin" id="badgeModoPainel"><svg class="icon icon-sm"><use href="#i-key"></use></svg> Modo Admin — Gerenciamento de Agenda</div>
+
+    <div class="seletor-data-agenda" id="seletorDataAgenda" aria-label="Escolher dia da agenda"></div>
+    <div class="badge-data-agenda" id="badgeDataAgenda"></div>
+
     <button class="btn-mostrar" id="btnMostrar" onclick="mostrarImportador()"><svg class="icon"><use href="#i-clipboard-list"></use></svg> Mostrar campo da agenda</button>
 
     <div class="importador" id="importador">
@@ -2179,7 +2436,7 @@
         <button class="btn-minimizar-campo" onclick="minimizarImportador()"><svg class="icon icon-sm"><use href="#i-chevron-down"></use></svg> Minimizar</button>
         <button class="btn-limpar-campo" onclick="limparImportador()"><svg class="icon icon-sm"><use href="#i-trash-2"></use></svg> Limpar</button>
       </div>
-      <textarea id="entrada" placeholder="Cole aqui a agenda completa..."></textarea>
+      <textarea id="entrada" placeholder="Cole aqui a agenda do dia selecionado..."></textarea>
       <button class="btn-gerar" onclick="gerarAgenda()"><svg class="icon"><use href="#i-zap"></use></svg> Gerar Agenda Inteligente</button>
     </div>
 
@@ -2368,6 +2625,17 @@ Contato: (11) 99347-3587"></textarea>
 
   </div> <!-- /#appConteudo -->
 
+
+  <!-- Modal Clientes da mesma CTO -->
+  <div class="modal-overlay" id="modalCtoClientesOverlay">
+    <div class="modal">
+      <button class="modal-fechar" onclick="fecharModalCtoClientes()" aria-label="Fechar"><svg class="icon"><use href="#i-x"></use></svg></button>
+      <div class="modal-titulo"><svg class="icon icon-lg"><use href="#i-router"></use></svg> <span id="ctoClientesTitulo">Clientes da CTO</span></div>
+      <p id="ctoClientesSub" style="font-size:13px; color:#94a3b8; margin:-8px 0 14px;">Instalações registradas com esta CTO</p>
+      <div id="ctoClientesLista"></div>
+    </div>
+  </div>
+
   <div class="loading-overlay" id="loadingOverlay">
     <div class="spinner"></div>
     <div class="loading-texto" id="loadingTexto">Sincronizando...</div>
@@ -2549,9 +2817,11 @@ Contato: (11) 99347-3587"></textarea>
         try {
           const resp = await fetch(API_URL);
           const dados = await resp.json();
-          const registro = dados.find(d => d.tecnico === usuario);
+          let registro = dados.find(d => d.tecnico === usuario);
           if (registro) {
+            registro = await garantirAgendaDoDia(registro);
             registroAtualId = registro.id;
+            limparStatusLocalTecnico(usuario);
             document.getElementById("entradaTecnico").value = registro.agenda || "";
           }
         } catch (e) { console.warn("Erro ao carregar agenda do técnico:", e); }
@@ -2593,7 +2863,22 @@ Contato: (11) 99347-3587"></textarea>
     }
 
     // Menu Rápido do técnico: agrupa agenda inteligente, OS avulsa, relatório e instalações do mês
-    function abrirModalMenuTecnico() {
+    async function abrirModalMenuTecnico() {
+      try {
+        const resp = await fetch(API_URL);
+        const dados = await resp.json();
+        let registro = dados.find(d => d.tecnico === usuarioLogado);
+        if (registro) {
+          registro = await garantirAgendaDoDia(registro);
+          registroAtualId = registro.id;
+          tecnicoAtual = usuarioLogado;
+          cacheRegistroAgenda = registro;
+          if (!dataAgendaSelecionada) dataAgendaSelecionada = dataISOLocal();
+          renderizarSeletorDataAgenda("seletorDataAgendaTecnico", registro);
+        }
+      } catch (e) {
+        renderizarSeletorDataAgenda("seletorDataAgendaTecnico", cacheRegistroAgenda);
+      }
       const overlay = document.getElementById("modalMenuTecnicoOverlay");
       overlay.style.display = "flex";
       setTimeout(() => overlay.classList.add("aberto"), 10);
@@ -2615,6 +2900,7 @@ Contato: (11) 99347-3587"></textarea>
     document.getElementById("modalInstalacoesMesOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalInstalacoesMes(); });
     document.getElementById("modalHistoricoDataOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalHistoricoData(); });
     document.getElementById("modalMigrarOSOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalMigrarOS(); });
+    document.getElementById("modalCtoClientesOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalCtoClientes(); });
 
     function toggleDropdown(tec, event) {
       if (event) event.stopPropagation();
@@ -3049,6 +3335,10 @@ Contato: (11) 99347-3587"></textarea>
 
       const tecnicoContexto = instalacaoTecnicoAtual;
       const osIdContexto = instalacaoOsIdAtual;
+      // Snapshot da localização antes de fechar o modal
+      const locSnap = localizacaoInstalacaoAtual
+        ? { lat: localizacaoInstalacaoAtual.lat, lng: localizacaoInstalacaoAtual.lng }
+        : null;
 
       try {
         const okInst = await copiarTexto(script);
@@ -3065,7 +3355,12 @@ Contato: (11) 99347-3587"></textarea>
       if (tecnicoContexto && osIdContexto) {
         toggleLoading(true, "Finalizando OS...");
         await finalizarInstalacaoComoConcluida(tecnicoContexto, osIdContexto, script);
-        await registrarInstalacao(tecnicoContexto, { cliente, cto, porta, drop, apc, equipamento });
+        await registrarInstalacao(tecnicoContexto, {
+          cliente, cto, porta, drop, apc, equipamento,
+          lat: locSnap && locSnap.lat != null ? locSnap.lat : null,
+          lng: locSnap && locSnap.lng != null ? locSnap.lng : null,
+          maps: (locSnap && locSnap.lat != null && locSnap.lng != null) ? `https://maps.google.com/?q=${locSnap.lat},${locSnap.lng}` : ""
+        });
         mostrarToast(ic('check-circle') + ' OS marcada como concluída!');
         recarregarPagina(1200);
       }
@@ -3089,10 +3384,13 @@ Contato: (11) 99347-3587"></textarea>
         try { statusObj = JSON.parse(registro.status || "{}"); } catch(e) {}
         statusObj[osId] = { status: 'concluido', obs: obsTexto, timestamp: horaAtual, data: dataISOLocal() };
 
+        const entradaHist = montarEntradaHistoricoStatus(osId, 'concluido', obsTexto, horaAtual, {});
+        const historicoNovo = anexarHistoricoStatusLocal(parseStatusHistorico(registro), [entradaHist]);
+
         await fetch(`${API_URL}/${registro.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status: JSON.stringify(statusObj) })
+          body: JSON.stringify({ status: JSON.stringify(statusObj), statusHistorico: JSON.stringify(historicoNovo) })
         });
       } catch(e) {
         console.warn("Erro ao finalizar OS de instalação:", e);
@@ -3141,6 +3439,373 @@ Contato: (11) 99347-3587"></textarea>
       return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     }
 
+
+    // ===== Histórico permanente de mudanças de status (por OS e por data) =====
+    // Cada entrada: { osId, status, obs, timestamp, data (AAAA-MM-DD), cliente, assunto }
+    function parseStatusHistorico(registro) {
+      if (!registro) return [];
+      try {
+        const h = JSON.parse(registro.statusHistorico || "[]");
+        return Array.isArray(h) ? h : [];
+      } catch (e) { return []; }
+    }
+
+    function montarEntradaHistoricoStatus(osId, status, obs, timestamp, extra) {
+      if (!status) return null;
+      return {
+        osId: String(osId),
+        status: status,
+        obs: obs || "",
+        timestamp: timestamp || obtenerHoraAtual(),
+        data: dataISOLocal(),
+        cliente: (extra && extra.cliente) || "",
+        assunto: (extra && extra.assunto) || "",
+        horario: (extra && extra.horario) || ""
+      };
+    }
+
+    // Anexa entradas ao array de histórico (ignora nulos / sem status)
+    function anexarHistoricoStatusLocal(historico, entradas) {
+      const base = Array.isArray(historico) ? historico.slice() : [];
+      (entradas || []).forEach(e => {
+        if (e && e.status) base.push(e);
+      });
+      return base;
+    }
+
+    // Última mudança de status de cada OS em uma data específica
+    function ultimaMudancaPorOSNoDia(historico, dataSel) {
+      const porOs = {};
+      (historico || []).forEach(h => {
+        if (!h || !h.status) return;
+        const d = (h.data && String(h.data).slice(0, 10)) || extrairDataStatus(h);
+        if (d !== dataSel) return;
+        const id = String(h.osId);
+        const prev = porOs[id];
+        if (!prev) {
+          porOs[id] = h;
+          return;
+        }
+        // Compara timestamp HH:MM (e, se igual, mantém o último encontrado = ordem de gravação)
+        const tA = String(prev.timestamp || "");
+        const tB = String(h.timestamp || "");
+        if (tB.localeCompare(tA) >= 0) porOs[id] = h;
+      });
+      return porOs;
+    }
+
+
+
+    // ===== Agenda por dia =====
+    // agenda + status + agendaData = dia corrente (hoje, após virada)
+    // agendasHistorico = { "AAAA-MM-DD": { agenda, status, arquivadoEm } }  → dias passados
+    // agendasFuturas   = { "AAAA-MM-DD": { agenda } }  → hoje+1 .. hoje+3 (planejado)
+    let dataAgendaSelecionada = null; // AAAA-MM-DD no painel de agenda
+    let cacheRegistroAgenda = null;   // último registro carregado do técnico atual
+
+    function parseAgendasHistorico(registro) {
+      if (!registro) return {};
+      try {
+        const h = JSON.parse(registro.agendasHistorico || "{}");
+        return (h && typeof h === "object" && !Array.isArray(h)) ? h : {};
+      } catch (e) { return {}; }
+    }
+
+    function parseAgendasFuturas(registro) {
+      if (!registro) return {};
+      try {
+        const h = JSON.parse(registro.agendasFuturas || "{}");
+        return (h && typeof h === "object" && !Array.isArray(h)) ? h : {};
+      } catch (e) { return {}; }
+    }
+
+    function limparStatusLocalTecnico(tecnico) {
+      if (!tecnico) return;
+      const prefixos = [
+        `status_${tecnico}_`,
+        `obs_${tecnico}_`,
+        `timestamp_${tecnico}_`
+      ];
+      const aRemover = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && prefixos.some(p => key.startsWith(p))) aRemover.push(key);
+      }
+      aRemover.forEach(k => localStorage.removeItem(k));
+    }
+
+    // Retorna [hoje, +1, +2, +3] em AAAA-MM-DD
+    function datasAgendaveis() {
+      const base = new Date();
+      base.setHours(12, 0, 0, 0);
+      const out = [];
+      for (let i = 0; i <= 3; i++) {
+        const d = new Date(base);
+        d.setDate(base.getDate() + i);
+        out.push(dataISOLocal(d));
+      }
+      return out;
+    }
+
+    function rotuloCurtoDia(iso) {
+      const hoje = dataISOLocal();
+      if (iso === hoje) return "Hoje";
+      const d = new Date(iso + "T12:00:00");
+      const amanha = new Date();
+      amanha.setHours(12, 0, 0, 0);
+      amanha.setDate(amanha.getDate() + 1);
+      if (iso === dataISOLocal(amanha)) return "Amanhã";
+      const nomes = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+      return nomes[d.getDay()] || "";
+    }
+
+    function formatarDiaMes(iso) {
+      const m = String(iso || "").match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (!m) return iso || "";
+      return `${m[3]}/${m[2]}`;
+    }
+
+    // Obtém agenda + status de uma data (corrente, histórico ou futura)
+    function obterAgendaDoDia(registro, dataSel) {
+      if (!registro) return { agenda: "", status: {}, origem: "vazio" };
+      const hoje = dataISOLocal();
+      const dataCorrente = registro.agendaData || hoje;
+
+      if (dataSel === dataCorrente || (!registro.agendaData && dataSel === hoje)) {
+        return {
+          agenda: registro.agenda || "",
+          status: (() => { try { return JSON.parse(registro.status || "{}"); } catch(e) { return {}; } })(),
+          origem: "corrente"
+        };
+      }
+
+      const hist = parseAgendasHistorico(registro);
+      if (hist[dataSel]) {
+        const snap = hist[dataSel];
+        let st = {};
+        if (typeof snap.status === "object" && snap.status) st = snap.status;
+        else { try { st = JSON.parse(snap.status || "{}"); } catch(e) {} }
+        return { agenda: snap.agenda || "", status: st, origem: "historico" };
+      }
+
+      const fut = parseAgendasFuturas(registro);
+      if (fut[dataSel]) {
+        return {
+          agenda: fut[dataSel].agenda || "",
+          status: {},
+          origem: "futura"
+        };
+      }
+
+      return { agenda: "", status: {}, origem: "vazio" };
+    }
+
+    function agendaTemConteudo(registro, dataSel) {
+      const snap = obterAgendaDoDia(registro, dataSel);
+      return !!(snap.agenda && String(snap.agenda).trim());
+    }
+
+    // Se a agenda salva é de outro dia, arquiva no histórico e inicia o dia
+    // (promovendo agenda futura se existir)
+    async function garantirAgendaDoDia(registro) {
+      if (!registro || !registro.id) return registro;
+      const hoje = dataISOLocal();
+      const dataCorrente = registro.agendaData || null;
+
+      if (!dataCorrente) {
+        try {
+          const payload = { agendaData: hoje };
+          await fetch(`${API_URL}/${registro.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          registro.agendaData = hoje;
+        } catch (e) {
+          console.warn("Falha ao gravar agendaData inicial:", e);
+        }
+        return registro;
+      }
+
+      if (dataCorrente === hoje) return registro;
+
+      // Virada de dia: arquiva dia anterior e promove futura de hoje (se houver)
+      try {
+        const hist = parseAgendasHistorico(registro);
+        const fut = parseAgendasFuturas(registro);
+        let statusObj = {};
+        try { statusObj = JSON.parse(registro.status || "{}"); } catch (e) {}
+
+        const temAgenda = !!(registro.agenda && String(registro.agenda).trim());
+        const temStatus = statusObj && Object.keys(statusObj).length > 0;
+        if (temAgenda || temStatus) {
+          hist[dataCorrente] = {
+            agenda: registro.agenda || "",
+            status: statusObj,
+            arquivadoEm: new Date().toISOString()
+          };
+        }
+
+        // Promove agenda planejada para hoje, senão inicia limpa
+        let agendaNova = "";
+        if (fut[hoje] && fut[hoje].agenda) {
+          agendaNova = fut[hoje].agenda;
+        }
+        delete fut[hoje];
+
+        // Remove futuras já passadas (limpeza)
+        Object.keys(fut).forEach(k => {
+          if (k < hoje) delete fut[k];
+        });
+
+        const payload = {
+          agenda: agendaNova,
+          status: JSON.stringify({}),
+          agendaData: hoje,
+          agendasHistorico: JSON.stringify(hist),
+          agendasFuturas: JSON.stringify(fut)
+        };
+
+        await fetch(`${API_URL}/${registro.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        registro.agenda = agendaNova;
+        registro.status = "{}";
+        registro.agendaData = hoje;
+        registro.agendasHistorico = JSON.stringify(hist);
+        registro.agendasFuturas = JSON.stringify(fut);
+
+        if (registro.tecnico) limparStatusLocalTecnico(registro.tecnico);
+        console.info(`Agenda de ${registro.tecnico}: ${dataCorrente} arquivada → ${hoje}${agendaNova ? " (promovida do futuro)" : " (vazia)"}`);
+      } catch (e) {
+        console.warn("Erro na virada de dia da agenda:", e);
+      }
+      return registro;
+    }
+
+    async function garantirAgendaDoDiaTodos(dados) {
+      if (!Array.isArray(dados)) return dados;
+      const atualizados = [];
+      for (const reg of dados) {
+        atualizados.push(await garantirAgendaDoDia(reg));
+      }
+      return atualizados;
+    }
+
+    function renderizarSeletorDataAgenda(containerId, registro) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      const datas = datasAgendaveis();
+      if (!dataAgendaSelecionada || !datas.includes(dataAgendaSelecionada)) {
+        dataAgendaSelecionada = datas[0];
+      }
+      el.innerHTML = datas.map(iso => {
+        const ativo = iso === dataAgendaSelecionada ? " ativo" : "";
+        const tem = registro && agendaTemConteudo(registro, iso) ? " tem-agenda" : "";
+        return `<button type="button" class="chip-data-agenda${ativo}${tem}" onclick="selecionarDataAgenda('${iso}')">
+          <span class="chip-data-label">${rotuloCurtoDia(iso)}</span>
+          <span class="chip-data-dia">${formatarDiaMes(iso)}</span>
+          <span class="chip-data-dot" title="Agenda preenchida"></span>
+        </button>`;
+      }).join("");
+      atualizarBadgeDataAgenda();
+    }
+
+    function atualizarBadgeDataAgenda() {
+      const badge = document.getElementById("badgeDataAgenda");
+      if (!badge || !dataAgendaSelecionada) return;
+      const hoje = dataISOLocal();
+      const label = rotuloCurtoDia(dataAgendaSelecionada);
+      const dm = formatarDiaMes(dataAgendaSelecionada);
+      if (dataAgendaSelecionada === hoje) {
+        badge.classList.remove("visivel");
+        badge.innerHTML = "";
+      } else {
+        badge.classList.add("visivel");
+        badge.innerHTML = `${ic('clock','icon-sm')} Editando agenda de <strong style="color:var(--text)">${label} ${dm}</strong>`;
+      }
+    }
+
+    async function selecionarDataAgenda(iso) {
+      dataAgendaSelecionada = iso;
+      const registro = cacheRegistroAgenda;
+      renderizarSeletorDataAgenda("seletorDataAgenda", registro);
+      renderizarSeletorDataAgenda("seletorDataAgendaTecnico", registro);
+
+      if (!tecnicoAtual && perfilAtual === 'tecnico') {
+        tecnicoAtual = usuarioLogado;
+      }
+      if (!registro && !tecnicoAtual) return;
+
+      await carregarAgendaNaUI(registro || cacheRegistroAgenda, iso);
+    }
+
+    function aplicarStatusNoLocalStorage(tecnico, statusObj) {
+      limparStatusLocalTecnico(tecnico);
+      if (!statusObj) return;
+      Object.keys(statusObj).forEach(osId => {
+        const info = statusObj[osId];
+        if (typeof info === 'object') {
+          localStorage.setItem(`status_${tecnico}_${osId}`, info.status || "");
+          localStorage.setItem(`obs_${tecnico}_${osId}`, info.obs || "");
+          if (info.status) {
+            localStorage.setItem(`timestamp_${tecnico}_${osId}_${info.status}`, info.timestamp || "--:--");
+          }
+        } else {
+          localStorage.setItem(`status_${tecnico}_${osId}`, info);
+        }
+      });
+    }
+
+    async function carregarAgendaNaUI(registro, dataSel) {
+      const data = dataSel || dataAgendaSelecionada || dataISOLocal();
+      const snap = obterAgendaDoDia(registro, data);
+      const texto = snap.agenda || "";
+      const tec = (registro && registro.tecnico) || tecnicoAtual || usuarioLogado;
+
+      const entrada = document.getElementById("entrada");
+      const entradaTec = document.getElementById("entradaTecnico");
+      if (entrada) entrada.value = texto;
+      if (entradaTec) entradaTec.value = texto;
+
+      if (tec) aplicarStatusNoLocalStorage(tec, snap.status);
+
+      const hoje = dataISOLocal();
+      const ehPassado = data < hoje;
+      const importador = document.getElementById("importador");
+      const btnMostrar = document.getElementById("btnMostrar");
+
+      if (texto) {
+        criarCards(texto);
+        if (importador && perfilAtual !== 'tecnico') {
+          importador.classList.add("oculto");
+          if (btnMostrar) btnMostrar.style.display = "block";
+        }
+      } else {
+        document.getElementById("cards").innerHTML = `<div class="sem-atividade" style="width:100%">Nenhuma O.S. para ${rotuloCurtoDia(data)} (${formatarDiaMes(data)}). Cole a agenda abaixo.</div>`;
+        if (importador && perfilAtual !== 'tecnico') {
+          importador.classList.remove("oculto");
+          if (btnMostrar) btnMostrar.style.display = "none";
+        }
+      }
+
+      // Datas passadas: permite ver, mas avisa no badge
+      atualizarBadgeDataAgenda();
+      if (ehPassado) {
+        const badge = document.getElementById("badgeDataAgenda");
+        if (badge) {
+          badge.classList.add("visivel");
+          badge.innerHTML = `${ic('clock','icon-sm')} Histórico de <strong style="color:var(--text)">${formatarDiaMes(data)}</strong> (somente leitura sugerida)`;
+        }
+      }
+
+      document.getElementById("subtitulo").textContent =
+        `Agenda: ${tec || ""} · ${rotuloCurtoDia(data)} ${formatarDiaMes(data)}`;
+    }
+
     function formatarDataBR(isoDate) {
       if (!isoDate) return "";
       const m = String(isoDate).match(/^(\d{4})-(\d{2})-(\d{2})/);
@@ -3173,15 +3838,144 @@ Contato: (11) 99347-3587"></textarea>
       return null;
     }
 
-    function abrirModalHistoricoData() {
+    // ===== Calendário do Histórico Geral =====
+    let calHistAno = null;
+    let calHistMes = null; // 0-11
+    let calHistDiasComAgenda = new Set(); // "AAAA-MM-DD"
+    let calHistCacheDados = null;
+
+    function datasComAgendamentoNoRegistro(registro) {
+      const dias = new Set();
+      if (!registro) return dias;
+
+      const tem = (txt) => !!(txt && String(txt).trim());
+
+      // Dia corrente
+      const dataCorrente = registro.agendaData || dataISOLocal();
+      if (tem(registro.agenda)) dias.add(dataCorrente);
+
+      // Histórico
+      const hist = parseAgendasHistorico(registro);
+      Object.keys(hist).forEach(k => {
+        if (tem(hist[k] && hist[k].agenda)) dias.add(k);
+      });
+
+      // Futuras
+      const fut = parseAgendasFuturas(registro);
+      Object.keys(fut).forEach(k => {
+        if (tem(fut[k] && fut[k].agenda)) dias.add(k);
+      });
+
+      return dias;
+    }
+
+    async function carregarDiasComAgendamento() {
+      const dias = new Set();
+      try {
+        const resp = await fetch(API_URL);
+        const dados = await resp.json();
+        calHistCacheDados = dados;
+        const ehTecnico = perfilAtual === 'tecnico';
+        dados.forEach(reg => {
+          if (ehTecnico && reg.tecnico !== usuarioLogado) return;
+          datasComAgendamentoNoRegistro(reg).forEach(d => dias.add(d));
+        });
+      } catch (e) {
+        console.warn("Erro ao carregar dias com agendamento:", e);
+      }
+      calHistDiasComAgenda = dias;
+      return dias;
+    }
+
+    function navegarCalendarioHist(deltaMes) {
+      if (calHistAno == null) {
+        const n = new Date();
+        calHistAno = n.getFullYear();
+        calHistMes = n.getMonth();
+      }
+      calHistMes += deltaMes;
+      if (calHistMes > 11) { calHistMes = 0; calHistAno++; }
+      if (calHistMes < 0) { calHistMes = 11; calHistAno--; }
+      renderizarCalendarioHist();
+    }
+
+    function renderizarCalendarioHist() {
+      const grid = document.getElementById("calHistGrid");
+      const label = document.getElementById("calHistMesLabel");
+      if (!grid || !label) return;
+
+      if (calHistAno == null) {
+        const n = new Date();
+        calHistAno = n.getFullYear();
+        calHistMes = n.getMonth();
+      }
+
+      const nomesMes = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+      label.textContent = `${nomesMes[calHistMes]} ${calHistAno}`;
+
+      const hoje = dataISOLocal();
+      const selecionado = (document.getElementById("historico-data-input") || {}).value || "";
+
+      // Grade começando no domingo
+      const primeiro = new Date(calHistAno, calHistMes, 1);
+      const inicioSemana = primeiro.getDay(); // 0=dom
+      const diasNoMes = new Date(calHistAno, calHistMes + 1, 0).getDate();
+
+      const dows = ["D","S","T","Q","Q","S","S"];
+      let html = dows.map(d => `<div class="cal-hist-dow">${d}</div>`).join("");
+
+      // Células vazias antes do dia 1
+      for (let i = 0; i < inicioSemana; i++) {
+        html += `<button type="button" class="cal-hist-dia outro-mes" disabled></button>`;
+      }
+
+      for (let dia = 1; dia <= diasNoMes; dia++) {
+        const iso = `${calHistAno}-${String(calHistMes + 1).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
+        const classes = ["cal-hist-dia"];
+        if (iso === hoje) classes.push("hoje");
+        if (calHistDiasComAgenda.has(iso)) classes.push("tem-agenda");
+        if (iso === selecionado) classes.push("selecionado");
+        html += `<button type="button" class="${classes.join(" ")}" onclick="selecionarDiaCalendarioHist('${iso}')" aria-label="${iso}">
+          <span>${dia}</span>
+          <span class="cal-dot"></span>
+        </button>`;
+      }
+
+      grid.innerHTML = html;
+    }
+
+    async function selecionarDiaCalendarioHist(iso) {
+      const input = document.getElementById("historico-data-input");
+      if (input) input.value = iso;
+      renderizarCalendarioHist();
+      await buscarHistoricoPorData();
+    }
+
+    async function abrirModalHistoricoData() {
       try { fecharModalConfig(); } catch(e) {}
       try { fecharModalMenuTecnico(); } catch(e) {}
+
+      const hoje = dataISOLocal();
       const input = document.getElementById("historico-data-input");
-      if (input && !input.value) input.value = dataISOLocal();
+      if (input) input.value = hoje;
+
+      const n = new Date();
+      calHistAno = n.getFullYear();
+      calHistMes = n.getMonth();
+
       document.getElementById("historicoDataResultado").style.display = "none";
       const overlay = document.getElementById("modalHistoricoDataOverlay");
       overlay.style.display = "flex";
       setTimeout(() => overlay.classList.add("aberto"), 10);
+
+      toggleLoading(true, "Carregando calendário...");
+      try {
+        await carregarDiasComAgendamento();
+        renderizarCalendarioHist();
+        await buscarHistoricoPorData();
+      } finally {
+        toggleLoading(false);
+      }
     }
 
     function fecharModalHistoricoData() {
@@ -3222,14 +4016,38 @@ Contato: (11) 99347-3587"></textarea>
             }
           });
 
-          // Status de O.S. na data
-          let statusSalvo = {};
-          try { statusSalvo = JSON.parse(registro.status || "{}"); } catch(e) {}
-          const listaOS = registro.agenda ? parsearAgenda(registro.agenda) : [];
+          // Agenda + status referentes à data escolhida (snapshot do dia ou dia corrente)
+          const snapDia = obterAgendaDoDia(registro, dataSel);
+          const listaOS = snapDia.agenda ? parsearAgenda(snapDia.agenda) : [];
           const mapaOS = {};
-          listaOS.forEach(os => { mapaOS[os.id] = os; });
+          listaOS.forEach(os => { mapaOS[String(os.id)] = os; });
 
+          // Status: prioriza statusHistorico (última mudança do dia); depois status do snapshot do dia
+          const historicoStatus = parseStatusHistorico(registro);
+          const ultimaPorOs = ultimaMudancaPorOSNoDia(historicoStatus, dataSel);
+          const osIdsJaIncluidos = new Set();
+
+          Object.keys(ultimaPorOs).forEach(osId => {
+            const h = ultimaPorOs[osId];
+            const osInfo = mapaOS[osId] || { id: osId, cliente: h.cliente || ("O.S. " + osId), assunto: h.assunto || "", horario: h.horario || "" };
+            osDia.push({
+              tecnico: tec,
+              osId,
+              status: h.status,
+              obs: h.obs || "",
+              timestamp: h.timestamp || "",
+              cliente: osInfo.cliente || h.cliente || "",
+              assunto: osInfo.assunto || h.assunto || "",
+              horario: osInfo.horario || h.horario || "",
+              endereco: osInfo.endereco || ""
+            });
+            osIdsJaIncluidos.add(String(osId));
+          });
+
+          // Status gravado no snapshot da agenda daquele dia
+          const statusSalvo = snapDia.status || {};
           Object.keys(statusSalvo).forEach(osId => {
+            if (osIdsJaIncluidos.has(String(osId))) return;
             const info = statusSalvo[osId];
             let st = "", obs = "", time = "", dataStatus = null;
             if (typeof info === 'object') {
@@ -3241,15 +4059,12 @@ Contato: (11) 99347-3587"></textarea>
               st = info;
             }
             if (!st) return;
-
-            // Registros antigos sem campo data: só entram se a data escolhida for hoje
-            if (!dataStatus) {
-              if (dataSel !== dataISOLocal()) return;
-            } else if (dataStatus !== dataSel) {
-              return;
+            // No snapshot do dia, aceita status mesmo sem campo data
+            if (dataStatus && dataStatus !== dataSel && snapDia.origem === "corrente") {
+              // status atual de outro dia — ignora
+              if (dataStatus !== dataSel) return;
             }
-
-            const osInfo = mapaOS[osId] || { id: osId, cliente: "O.S. " + osId, assunto: "", horario: "" };
+            const osInfo = mapaOS[String(osId)] || { id: osId, cliente: "O.S. " + osId, assunto: "", horario: "" };
             osDia.push({
               tecnico: tec,
               osId,
@@ -3258,14 +4073,33 @@ Contato: (11) 99347-3587"></textarea>
               timestamp: time,
               cliente: osInfo.cliente,
               assunto: osInfo.assunto,
-              horario: osInfo.horario
+              horario: osInfo.horario,
+              endereco: osInfo.endereco || ""
+            });
+            osIdsJaIncluidos.add(String(osId));
+          });
+
+          // OS da agenda daquele dia ainda sem status (pendentes)
+          listaOS.forEach(os => {
+            const id = String(os.id);
+            if (osIdsJaIncluidos.has(id)) return;
+            osDia.push({
+              tecnico: tec,
+              osId: id,
+              status: "aguardando",
+              obs: "",
+              timestamp: "",
+              cliente: os.cliente || "",
+              assunto: os.assunto || "",
+              horario: os.horario || "",
+              endereco: os.endereco || ""
             });
           });
         });
 
         // Ordena
         instalacoesDia.sort((a, b) => new Date(b.data) - new Date(a.data));
-        const ordemStatus = { rota: 0, concluido: 1, 'nao-concluido': 2 };
+        const ordemStatus = { rota: 0, concluido: 1, 'nao-concluido': 2, aguardando: 3 };
         osDia.sort((a, b) => (ordemStatus[a.status] ?? 9) - (ordemStatus[b.status] ?? 9) || String(a.timestamp).localeCompare(String(b.timestamp)));
 
         const qtdRota = osDia.filter(o => o.status === 'rota').length;
@@ -3288,7 +4122,7 @@ Contato: (11) 99347-3587"></textarea>
               return `
                 <div class="detalhe-linha" style="flex-wrap:wrap; gap:6px;">
                   <span class="rotulo">${ic('clock','icon-sm')} ${hora}${tecLabel}</span>
-                  <span class="valor">${escapeHtml(item.cliente || '—')} · CTO ${escapeHtml(item.cto || '—')} · Porta ${escapeHtml(String(item.porta || '—'))}${item.equipamento ? ' · ' + escapeHtml(item.equipamento) : ''}</span>
+                  <span class="valor">${htmlClienteMaps(item)} · ${htmlCtoClicavel(item.cto)} · Porta ${escapeHtml(String(item.porta || '—'))}${item.equipamento ? ' · ' + escapeHtml(item.equipamento) : ''}</span>
                 </div>`;
             }).join("")
           : `<div class="sem-atividade" style="padding:10px 0;">Nenhuma instalação nesta data.</div>`;
@@ -3298,8 +4132,9 @@ Contato: (11) 99347-3587"></textarea>
               const cfg = {
                 rota: { cor: '#facc15', label: 'Em rota', icon: 'car' },
                 concluido: { cor: '#4ade80', label: 'Concluído', icon: 'check-circle' },
-                'nao-concluido': { cor: '#f87171', label: 'Não concluído', icon: 'x-circle' }
-              }[item.status] || { cor: '#94a3b8', label: item.status, icon: 'clock' };
+                'nao-concluido': { cor: '#f87171', label: 'Não concluído', icon: 'x-circle' },
+                aguardando: { cor: '#94a3b8', label: 'Pendente', icon: 'clock' }
+              }[item.status] || { cor: '#94a3b8', label: item.status || 'Pendente', icon: 'clock' };
               const hora = formatarHoraSimples(item.timestamp) || (item.timestamp && item.timestamp !== '--:--' ? item.timestamp : '--h--');
               const tecLabel = ehTecnico ? '' : ` · ${escapeHtml(item.tecnico)}`;
               const obs = item.obs ? `<div style="font-size:12px; color:#94a3b8; margin-top:4px; font-style:italic;">${escapeHtml(item.obs)}</div>` : '';
@@ -3314,7 +4149,7 @@ Contato: (11) 99347-3587"></textarea>
                   ${obs}
                 </div>`;
             }).join("")
-          : `<div class="sem-atividade" style="padding:10px 0;">Nenhuma atividade de O.S. registrada nesta data.${dataSel !== dataISOLocal() ? ' (Registros antigos sem data só aparecem no dia de hoje.)' : ''}</div>`;
+          : `<div class="sem-atividade" style="padding:10px 0;">Nenhuma atividade de O.S. registrada nesta data.${dataSel !== dataISOLocal() ? ' (Só entram mudanças com data gravada ou o status atual de hoje.)' : ''}</div>`;
 
         document.getElementById("historicoDataResultado").style.display = "block";
       } catch (e) {
@@ -3444,6 +4279,12 @@ Contato: (11) 99347-3587"></textarea>
         let historico = [];
         try { historico = JSON.parse(registro.instalacoes || "[]"); } catch(e) {}
 
+        const lat = dadosInstalacao.lat != null ? dadosInstalacao.lat : null;
+        const lng = dadosInstalacao.lng != null ? dadosInstalacao.lng : null;
+        const maps = (lat != null && lng != null)
+          ? `https://maps.google.com/?q=${lat},${lng}`
+          : (dadosInstalacao.maps || "");
+
         historico.push({
           data: new Date().toISOString(),
           mesAno: mesAnoAtual(),
@@ -3452,7 +4293,10 @@ Contato: (11) 99347-3587"></textarea>
           porta: dadosInstalacao.porta || "",
           drop: dadosInstalacao.drop || "",
           apc: dadosInstalacao.apc || "",
-          equipamento: dadosInstalacao.equipamento || ""
+          equipamento: dadosInstalacao.equipamento || "",
+          lat: lat,
+          lng: lng,
+          maps: maps
         });
 
         await fetch(`${API_URL}/${registro.id}`, {
@@ -3465,6 +4309,164 @@ Contato: (11) 99347-3587"></textarea>
       }
     }
 
+
+    // Normaliza CTO para comparação (CTO-014, cto 014, 014 → "014")
+    function normalizarCTO(cto) {
+      return String(cto || "")
+        .toUpperCase()
+        .replace(/^CTO[\s\-_]*/i, "")
+        .replace(/[^A-Z0-9]/g, "")
+        .trim();
+    }
+
+    function rotuloCTO(cto) {
+      const raw = String(cto || "").trim();
+      if (!raw) return "—";
+      return raw;
+    }
+
+    // Chip clicável de CTO (evita propagar clique em listas expansíveis)
+    function htmlCtoClicavel(cto) {
+      const raw = String(cto || "").trim();
+      if (!raw) return "—";
+      const safeAttr = raw.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+      return `<button type="button" class="cto-link" onclick="event.stopPropagation(); abrirClientesPorCTO('${safeAttr}')" title="Ver todos os clientes desta CTO">${ic('router','icon-sm')} ${escapeHtml(raw)}</button>`;
+    }
+
+
+    // Monta URL do Maps a partir de um registro de instalação (GPS prioritário)
+    function linkMapsInstalacao(item) {
+      if (!item) return "";
+      if (item.lat != null && item.lng != null && item.lat !== "" && item.lng !== "") {
+        return `https://maps.google.com/?q=${item.lat},${item.lng}`;
+      }
+      if (item.maps) return String(item.maps);
+      if (item.endereco) return construirLinkMaps(item.endereco);
+      return "";
+    }
+
+    function abrirMapsInstalacao(lat, lng, mapsUrl) {
+      let url = "";
+      if (lat != null && lng != null && String(lat) !== "" && String(lng) !== "") {
+        url = `https://maps.google.com/?q=${lat},${lng}`;
+      } else if (mapsUrl) {
+        url = String(mapsUrl);
+      }
+      if (!url) {
+        mostrarErro("Esta instalação não tem localização salva.");
+        return;
+      }
+      window.open(url, "_blank");
+    }
+
+    // Nome do cliente clicável → abre Maps quando houver localização
+    function htmlClienteMaps(item) {
+      const nome = (item && item.cliente) ? String(item.cliente).trim() : "";
+      if (!nome) return "—";
+      const url = linkMapsInstalacao(item);
+      if (!url) return escapeHtml(nome);
+
+      const lat = (item.lat != null && item.lat !== "") ? String(item.lat) : "";
+      const lng = (item.lng != null && item.lng !== "") ? String(item.lng) : "";
+      const mapsSafe = (item.maps || url || "").replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+      return `<button type="button" class="cliente-maps-link" onclick="event.stopPropagation(); abrirMapsInstalacao('${lat.replace(/'/g, "")}', '${lng.replace(/'/g, "")}', '${mapsSafe}')" title="Abrir no Google Maps">${ic('map-pin','icon-sm')} ${escapeHtml(nome)}</button>`;
+    }
+
+
+    async function abrirClientesPorCTO(cto) {
+      const chave = normalizarCTO(cto);
+      if (!chave) {
+        mostrarErro("CTO inválida.");
+        return;
+      }
+
+      toggleLoading(true, "Buscando clientes da CTO...");
+      try {
+        const resp = await fetch(API_URL);
+        const dados = await resp.json();
+        const ehTecnico = perfilAtual === 'tecnico';
+        const tecnicosAlvo = ehTecnico ? [usuarioLogado] : (listaTecnicos || []);
+
+        const encontrados = [];
+        dados.forEach(reg => {
+          const tec = reg.tecnico || "";
+          if (ehTecnico && tec !== usuarioLogado) return;
+          if (!ehTecnico && tecnicosAlvo.length && !tecnicosAlvo.includes(tec)) {
+            // ainda assim inclui se listaTecnicos estiver desatualizada
+          }
+          let historico = [];
+          try { historico = JSON.parse(reg.instalacoes || "[]"); } catch (e) {}
+          historico.forEach(item => {
+            if (normalizarCTO(item.cto) !== chave) return;
+            encontrados.push({
+              ...item,
+              tecnico: tec
+            });
+          });
+        });
+
+        // Ordena do mais recente para o mais antigo
+        encontrados.sort((a, b) => new Date(b.data || 0) - new Date(a.data || 0));
+
+        // Clientes únicos (mantém a instalação mais recente de cada cliente)
+        const porCliente = new Map();
+        encontrados.forEach(item => {
+          const nome = (item.cliente || "").trim().toLowerCase() || "(sem nome)";
+          if (!porCliente.has(nome)) porCliente.set(nome, item);
+        });
+        const unicos = Array.from(porCliente.values());
+
+        document.getElementById("ctoClientesTitulo").textContent = `CTO ${rotuloCTO(cto)}`;
+        document.getElementById("ctoClientesSub").textContent =
+          unicos.length === 0
+            ? "Nenhum cliente encontrado com esta CTO."
+            : `${unicos.length} cliente${unicos.length === 1 ? "" : "s"} · ${encontrados.length} instalação${encontrados.length === 1 ? "" : "ões"} no histórico`;
+
+        const lista = document.getElementById("ctoClientesLista");
+        if (encontrados.length === 0) {
+          lista.innerHTML = `<div class="sem-atividade" style="padding:12px 0;">Nenhuma instalação registrada com a CTO ${escapeHtml(rotuloCTO(cto))}.</div>`;
+        } else {
+          lista.innerHTML = encontrados.map(item => {
+            const dataFormatada = item.data
+              ? new Date(item.data).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })
+              : "—";
+            const detalhes = [
+              item.porta ? `Porta ${escapeHtml(String(item.porta))}` : null,
+              item.drop ? `Drop ${escapeHtml(String(item.drop))}m` : null,
+              item.apc ? `APC ${escapeHtml(String(item.apc))}` : null,
+              item.equipamento ? escapeHtml(item.equipamento) : null
+            ].filter(Boolean).join(" · ");
+            const tec = (!ehTecnico && item.tecnico) ? `<span style="color:#67e8f9; font-weight:600;">${escapeHtml(item.tecnico)}</span> · ` : "";
+            return `
+              <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:12px; margin-bottom:8px;">
+                <div style="font-size:14.5px; font-weight:800; color:#f1f5f9;">${htmlClienteMaps(item)}</div>
+                <div style="font-size:12px; color:#94a3b8; margin-top:4px; display:flex; flex-wrap:wrap; gap:6px; align-items:center;">
+                  <span>${ic('clock','icon-sm')} ${dataFormatada}</span>
+                  ${tec ? `<span>${tec}</span>` : ""}
+                </div>
+                ${detalhes ? `<div style="font-size:12.5px; color:#cbd5e1; margin-top:6px;">${detalhes}</div>` : ""}
+              </div>`;
+          }).join("");
+        }
+
+        const overlay = document.getElementById("modalCtoClientesOverlay");
+        overlay.style.display = "flex";
+        setTimeout(() => overlay.classList.add("aberto"), 10);
+      } catch (e) {
+        console.error("Erro ao buscar clientes da CTO:", e);
+        mostrarErro("Erro ao buscar clientes da CTO.");
+      } finally {
+        toggleLoading(false);
+      }
+    }
+
+    function fecharModalCtoClientes() {
+      const overlay = document.getElementById("modalCtoClientesOverlay");
+      overlay.classList.remove("aberto");
+      setTimeout(() => overlay.style.display = "none", 300);
+    }
+
+
     // Formata uma instalação individual em uma linha de histórico (data + cliente + CTO + porta + drop + APC + equipamento)
     function construirLinhaHistoricoInstalacao(item) {
       const dataFormatada = new Date(item.data).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
@@ -3475,9 +4477,9 @@ Contato: (11) 99347-3587"></textarea>
       ].filter(Boolean).join(' · ');
 
       return `
-        <div class="detalhe-linha">
+        <div class="detalhe-linha" style="flex-wrap:wrap; gap:6px;">
           <span class="rotulo">${ic('clock', 'icon-sm')} ${dataFormatada}</span>
-          <span class="valor">${escapeHtml(item.cliente || '—')} · CTO ${escapeHtml(item.cto || '—')} · Porta ${escapeHtml(String(item.porta || '—'))}${detalhesExtra ? ' · ' + detalhesExtra : ''}</span>
+          <span class="valor">${htmlClienteMaps(item)} · ${htmlCtoClicavel(item.cto)} · Porta ${escapeHtml(String(item.porta || '—'))}${detalhesExtra ? ' · ' + detalhesExtra : ''}</span>
         </div>
       `;
     }
@@ -3783,10 +4785,20 @@ Contato: (11) 99347-3587"></textarea>
           data: dataISOLocal()
         };
 
+        let historicoNovo = parseStatusHistorico(registro);
+        if (novoStatus) {
+          const entradaHist = montarEntradaHistoricoStatus(osId, novoStatus, novaObs, horaConclusao, {
+            cliente: clienteOS || "",
+            assunto: assuntoOS || "",
+            horario: horarioOS || ""
+          });
+          historicoNovo = anexarHistoricoStatusLocal(historicoNovo, [entradaHist]);
+        }
+
         await fetch(`${API_URL}/${registro.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status: JSON.stringify(statusObj) })
+          body: JSON.stringify({ status: JSON.stringify(statusObj), statusHistorico: JSON.stringify(historicoNovo) })
         });
 
         if (novoStatus) {
@@ -4117,7 +5129,9 @@ Contato: (11) 99347-3587"></textarea>
       try {
         const resp = await fetch(API_URL);
         if (!resp.ok) throw new Error();
-        const dados = await resp.json();
+        let dados = await resp.json();
+        // Virada de dia: arquiva agendas antigas e inicia o dia vazio
+        dados = await garantirAgendaDoDiaTodos(dados);
         atualizarDashboardGeralComDados(dados);
       } catch(e) { console.warn(e); }
     }
@@ -4145,35 +5159,26 @@ Contato: (11) 99347-3587"></textarea>
       try {
         const resp = await fetch(API_URL);
         if(!resp.ok) throw new Error();
-        const dados = await resp.json();
-        
-        const registro = dados.find(d => d.tecnico === tecnicoAtual);
+        let dados = await resp.json();
+        dados = await garantirAgendaDoDiaTodos(dados);
+
+        let registro = dados.find(d => d.tecnico === tecnicoAtual);
         
         if (registro) {
+          registro = await garantirAgendaDoDia(registro);
           registroAtualId = registro.id;
-          document.getElementById("entrada").value = registro.agenda || "";
-          
-          if (registro.status) {
-            try {
-              const statusSalvo = JSON.parse(registro.status);
-              Object.keys(statusSalvo).forEach(osId => {
-                if (typeof statusSalvo[osId] === 'object') {
-                  localStorage.setItem(`status_${tecnicoAtual}_${osId}`, statusSalvo[osId].status || "");
-                  localStorage.setItem(`obs_${tecnicoAtual}_${osId}`, statusSalvo[osId].obs || "");
-                  localStorage.setItem(`timestamp_${tecnicoAtual}_${osId}_${statusSalvo[osId].status}`, statusSalvo[osId].timestamp || "--:--");
-                } else {
-                  localStorage.setItem(`status_${tecnicoAtual}_${osId}`, statusSalvo[osId]);
-                }
-              });
-            } catch(e) {}
-          }
-
-          if (registro.agenda) {
-            criarCards(registro.agenda);
-            document.getElementById("importador").classList.add("oculto");
-            if (!ehTecnico) document.getElementById("btnMostrar").style.display = "block";
-          } else { abrirModoVazio(true); }
-        } else { abrirModoVazio(false); }
+          cacheRegistroAgenda = registro;
+          const salva = sessionStorage.getItem('dataAgendaSel');
+          const opcoes = datasAgendaveis();
+          dataAgendaSelecionada = (salva && opcoes.includes(salva)) ? salva : dataISOLocal();
+          sessionStorage.removeItem('dataAgendaSel');
+          renderizarSeletorDataAgenda("seletorDataAgenda", registro);
+          renderizarSeletorDataAgenda("seletorDataAgendaTecnico", registro);
+          await carregarAgendaNaUI(registro, dataAgendaSelecionada);
+        } else {
+          cacheRegistroAgenda = null;
+          abrirModoVazio(false);
+        }
       } catch (e) { abrirModoVazio(false); } finally { toggleLoading(false); }
     }
 
@@ -4200,22 +5205,126 @@ Contato: (11) 99347-3587"></textarea>
 
     async function salvarAgendaNaApi(texto, messageSilenciosa = false) {
       if(!messageSilenciosa) toggleLoading(true, "Salvando alterações...");
-      
-      const statusParaSalvar = {};
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith(`status_${tecnicoAtual}_`)) {
-          const osId = key.replace(`status_${tecnicoAtual}_`, "");
-          const statusVal = localStorage.getItem(key);
-          const obsVal = localStorage.getItem(`obs_${tecnicoAtual}_${osId}`) || "";
-          const timeVal = localStorage.getItem(`timestamp_${tecnicoAtual}_${osId}_${statusVal}`) || "--:--";
-
-          statusParaSalvar[osId] = { status: statusVal, obs: obsVal, timestamp: timeVal, data: dataISOLocal() };
-        }
-      }
 
       try {
-        const payload = { tecnico: tecnicoAtual, agenda: texto, status: JSON.stringify(statusParaSalvar) };
+        const dataAlvo = dataAgendaSelecionada || dataISOLocal();
+        const hoje = dataISOLocal();
+
+        let registroExistente = null;
+        let statusApiAnterior = {};
+        let historicoStatusAtual = [];
+        if (registroAtualId || tecnicoAtual) {
+          try {
+            const respAll = await fetch(API_URL);
+            const todos = await respAll.json();
+            registroExistente = (registroAtualId
+              ? todos.find(d => String(d.id) === String(registroAtualId))
+              : null) || todos.find(d => d.tecnico === tecnicoAtual);
+            if (registroExistente) {
+              registroExistente = await garantirAgendaDoDia(registroExistente);
+              registroAtualId = registroExistente.id;
+              try { statusApiAnterior = JSON.parse(registroExistente.status || "{}"); } catch(e) {}
+              historicoStatusAtual = parseStatusHistorico(registroExistente);
+            }
+          } catch (e) { console.warn("Não foi possível ler registro anterior:", e); }
+        }
+
+        // Monta status a partir do localStorage (só faz sentido no dia corrente)
+        const statusParaSalvar = {};
+        const novasEntradasHist = [];
+        const mapaOSLocal = {};
+        try {
+          parsearAgenda(texto || "").forEach(os => { mapaOSLocal[String(os.id)] = os; });
+        } catch (e) {}
+
+        if (dataAlvo === hoje) {
+          for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith(`status_${tecnicoAtual}_`)) {
+              const osId = key.replace(`status_${tecnicoAtual}_`, "");
+              const statusVal = localStorage.getItem(key);
+              const obsVal = localStorage.getItem(`obs_${tecnicoAtual}_${osId}`) || "";
+              const timeVal = localStorage.getItem(`timestamp_${tecnicoAtual}_${osId}_${statusVal}`) || "--:--";
+
+              const prev = statusApiAnterior[osId];
+              let prevStatus = "", prevObs = "", prevData = null, prevTime = "";
+              if (prev && typeof prev === "object") {
+                prevStatus = prev.status || "";
+                prevObs = prev.obs || "";
+                prevData = prev.data || null;
+                prevTime = prev.timestamp || "";
+              } else if (prev) {
+                prevStatus = prev;
+              }
+
+              const mudou = (statusVal !== prevStatus) || (obsVal !== prevObs) || (timeVal !== prevTime && statusVal);
+              const dataStatus = mudou ? dataISOLocal() : (prevData || dataISOLocal());
+
+              statusParaSalvar[osId] = {
+                status: statusVal,
+                obs: obsVal,
+                timestamp: timeVal,
+                data: dataStatus
+              };
+
+              if (mudou && statusVal) {
+                const osInfo = mapaOSLocal[String(osId)] || {};
+                novasEntradasHist.push(montarEntradaHistoricoStatus(osId, statusVal, obsVal, timeVal, {
+                  cliente: osInfo.cliente || "",
+                  assunto: osInfo.assunto || "",
+                  horario: osInfo.horario || ""
+                }));
+              }
+            }
+          }
+        }
+
+        const histStatusNovo = anexarHistoricoStatusLocal(historicoStatusAtual, novasEntradasHist);
+        const histAgendas = parseAgendasHistorico(registroExistente);
+        const futAgendas = parseAgendasFuturas(registroExistente);
+
+        let payload = { tecnico: tecnicoAtual };
+
+        if (dataAlvo === hoje) {
+          // Dia corrente
+          payload.agenda = texto;
+          payload.status = JSON.stringify(statusParaSalvar);
+          payload.agendaData = hoje;
+          payload.statusHistorico = JSON.stringify(histStatusNovo);
+          payload.agendasHistorico = JSON.stringify(histAgendas);
+          payload.agendasFuturas = JSON.stringify(futAgendas);
+        } else if (dataAlvo > hoje) {
+          // Agenda futura (planejamento)
+          futAgendas[dataAlvo] = { agenda: texto || "", atualizadoEm: new Date().toISOString() };
+          if (!(texto || "").trim()) delete futAgendas[dataAlvo];
+          payload.agendasFuturas = JSON.stringify(futAgendas);
+          // Mantém agenda corrente intacta
+          if (registroExistente) {
+            payload.agenda = registroExistente.agenda || "";
+            payload.status = registroExistente.status || JSON.stringify({});
+            payload.agendaData = registroExistente.agendaData || hoje;
+          }
+        } else {
+          // Dia passado: atualiza snapshot no histórico
+          let stPassado = {};
+          if (histAgendas[dataAlvo] && histAgendas[dataAlvo].status) {
+            stPassado = typeof histAgendas[dataAlvo].status === "object"
+              ? histAgendas[dataAlvo].status
+              : {};
+          }
+          histAgendas[dataAlvo] = {
+            agenda: texto || "",
+            status: stPassado,
+            arquivadoEm: (histAgendas[dataAlvo] && histAgendas[dataAlvo].arquivadoEm) || new Date().toISOString()
+          };
+          payload.agendasHistorico = JSON.stringify(histAgendas);
+          if (registroExistente) {
+            payload.agenda = registroExistente.agenda || "";
+            payload.status = registroExistente.status || JSON.stringify({});
+            payload.agendaData = registroExistente.agendaData || hoje;
+            payload.agendasFuturas = registroExistente.agendasFuturas || JSON.stringify({});
+          }
+        }
 
         if (registroAtualId) {
           await fetch(`${API_URL}/${registroAtualId}`, {
@@ -4232,7 +5341,22 @@ Contato: (11) 99347-3587"></textarea>
           const criado = await resp.json();
           registroAtualId = criado.id;
         }
-      } catch (e) { mostrarToast(ic('alert-triangle') + ' Erro ao sincronizar nuvem.'); } finally { if(!messageSilenciosa) toggleLoading(false); }
+
+        // Atualiza cache local
+        if (cacheRegistroAgenda) {
+          Object.assign(cacheRegistroAgenda, payload);
+          if (payload.agendasFuturas) cacheRegistroAgenda.agendasFuturas = payload.agendasFuturas;
+          if (payload.agendasHistorico) cacheRegistroAgenda.agendasHistorico = payload.agendasHistorico;
+          if (payload.agenda != null) cacheRegistroAgenda.agenda = payload.agenda;
+        }
+        renderizarSeletorDataAgenda("seletorDataAgenda", cacheRegistroAgenda);
+        renderizarSeletorDataAgenda("seletorDataAgendaTecnico", cacheRegistroAgenda);
+      } catch (e) {
+        console.error(e);
+        mostrarToast(ic('alert-triangle') + ' Erro ao sincronizar nuvem.');
+      } finally {
+        if(!messageSilenciosa) toggleLoading(false);
+      }
     }
 
     async function gerarAgenda() {
@@ -4242,8 +5366,11 @@ Contato: (11) 99347-3587"></textarea>
       await salvarAgendaNaApi(texto);
       document.getElementById("importador").classList.add("oculto");
       document.getElementById("btnMostrar").style.display = "block";
-      
-      mostrarToast(ic('zap') + ' Agenda sincronizada!');
+
+      const d = dataAgendaSelecionada || dataISOLocal();
+      mostrarToast(ic('zap') + ` Agenda de ${rotuloCurtoDia(d)} (${formatarDiaMes(d)}) sincronizada!`);
+      // Mantém a data selecionada após reload
+      sessionStorage.setItem('dataAgendaSel', d);
       recarregarPagina();
     }
 
@@ -4257,10 +5384,16 @@ Contato: (11) 99347-3587"></textarea>
         try {
           const resp = await fetch(API_URL);
           const dados = await resp.json();
-          const registro = dados.find(d => d.tecnico === usuarioLogado);
+          let registro = dados.find(d => d.tecnico === usuarioLogado);
           if (registro) {
+            registro = await garantirAgendaDoDia(registro);
             registroAtualId = registro.id;
-            document.getElementById("entradaTecnico").value = registro.agenda || "";
+            tecnicoAtual = usuarioLogado;
+            cacheRegistroAgenda = registro;
+            if (!dataAgendaSelecionada) dataAgendaSelecionada = dataISOLocal();
+            renderizarSeletorDataAgenda("seletorDataAgendaTecnico", registro);
+            const snap = obterAgendaDoDia(registro, dataAgendaSelecionada);
+            document.getElementById("entradaTecnico").value = snap.agenda || "";
           }
         } catch (e) {
           console.warn("Erro ao carregar agenda do técnico:", e);
@@ -4287,11 +5420,14 @@ Contato: (11) 99347-3587"></textarea>
       if (!texto) return;
 
       tecnicoAtual = usuarioLogado;
+      if (!dataAgendaSelecionada) dataAgendaSelecionada = dataISOLocal();
       toggleLoading(true, "Salvando sua agenda...");
       await salvarAgendaNaApi(texto);
       document.getElementById("importadorTecnico").classList.add("oculto");
 
-      mostrarToast(ic('zap') + ' Agenda atualizada!');
+      const d = dataAgendaSelecionada;
+      sessionStorage.setItem('dataAgendaSel', d);
+      mostrarToast(ic('zap') + ` Agenda de ${rotuloCurtoDia(d)} atualizada!`);
       recarregarPagina();
     }
 
@@ -4752,10 +5888,21 @@ Contato: (11) 99347-3587"></textarea>
         data: dataISOLocal()
       };
 
+      let histNovo = parseStatusHistorico(registroNovo);
+      if (statusAtual) {
+        histNovo = anexarHistoricoStatusLocal(histNovo, [
+          montarEntradaHistoricoStatus(osId, statusAtual, obsAtual, timeAtual, {
+            cliente: os.cliente || "",
+            assunto: os.assunto || "",
+            horario: os.horario || ""
+          })
+        ]);
+      }
+
       await fetch(`${API_URL}/${registroNovo.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ agenda: agendaNova, status: JSON.stringify(statusObjNovo) })
+        body: JSON.stringify({ agenda: agendaNova, status: JSON.stringify(statusObjNovo), statusHistorico: JSON.stringify(histNovo) })
       });
 
       localStorage.removeItem(`status_${tecnicoAtual}_${osId}`);
@@ -4919,18 +6066,30 @@ Contato: (11) 99347-3587"></textarea>
               // Prepara status object para o novo tecnico na API
               let statusObjNovo = {};
               try { statusObjNovo = JSON.parse(registroNovo.status || "{}"); } catch(e){}
+              const horaMig = novoStatus ? obtenerHoraAtual() : "--:--";
               statusObjNovo[os.id] = {
                  status: novoStatus || "",
                  obs: novaObs || "",
-                 timestamp: novoStatus ? obtenerHoraAtual() : "--:--",
+                 timestamp: horaMig,
                  data: dataISOLocal()
               };
+
+              let histNovo = parseStatusHistorico(registroNovo);
+              if (novoStatus) {
+                histNovo = anexarHistoricoStatusLocal(histNovo, [
+                  montarEntradaHistoricoStatus(os.id, novoStatus, novaObs, horaMig, {
+                    cliente: os.cliente || "",
+                    assunto: os.assunto || "",
+                    horario: os.horario || ""
+                  })
+                ]);
+              }
 
               // Atualiza o novo técnico na API
               await fetch(`${API_URL}/${registroNovo.id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ agenda: agendaNova, status: JSON.stringify(statusObjNovo) })
+                body: JSON.stringify({ agenda: agendaNova, status: JSON.stringify(statusObjNovo), statusHistorico: JSON.stringify(histNovo) })
               });
 
               // Limpa rastro no storage do técnico antigo
@@ -5263,6 +6422,7 @@ Contato: (11) 99347-3587"></textarea>
           document.getElementById("modalNovaInstalacaoOverlay").classList.contains("aberto") ||
           document.getElementById("modalInstalacoesMesOverlay").classList.contains("aberto") ||
           document.getElementById("modalHistoricoDataOverlay").classList.contains("aberto") ||
+          document.getElementById("modalCtoClientesOverlay").classList.contains("aberto") ||
           document.getElementById("modalNovaOSAvulsaOverlay").classList.contains("aberto") ||
           document.getElementById("modalMigrarOSOverlay").classList.contains("aberto") ||
           document.getElementById("modalMenuTecnicoOverlay").classList.contains("aberto")) {
@@ -5336,8 +6496,9 @@ Contato: (11) 99347-3587"></textarea>
       try {
         const resp = await fetch(API_URL);
         if(resp.ok) {
-          const dados = await resp.json();
+          let dados = await resp.json();
           if (dados && dados.length > 0) {
+            dados = await garantirAgendaDoDiaTodos(dados);
             const nomesApi = dados.map(d => d.tecnico).filter(t => t);
             if(nomesApi.length > 0) {
               listaTecnicos = nomesApi;
