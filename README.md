@@ -1,8 +1,17 @@
-# Agenda Técnico Inteligente
+# 📡 Agenda Técnico Inteligente
 
 **PWA de monitoramento e gestão de ordens de serviço para equipes de campo (telecom / fibra óptica).**
 
-Aplicação web mobile-first com login por perfil, sincronização em nuvem, agendamento por dia, histórico em calendário e fluxo completo de status das O.S.
+Aplicativo mobile-first usado no dia a dia por técnicos e supervisores: cola a agenda, acompanha status em tempo quase real, registra instalações com GPS e consulta histórico em calendário.
+
+<p align="center">
+  <a href="https://monitor-liard-eta.vercel.app" target="_blank">
+    <img src="https://img.shields.io/badge/🚀_Live_Demo-monitor--liard--eta.vercel.app-blue?style=for-the-badge" alt="Live Demo" />
+  </a>
+  &nbsp;
+  <img src="https://img.shields.io/badge/PWA-Ready-green?style=for-the-badge" alt="PWA" />
+  <img src="https://img.shields.io/badge/HTML5_%2B_JS-Vanilla-orange?style=for-the-badge" alt="Vanilla JS" />
+</p>
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/droidmarx/monitor/main/demo-agenda-tecnico.gif" alt="Demo animada do Agenda Técnico Inteligente" width="320" />
@@ -14,25 +23,27 @@ Aplicação web mobile-first com login por perfil, sincronização em nuvem, age
 
 ---
 
-## Visão geral
+## 🎯 Para que serve?
 
-| | |
-|---|---|
-| **Tipo** | Single Page Application (HTML5 + CSS + JS vanilla) |
-| **Uso** | Celular do técnico + painel do supervisor |
-| **Persistência** | MockAPI (REST) + localStorage |
-| **Idioma** | Português (pt-BR) |
+Em operações de fibra óptica, a agenda do técnico costuma chegar por WhatsApp/Telegram em texto solto. O supervisor não tem visão clara do que cada um está fazendo, e o histórico se perde.
+
+Este app resolve isso:
+
+- **Técnico** cola a agenda no celular, atualiza status (em rota / concluído / não concluído) e registra instalações com GPS.
+- **Supervisor / Admin** vê o dashboard com todos os técnicos, filtra por tipo de O.S., abre histórico por calendário e gera relatórios.
+
+Projeto **em uso real** em operação de campo.
 
 ---
 
-## Interface
+## 🖼️ Interface
 
 ### Login
 <p align="center">
   <img src="https://raw.githubusercontent.com/droidmarx/monitor/main/01-login.png" alt="Tela de login" width="280" />
 </p>
 
-Acesso por perfil (**master**, **admin** ou **técnico**), com validação de credenciais e sessão persistente na aba.
+Acesso por perfil (**master**, **admin** ou **técnico**), com validação de credenciais e sessão persistente.
 
 ### Dashboard de monitoramento
 <p align="center">
@@ -66,29 +77,32 @@ Chips **Hoje / Amanhã / +2 / +3** para colar e planejar a agenda. Ponto verde =
 
 ---
 
-## Funcionalidades
+## ✨ Funcionalidades
 
-- **Autenticação** — master, admin e técnico (técnico vê só a própria agenda)
-- **Monitoramento** — totais, filtros por tipo de O.S., lista expansível por técnico
-- **Agenda inteligente** — colar texto de O.S., parser (formato clássico e Ativo Telecom), cards com Maps e status
-- **Agendamento multi-dia** — hoje + até 3 dias à frente; histórico de dias passados
-- **Status de O.S.** — em rota / concluído / não concluído + observações e scripts para WhatsApp/Telegram
-- **Histórico em calendário** — dias agendados em verde; detalhe por data
-- **Instalações** — CTO, porta, drop, equipamento + GPS; cliente clicável abre no Maps
-- **CTO vinculada** — clique na CTO lista todos os clientes da mesma CTO
-- **Relatórios** — diário geral e individual por técnico
-- **PWA** — manifest, tema escuro, uso mobile com safe-area
+| Recurso | Descrição |
+|---------|-----------|
+| **Autenticação** | Perfis master, admin e técnico (técnico vê só a própria agenda) |
+| **Monitoramento** | Totais, filtros por tipo de O.S., lista expansível por técnico |
+| **Agenda inteligente** | Colar texto de O.S., parser (formato clássico e Ativo Telecom), cards com Maps e status |
+| **Agendamento multi-dia** | Hoje + até 3 dias à frente; histórico de dias passados |
+| **Status de O.S.** | Em rota / concluído / não concluído + observações e scripts para WhatsApp/Telegram |
+| **Histórico em calendário** | Dias agendados em verde; detalhe por data |
+| **Instalações** | CTO, porta, drop, equipamento + GPS; cliente clicável abre no Maps |
+| **CTO vinculada** | Clique na CTO lista todos os clientes da mesma CTO |
+| **Relatórios** | Diário geral e individual por técnico |
+| **PWA** | Manifest, tema escuro, uso mobile com safe-area |
 
 ---
 
-## Stack
+## 🛠️ Stack Tecnológica
 
-- HTML5 / CSS3 / JavaScript (vanilla)
-- MockAPI (REST)
-- Geolocation API, Clipboard API
-- Service Worker + Web App Manifest
+- **HTML5 / CSS3 / JavaScript (vanilla)** — SPA sem framework
+- **MockAPI** (REST) + localStorage
+- **Geolocation API** e **Clipboard API**
+- **Service Worker** + Web App Manifest (PWA)
+- **Vercel** (deploy)
 
-### Dados por técnico
+### Modelo de dados por técnico
 
 ```text
 agenda + status + agendaData     → dia corrente
@@ -100,47 +114,58 @@ instalacoes[]                    → CTO, porta, lat/lng, etc.
 
 ---
 
-## Como rodar
+## 🚀 Como rodar
 
-1. Abra `index.html` no navegador (ou o deploy na Vercel).
+1. Abra `index.html` no navegador **ou** acesse o deploy:
+   🔗 **[https://monitor-liard-eta.vercel.app](https://monitor-liard-eta.vercel.app)**
+
 2. Logins de demonstração:
    - **master** / `master123`
    - **admin** / `mike`
+
 3. Técnicos: **nome cadastrado** + senha definida no painel.
 
 A URL da API está no início do `<script>` (`API_URL`).
 
 ---
 
-## Estrutura
+## 📂 Estrutura
 
 ```text
-├── index.html
-├── README.md
+├── index.html                 # App principal (SPA)
+├── Monitor_Operacional.html
 ├── demo-agenda-tecnico.gif
-├── 01-login.png
-├── 02-dashboard.png
-├── 03-historico-calendario.png
-├── 04-gerenciar-tecnicos.png
-├── 05-agenda-por-dia.png
-├── 06-dashboard-desktop.png
+├── 01-login.png … 06-dashboard-desktop.png
 ├── manifest.json / sw.js / icon-*.png
 ├── api/
+│   └── galeria.js
 └── vercel.json
 ```
 
 ---
 
-## Portfólio
+## 💼 Por que este projeto importa no portfólio
 
-Projeto orientado a **operação real de campo**: parser de agendas, fluxo de status, GPS em instalação e histórico auditável por calendário.
+Projeto orientado a **operação real de campo**:
 
-Demonstra:
-
-- UI **mobile-first** e base de PWA  
-- modelagem de **estado + sincronização**  
+- Parser de agendas vindas de texto livre
+- Fluxo completo de status de O.S.
+- GPS em instalação
+- Histórico auditável por calendário
+- UI **mobile-first** e base de PWA
+- Modelagem de estado + sincronização com API
 - UX operacional (copiar script, Maps em um toque, chips de data)
+
+Demonstra capacidade de entregar solução útil sem depender de frameworks pesados.
 
 ---
 
-*Capturas e GIF gerados a partir da versão atual do app.*
+## 👨‍💻 Autor
+
+**Guilherme Marques Santos**  
+Front-end Developer | Telecom / Fibra Óptica  
+[GitHub](https://github.com/droidmarx)
+
+---
+
+*Capturas e GIF gerados a partir da versão atual do app em produção.*
