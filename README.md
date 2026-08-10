@@ -1,130 +1,125 @@
 # Agenda Técnico Inteligente
 
-**PWA de monitoramento e gestão de ordens de serviço (O.S.) para equipes de campo de telecom/fibra óptica.**
+**PWA de monitoramento e gestão de ordens de serviço para equipes de campo (telecom / fibra óptica).**
 
-Aplicação web mobile-first, com login por perfil, sincronização em nuvem, agendamento por dia, histórico em calendário e fluxo completo de status das O.S. — da rota até a conclusão ou instalação.
+Aplicação web mobile-first com login por perfil, sincronização em nuvem, agendamento por dia, histórico em calendário e fluxo completo de status das O.S.
+
+<p align="center">
+  <img src="docs/demo-agenda-tecnico.gif" alt="Demo animada do Agenda Técnico Inteligente" width="320" />
+</p>
+
+<p align="center">
+  <em>Demo: login → dashboard → histórico em calendário → gestão de técnicos → agenda por dia</em>
+</p>
 
 ---
 
-## Capturas de tela
+## Visão geral
 
-### Tela de login
-![Login](docs/screenshots/01-login.png)
+| | |
+|---|---|
+| **Tipo** | Single Page Application (HTML5 + CSS + JS vanilla) |
+| **Uso** | Celular do técnico + painel do supervisor |
+| **Persistência** | MockAPI (REST) + localStorage |
+| **Idioma** | Português (pt-BR) |
 
-Acesso por perfil (**master**, **admin** ou **técnico**), com validação de credenciais e sessão persistente.
+---
+
+## Interface
+
+### Login
+<p align="center">
+  <img src="docs/screenshots/01-login.png" alt="Tela de login" width="280" />
+</p>
+
+Acesso por perfil (**master**, **admin** ou **técnico**), com validação de credenciais e sessão persistente na aba.
 
 ### Dashboard de monitoramento
-![Dashboard mobile](docs/screenshots/02-dashboard.png)
+<p align="center">
+  <img src="docs/screenshots/02-dashboard.png" alt="Dashboard mobile" width="280" />
+  &nbsp;
+  <img src="docs/screenshots/06-dashboard-desktop.png" alt="Dashboard desktop" width="480" />
+</p>
 
-Visão geral das O.S. com gráfico donut, filtros por tipo de serviço (instalação, LOS, lentidão etc.) e cards por técnico com status em tempo quase real.
+Resumo geral com gráfico donut, filtros por tipo de serviço (instalação, LOS, lentidão…) e cards por técnico com status quase em tempo real.
 
-![Dashboard desktop](docs/screenshots/06-dashboard-desktop.png)
-
-### Histórico geral em calendário
-![Histórico calendário](docs/screenshots/03-historico-calendario.png)
+### Histórico geral (calendário)
+<p align="center">
+  <img src="docs/screenshots/03-historico-calendario.png" alt="Histórico em calendário" width="280" />
+</p>
 
 Calendário mensal em que **dias com agendamento** aparecem com **indicador verde**. Toque no dia para ver instalações, O.S. em rota, concluídas e não concluídas.
 
-### Gestão de técnicos (admin)
-![Gerenciar técnicos](docs/screenshots/04-gerenciar-tecnicos.png)
+### Gestão de técnicos
+<p align="center">
+  <img src="docs/screenshots/04-gerenciar-tecnicos.png" alt="Gerenciar técnicos" width="280" />
+</p>
 
-Cadastro de técnicos, senhas de acesso, abertura de agenda individual, relatórios e atalhos de histórico/instalações.
+Cadastro, senhas, abertura de agenda, relatórios e atalhos de histórico/instalações (perfil admin/master).
 
 ### Agenda por dia
-![Agenda por dia](docs/screenshots/05-agenda-por-dia.png)
+<p align="center">
+  <img src="docs/screenshots/05-agenda-por-dia.png" alt="Agenda por dia com chips" width="280" />
+</p>
 
-Chips **Hoje / Amanhã / +2 / +3** para colar e planejar a agenda de cada data. Pontos verdes marcam dias já preenchidos. Na virada do dia, o planejamento futuro é promovido ou o dia inicia limpo.
-
----
-
-## Problema que resolve
-
-Equipes de campo precisam:
-
-- distribuir O.S. por técnico e por dia;
-- acompanhar status (em rota, concluído, não concluído) em tempo real;
-- gerar scripts prontos para WhatsApp/Telegram;
-- registrar instalações (CTO, porta, drop, GPS);
-- consultar o que foi feito em dias anteriores.
-
-O **Agenda Técnico Inteligente** centraliza isso em um único app web, usável no celular do técnico e no painel do supervisor.
+Chips **Hoje / Amanhã / +2 / +3** para colar e planejar a agenda. Ponto verde = dia já preenchido. Na virada do dia, o plano futuro é promovido ou o dia inicia limpo.
 
 ---
 
-## Funcionalidades principais
+## Funcionalidades
 
-| Área | Recursos |
-|------|----------|
-| **Autenticação** | Perfis master, admin e técnico; técnico vê só a própria agenda |
-| **Monitoramento** | Dashboard com totais, filtros por tipo de O.S., lista expansível por técnico |
-| **Agenda** | Colar texto de O.S., parser inteligente (formatos clássico e Ativo Telecom), cards com Maps / status |
-| **Agendamento multi-dia** | Hoje + até 3 dias à frente; histórico de dias passados; dia seguinte limpo se não houver plano |
-| **Status de O.S.** | Em rota, concluído, não concluído + observações; cópia automática de scripts |
-| **Histórico** | Calendário com dias agendados em verde; detalhe por data |
-| **Instalações** | Formulário CTO/porta/drop/equipamento + captura de GPS; link no Maps no histórico |
-| **CTO vinculada** | Clique na CTO lista todos os clientes da mesma CTO |
-| **Relatórios** | Relatório diário geral e individual por técnico |
-| **PWA** | Manifest, tema escuro, uso mobile com área segura |
+- **Autenticação** — master, admin e técnico (técnico vê só a própria agenda)
+- **Monitoramento** — totais, filtros por tipo de O.S., lista expansível por técnico
+- **Agenda inteligente** — colar texto de O.S., parser (formato clássico e Ativo Telecom), cards com Maps e status
+- **Agendamento multi-dia** — hoje + até 3 dias à frente; histórico de dias passados
+- **Status de O.S.** — em rota / concluído / não concluído + observações e scripts para WhatsApp/Telegram
+- **Histórico em calendário** — dias agendados em verde; detalhe por data
+- **Instalações** — CTO, porta, drop, equipamento + GPS; cliente clicável abre no Maps
+- **CTO vinculada** — clique na CTO lista todos os clientes da mesma CTO
+- **Relatórios** — diário geral e individual por técnico
+- **PWA** — manifest, tema escuro, uso mobile com safe-area
 
 ---
 
-## Stack técnica
+## Stack
 
-- **HTML5 / CSS3 / JavaScript (vanilla)** — app de página única, sem framework
-- **MockAPI** — persistência REST (agenda, status, histórico, instalações, senhas)
-- **localStorage / sessionStorage** — cache de status e sessão
-- **Geolocation API** — coordenadas da instalação
-- **Clipboard API** — cópia de scripts e credenciais
-- **Service Worker / Manifest** — base para PWA
+- HTML5 / CSS3 / JavaScript (vanilla)
+- MockAPI (REST)
+- Geolocation API, Clipboard API
+- Service Worker + Web App Manifest
 
-### Modelo de dados (por técnico)
+### Dados por técnico
 
 ```text
 agenda + status + agendaData     → dia corrente
 agendasFuturas[AAAA-MM-DD]       → planejamento (hoje+1 … +3)
-agendasHistorico[AAAA-MM-DD]     → dias passados (agenda + status)
+agendasHistorico[AAAA-MM-DD]     → dias passados
 statusHistorico[]                → log de mudanças de status
-instalacoes[]                    → histórico com CTO, porta, lat/lng
+instalacoes[]                    → CTO, porta, lat/lng, etc.
 ```
-
----
-
-## Perfis de uso
-
-1. **Master / Admin** — visão de todos os técnicos, colar agendas, migrar O.S., relatórios, histórico geral, instalações do mês.
-2. **Técnico** — só a própria rota, atualizar status, colar agenda do dia, registrar instalação, relatório pessoal.
 
 ---
 
 ## Como rodar
 
-1. Abra `agenda-tecnico.html` em um navegador moderno (ou sirva via HTTP estático).
-2. Login padrão de demonstração:
+1. Abra `agenda-tecnico.html` no navegador (ou sirva via HTTP estático).
+2. Logins de demonstração:
    - **master** / `master123`
    - **admin** / `mike`
-3. Técnicos usam o **nome cadastrado** como usuário e a senha definida no painel.
+3. Técnicos: **nome cadastrado** + senha definida no painel.
 
-> A URL da API está no início do `<script>` (`API_URL`). Ajuste para o seu endpoint se for reutilizar o projeto.
-
----
-
-## Destaques de UX
-
-- Visual **dark** com gradientes e glassmorphism leves
-- Layout **mobile-first**, touch targets generosos
-- Modais bottom-sheet no mobile
-- Feedback por **toast** e loading overlay
-- Ícones SVG em sprite inline (sem dependência externa de icon font)
+A URL da API está no início do `<script>` (`API_URL`).
 
 ---
 
-## Estrutura do repositório
+## Estrutura
 
 ```text
-├── agenda-tecnico.html          # Aplicação completa
-├── README.md                    # Este arquivo
+├── agenda-tecnico.html
+├── README.md
 └── docs/
-    └── screenshots/             # Prints para portfólio
+    ├── demo-agenda-tecnico.gif      # demo animada
+    └── screenshots/
         ├── 01-login.png
         ├── 02-dashboard.png
         ├── 03-historico-calendario.png
@@ -135,26 +130,16 @@ instalacoes[]                    → histórico com CTO, porta, lat/lng
 
 ---
 
-## Possíveis evoluções
+## Portfólio
 
-- Backend próprio (auth JWT, multi-empresa)
-- Notificações push quando O.S. muda de status
-- Mapa com todas as rotas do dia
-- Exportação PDF do relatório diário
-- Offline-first com fila de sincronização
+Projeto orientado a **operação real de campo**: parser de agendas, fluxo de status, GPS em instalação e histórico auditável por calendário.
 
----
+Demonstra:
 
-## Autor / portfólio
-
-Projeto focado em **produto real para operação de campo**: parser de agendas, fluxo de status, GPS em instalação e histórico auditável por calendário.
-
-Ideal para demonstrar:
-
-- domínio de **UI mobile** e PWA;
-- modelagem de **estado e sincronização**;
-- cuidado com **UX operacional** (copiar script, um toque para Maps, chips de data).
+- UI **mobile-first** e base de PWA  
+- modelagem de **estado + sincronização**  
+- UX operacional (copiar script, Maps em um toque, chips de data)
 
 ---
 
-*Interface em português (pt-BR). Capturas geradas a partir da versão atual do app.*
+*Capturas e GIF gerados a partir da versão atual do app.*
