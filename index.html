@@ -2814,6 +2814,7 @@ Contato: (11) 99347-3587"></textarea>
 
       if (perfil === 'tecnico') {
         // Busca o registro do próprio técnico para permitir colar/atualizar a agenda depois
+        let agendaVazia = true;
         try {
           const resp = await fetch(API_URL);
           const dados = await resp.json();
@@ -2821,8 +2822,11 @@ Contato: (11) 99347-3587"></textarea>
           if (registro) {
             registro = await garantirAgendaDoDia(registro);
             registroAtualId = registro.id;
+            cacheRegistroAgenda = registro;
             limparStatusLocalTecnico(usuario);
             document.getElementById("entradaTecnico").value = registro.agenda || "";
+            const textoAgenda = (registro.agenda || "").trim();
+            agendaVazia = !textoAgenda || parsearAgenda(textoAgenda).length === 0;
           }
         } catch (e) { console.warn("Erro ao carregar agenda do técnico:", e); }
 
@@ -2830,6 +2834,24 @@ Contato: (11) 99347-3587"></textarea>
 
         // Expande automaticamente o próprio card, já que é o único visível
         toggleDropdown(usuario);
+
+        // Sem agenda configurada no dia: abre na hora a tela para colar a agenda
+        if (agendaVazia) {
+          setTimeout(async () => {
+            try {
+              await abrirModalMenuTecnico();
+              const importador = document.getElementById("importadorTecnico");
+              if (importador && importador.classList.contains("oculto")) {
+                // mostraImportadorTecnico abre o campo e carrega o texto atual
+                await mostrarImportadorTecnico();
+              }
+              const ta = document.getElementById("entradaTecnico");
+              if (ta) ta.focus();
+            } catch (e) {
+              console.warn("Não foi possível abrir o importador de agenda automaticamente:", e);
+            }
+          }, 350);
+        }
       } else {
         const tecnicoSalvo = sessionStorage.getItem('tecnicoAberto');
         if (tecnicoSalvo && listaTecnicos.includes(tecnicoSalvo)) {
