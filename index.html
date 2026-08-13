@@ -5031,11 +5031,34 @@ Contato: (11) 99347-3587"></textarea>
           preview.innerHTML = htmlContador || '<span style="color:#64748b">Sem atividades</span>';
         }
 
-        const conteudoFinal = logsHtml
-          ? logsHtml
-          : (filtroTipoSinal
-              ? `<div class="sem-atividade">Nenhuma O.S. deste tipo para este técnico.</div>`
-              : `<div class="sem-atividade">Nenhuma O.S. configurada no sistema.</div>`);
+        let conteudoFinal;
+        if (logsHtml) {
+          conteudoFinal = logsHtml;
+        } else if (filtroTipoSinal) {
+          conteudoFinal = `<div class="sem-atividade">Nenhuma O.S. deste tipo para este técnico.</div>`;
+        } else {
+          // Sem O.S.: admin/master pode ir direto colar a agenda; técnico usa o Menu Rápido
+          const tecJs = String(tec).replace(/'/g, "\\'");
+          if (perfilAtual === 'master' || perfilAtual === 'admin') {
+            conteudoFinal = `
+              <div class="sem-atividade" style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:16px 8px;">
+                <span>Nenhuma O.S. configurada no sistema.</span>
+                <button type="button" class="btn-gerar" style="width:auto;min-height:44px;padding:12px 18px;margin:0;font-size:13.5px;" onclick="event.stopPropagation(); selecionarTecnico('${tecJs}')">
+                  ${ic('clipboard-list','icon-sm')} Colar agenda deste técnico
+                </button>
+              </div>`;
+          } else if (perfilAtual === 'tecnico') {
+            conteudoFinal = `
+              <div class="sem-atividade" style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:16px 8px;">
+                <span>Nenhuma O.S. configurada no sistema.</span>
+                <button type="button" class="btn-gerar" style="width:auto;min-height:44px;padding:12px 18px;margin:0;font-size:13.5px;" onclick="event.stopPropagation(); abrirModalMenuTecnico().then(() => { const el = document.getElementById('importadorTecnico'); if (el && el.classList.contains('oculto')) mostrarImportadorTecnico(); })">
+                  ${ic('clipboard-list','icon-sm')} Colar minha agenda
+                </button>
+              </div>`;
+          } else {
+            conteudoFinal = `<div class="sem-atividade">Nenhuma O.S. configurada no sistema.</div>`;
+          }
+        }
         const containerAtividades = document.getElementById(`atividades-${tec}`);
         const btnDrop = document.getElementById(`btn-drop-${tec}`);
         // Evita reescrever o DOM (e reiniciar animações/fechar dropdowns abertos) quando nada mudou
