@@ -1957,6 +1957,41 @@
     }
     .secao-titulo-rota .icon { color: var(--cyan-2); }
     .secao-titulo-rota.oculto { display: none !important; }
+    .titulo-rota-texto {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex: 1;
+      min-width: 0;
+    }
+    .btn-navegar-rota {
+      width: 38px;
+      height: 38px;
+      min-width: 38px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface-2);
+      color: var(--text-2);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 27px;
+      line-height: 1;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background .15s, border-color .15s, color .15s, transform .12s;
+    }
+    .btn-navegar-rota:hover:not(:disabled) {
+      background: var(--surface-3);
+      border-color: var(--border-2);
+      color: var(--cyan-2);
+    }
+    .btn-navegar-rota:active:not(:disabled) { transform: scale(.93); }
+    .btn-navegar-rota:disabled {
+      opacity: .28;
+      cursor: not-allowed;
+    }
 
     .resumo-tipos-divider {
       border-top: 1px solid var(--border);
@@ -2418,7 +2453,11 @@
   </div>
 
   <!-- Rota do técnico — o mais importante, sempre em evidência -->
-  <div class="secao-titulo-rota oculto" id="tituloRotaTecnico"><svg class="icon icon-lg"><use href="#i-car"></use></svg> Minha Rota de Hoje</div>
+  <div class="secao-titulo-rota oculto" id="tituloRotaTecnico">
+    <button type="button" class="btn-navegar-rota" id="btnRotaAnterior" onclick="navegarRotaTecnico(-1)" aria-label="Dia anterior com agenda" title="Dia anterior com agenda">‹</button>
+    <span class="titulo-rota-texto"><svg class="icon icon-lg"><use href="#i-car"></use></svg> <span id="tituloRotaTexto">Minha Rota de Hoje</span></span>
+    <button type="button" class="btn-navegar-rota" id="btnRotaProximo" onclick="navegarRotaTecnico(1)" aria-label="Próximo dia com agenda" title="Próximo dia com agenda">›</button>
+  </div>
   <div class="seletor-tecnico" id="seletorTecnico"></div>
 
   <!-- Painel do Técnico (Agenda Específica) -->
@@ -2805,6 +2844,8 @@ Contato: (11) 99347-3587"></textarea>
         document.getElementById("resumoTitulo").innerHTML = `${ic('pie-chart', 'icon-sm')} Meu Resumo de O.S.'s`;
         document.getElementById("btnMenuTecnico").classList.remove("oculto");
         document.getElementById("tituloRotaTecnico").classList.remove("oculto");
+        dataRotaSelecionada = dataISOLocal();
+        atualizarTituloRotaTecnico();
         document.getElementById("dividerInstalacoesTecnico").classList.remove("oculto");
         document.getElementById("blocoInstalacoesTecnico").classList.remove("oculto");
         tecnicoAtual = usuario;
@@ -3523,7 +3564,8 @@ Contato: (11) 99347-3587"></textarea>
     // agendasHistorico = { "AAAA-MM-DD": { agenda, status, arquivadoEm } }  → dias passados
     // agendasFuturas   = { "AAAA-MM-DD": { agenda } }  → hoje+1 .. hoje+3 (planejado)
     let dataAgendaSelecionada = null; // AAAA-MM-DD no painel de agenda
-    let cacheRegistroAgenda = null;   // último registro carregado do técnico atual
+    let dataRotaSelecionada = null;    // AAAA-MM-DD exibido em "Minha Rota"
+    let cacheRegistroAgenda = null;    // último registro carregado do técnico atual
 
     function parseAgendasHistorico(registro) {
       if (!registro) return {};
@@ -4959,6 +5001,8 @@ Contato: (11) 99347-3587"></textarea>
 
     function atualizarDashboardGeralComDados(todosDados) {
       ultimoDashboardDados = todosDados;
+      if (!dataRotaSelecionada) dataRotaSelecionada = dataISOLocal();
+      atualizarTituloRotaTecnico(todosDados);
       const tecnicosParaExibir = listaTecnicosVisiveis();
       if(!tecnicosParaExibir) return;
       const totalGeral = { rota: 0, concluido: 0, naoConcluido: 0, aguardando: 0 };
@@ -4969,22 +5013,22 @@ Contato: (11) 99347-3587"></textarea>
         let logsHtml = "";
         let cascataIdx = 0;
 
-        if (dados && dados.length > 0 && dados[0].agenda) {
+        if (dados && dados.length > 0) {
           const registro = dados[0];
-          const listaOS = parsearAgenda(registro.agenda);
-          
-          let statusSalvo = {};
-          if (registro.status) {
-            try { statusSalvo = JSON.parse(registro.status); } catch(e){}
-          }
+          const dataRota = dataRotaSelecionada || dataISOLocal();
+          const snapRota = obterAgendaDoDia(registro, dataRota);
+          const textoRota = snapRota.agenda || "";
+          const listaOS = textoRota ? parsearAgenda(textoRota) : [];
 
+          let statusSalvo = snapRota.status || {};
+          limparStatusLocalTecnico(tec);
           Object.keys(statusSalvo).forEach(osId => {
             if (typeof statusSalvo[osId] === 'object') {
               localStorage.setItem(`status_${tec}_${osId}`, statusSalvo[osId].status || "");
               localStorage.setItem(`obs_${tec}_${osId}`, statusSalvo[osId].obs || "");
               localStorage.setItem(`timestamp_${tec}_${osId}_${statusSalvo[osId].status}`, statusSalvo[osId].timestamp || "--:--");
             } else {
-              localStorage.setItem(`status_${tec}_${osId}`, statusSalvo[osId]);
+              localStorage.setItem(`status_${tec}_${osId}`, statusSalvo[osId] || "");
             }
           });
 
@@ -5082,6 +5126,80 @@ Contato: (11) 99347-3587"></textarea>
 
       renderizarResumoGeral(totalGeral);
       renderizarResumoTipos(totalTipos);
+    }
+
+    function obterDatasComAgendaRota(todosDados) {
+      const dias = new Set();
+      const tecs = listaTecnicosVisiveis() || [];
+      (todosDados || []).forEach(registro => {
+        if (!tecs.includes(registro.tecnico)) return;
+        datasComAgendamentoNoRegistro(registro).forEach(data => dias.add(data));
+      });
+      return Array.from(dias).sort();
+    }
+
+    function atualizarTituloRotaTecnico(todosDados = ultimoDashboardDados) {
+      const titulo = document.getElementById("tituloRotaTexto");
+      const anterior = document.getElementById("btnRotaAnterior");
+      const proximo = document.getElementById("btnRotaProximo");
+      if (!titulo) return;
+
+      const data = dataRotaSelecionada || dataISOLocal();
+      const hoje = dataISOLocal();
+      titulo.textContent = data === hoje
+        ? "Minha Rota de Hoje"
+        : `Minha Rota — ${rotuloCurtoDia(data)} ${formatarDiaMes(data)}`;
+
+      const datas = obterDatasComAgendaRota(todosDados);
+      const anteriores = datas.filter(d => d < data);
+      const proximas = datas.filter(d => d > data);
+
+      if (anterior) {
+        anterior.disabled = anteriores.length === 0;
+        anterior.title = anteriores.length ? `Ir para ${formatarDiaMes(anteriores[anteriores.length - 1])}` : "Não há agenda anterior";
+      }
+      if (proximo) {
+        proximo.disabled = proximas.length === 0;
+        proximo.title = proximas.length ? `Ir para ${formatarDiaMes(proximas[0])}` : "Não há próxima agenda";
+      }
+    }
+
+    async function navegarRotaTecnico(direcao) {
+      if (perfilAtual !== "tecnico") return;
+
+      let dados = ultimoDashboardDados || [];
+      let datas = obterDatasComAgendaRota(dados);
+
+      if (!datas.length) {
+        try {
+          const resp = await fetch(API_URL);
+          if (!resp.ok) throw new Error("Falha ao buscar agenda");
+          dados = await resp.json();
+          ultimoDashboardDados = dados;
+          datas = obterDatasComAgendaRota(dados);
+        } catch (e) {
+          console.warn("Não foi possível localizar outras datas da rota:", e);
+          return;
+        }
+      }
+
+      const atual = dataRotaSelecionada || dataISOLocal();
+      const candidatas = direcao < 0
+        ? datas.filter(d => d < atual).sort().reverse()
+        : datas.filter(d => d > atual).sort();
+
+      if (!candidatas.length) return;
+
+      dataRotaSelecionada = candidatas[0];
+      atualizarDashboardGeralComDados(dados);
+
+      const container = document.getElementById(`atividades-${tecnicoAtual}`);
+      const btn = document.getElementById(`btn-drop-${tecnicoAtual}`);
+      if (container && btn) {
+        container.classList.add("visivel");
+        btn.classList.add("aberto");
+        btn.innerHTML = `${ic('chevron-down')} Recolher`;
+      }
     }
 
     // Renderiza a contagem de O.S.'s por tipo (Instalação, LOS/Sem sinal, Lentidão, Não identificado) no topo
