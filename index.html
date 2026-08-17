@@ -2635,6 +2635,10 @@
           <button class="btn-hamburguer oculto" id="btnMenuTecnico" onclick="abrirModalMenuTecnico()" aria-label="Menu rápido">
             <svg class="icon icon-sm"><use href="#i-menu"></use></svg> Menu
           </button>
+          <button class="btn-config" id="btnSuperAdmin" onclick="abrirModalSuperAdmin()" aria-label="Super Admin" style="display:none; background:rgba(239,68,68,0.12); border-color:rgba(239,68,68,0.35); color:#f87171;">
+            <svg class="icon"><use href="#i-key"></use></svg>
+            <span class="btn-config-texto">Super</span>
+          </button>
           <button class="btn-config" id="btnConfigTecnicos" onclick="abrirModalConfig()" aria-label="Gerenciar técnicos">
             <svg class="icon"><use href="#i-settings"></use></svg>
             <span class="btn-config-texto">Técnicos</span>
@@ -3093,6 +3097,39 @@ Contato: (11) 99347-3587"></textarea>
   </div> <!-- /#appConteudo -->
 
 
+  <!-- Modal Super Admin -->
+  <div class="modal-overlay" id="modalSuperAdminOverlay">
+    <div class="modal" style="max-width:520px;">
+      <button class="modal-fechar" onclick="fecharModalSuperAdmin()" aria-label="Fechar"><svg class="icon"><use href="#i-x"></use></svg></button>
+      <div class="modal-titulo"><svg class="icon icon-lg"><use href="#i-key"></use></svg> Super Admin</div>
+      <p style="font-size:12.5px; color:#94a3b8; margin:-8px 0 14px;">Gerencie logins de admin e apague qualquer instalação ou O.S. (manutenção).</p>
+
+      <div class="modal-secao">Novo admin</div>
+      <div class="form-add-tecnico">
+        <input type="text" class="input-add" id="superNovoAdminLogin" placeholder="Login do admin..." autocomplete="off" />
+        <div class="linha-senha-add">
+          <input type="text" class="input-add" id="superNovoAdminSenha" placeholder="Senha..." autocomplete="off" />
+          <button class="btn-add" onclick="adicionarAdminDinamico()" aria-label="Adicionar admin"><svg class="icon"><use href="#i-plus"></use></svg></button>
+        </div>
+      </div>
+      <p style="font-size:11.5px; color:#64748b; margin:-6px 0 10px;">Admins dinâmicos têm o mesmo acesso operacional do admin (não podem gerenciar outros admins nem usar o painel Super).</p>
+
+      <div class="modal-secao">Admins cadastrados</div>
+      <div class="lista-gerenciar" id="listaAdminsSuper" style="max-height:min(200px,30vh);"></div>
+
+      <div class="modal-divider"></div>
+      <div class="modal-secao">Apagar registros</div>
+      <button class="btn-salvar-modal" onclick="carregarPainelExclusaoSuper('instalacoes')" style="margin-top:0; background:linear-gradient(135deg,#f43f5e,#e11d48);"><svg class="icon"><use href="#i-trash-2"></use></svg> Instalações — listar e apagar</button>
+      <button class="btn-salvar-modal" onclick="carregarPainelExclusaoSuper('os')" style="margin-top:10px; background:linear-gradient(135deg,#fb923c,#ea580c);"><svg class="icon"><use href="#i-clipboard-list"></use></svg> O.S. / Manutenções — listar e apagar</button>
+
+      <div id="superExclusaoPainel" style="display:none; margin-top:14px;">
+        <div class="modal-secao" id="superExclusaoTitulo">Registros</div>
+        <input type="search" class="campo-input" id="superExclusaoFiltro" placeholder="Filtrar por cliente, CTO, O.S., técnico..." oninput="filtrarPainelExclusaoSuper()" style="margin-bottom:10px;" />
+        <div class="lista-gerenciar" id="superExclusaoLista" style="max-height:min(280px,40vh);"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal Mapa de CTOs (Google Maps JS + exportação KML) -->
   <div class="modal-overlay" id="modalMapaCtosOverlay">
     <div class="modal modal-mapa-cto">
@@ -3184,10 +3221,16 @@ Contato: (11) 99347-3587"></textarea>
     const MASTER_SENHA = "master123";
     const ADMIN_LOGIN = "admin";
     const ADMIN_SENHA = "mike";
+    // Super Admin — acesso total: apagar qualquer registro + gerenciar logins de admin
+    const SUPER_LOGIN = "super";
+    const SUPER_SENHA = "super@indaia";
+    const REGISTRO_ADMINS_KEY = "__ADMINS__"; // registro especial na API (não é técnico)
 
     // Perfil e usuário autenticados na sessão atual
-    let perfilAtual = null;   // 'master' | 'admin' | 'tecnico'
+    let perfilAtual = null;   // 'super' | 'master' | 'admin' | 'tecnico'
     let usuarioLogado = null;
+    let listaAdminsDinamicos = []; // [{ login, senha }]
+    let registroAdminsId = null;
 
     // Helper do pacote de ícones: retorna um <svg> referenciando um símbolo do sprite
     function ic(nome, cls) {
@@ -3217,7 +3260,20 @@ Contato: (11) 99347-3587"></textarea>
     // Retorna a lista de técnicos que o perfil atual pode enxergar: um técnico logado só vê a si mesmo
     function listaTecnicosVisiveis() {
       if (perfilAtual === 'tecnico' && usuarioLogado) return [usuarioLogado];
-      return listaTecnicos;
+      return (listaTecnicos || []).filter(t => !ehRegistroSistema(t));
+    }
+
+    function ehRegistroSistema(nome) {
+      const n = String(nome || "");
+      return n === REGISTRO_ADMINS_KEY || n.startsWith("__");
+    }
+
+    function ehEquipeGestao() {
+      return perfilAtual === 'super' || perfilAtual === 'master' || perfilAtual === 'admin';
+    }
+
+    function ehSuperAdmin() {
+      return perfilAtual === 'super';
     }
 
     function recarregarPagina(delay = 800) {
@@ -3263,7 +3319,7 @@ Contato: (11) 99347-3587"></textarea>
       card.classList.add("shake");
     }
 
-    // Valida as credenciais digitadas contra os 3 perfis possíveis: master, admin (senha fixa) e técnico (senha própria na API)
+    // Valida credenciais: super → master → admin fixo → admins dinâmicos → técnico
     async function realizarLogin() {
       const usuario = document.getElementById("loginUsuario").value.trim();
       const senha = document.getElementById("loginSenha").value;
@@ -3274,24 +3330,48 @@ Contato: (11) 99347-3587"></textarea>
         return;
       }
 
-      if (usuario.toLowerCase() === MASTER_LOGIN && senha === MASTER_SENHA) {
+      const uLow = usuario.toLowerCase();
+
+      if (uLow === SUPER_LOGIN && senha === SUPER_SENHA) {
+        persistirSessao('super', usuario);
+        await entrarNoApp('super', usuario);
+        return;
+      }
+
+      if (uLow === MASTER_LOGIN && senha === MASTER_SENHA) {
         persistirSessao('master', usuario);
         await entrarNoApp('master', usuario);
         return;
       }
 
-      if (usuario.toLowerCase() === ADMIN_LOGIN && senha === ADMIN_SENHA) {
+      if (uLow === ADMIN_LOGIN && senha === ADMIN_SENHA) {
         persistirSessao('admin', usuario);
         await entrarNoApp('admin', usuario);
         return;
       }
 
-      // Não bateu com master/admin: tenta como login de técnico (senha cadastrada na API)
       toggleLoading(true, "Verificando credenciais...");
       try {
         const resp = await fetch(API_URL);
         const dados = await resp.json();
-        const registro = dados.find(d => (d.tecnico || "").toLowerCase() === usuario.toLowerCase());
+
+        // Carrega admins dinâmicos do registro especial
+        await carregarAdminsDaApi(dados);
+
+        const adminDyn = (listaAdminsDinamicos || []).find(a =>
+          (a.login || "").toLowerCase() === uLow && a.senha === senha
+        );
+        if (adminDyn) {
+          toggleLoading(false);
+          persistirSessao('admin', adminDyn.login);
+          await entrarNoApp('admin', adminDyn.login);
+          return;
+        }
+
+        const registro = dados.find(d =>
+          !ehRegistroSistema(d.tecnico) &&
+          (d.tecnico || "").toLowerCase() === uLow
+        );
         toggleLoading(false);
 
         if (registro && registro.senha && registro.senha === senha) {
@@ -3321,13 +3401,17 @@ Contato: (11) 99347-3587"></textarea>
       document.getElementById("telaLogin").classList.add("oculto");
       document.getElementById("appConteudo").classList.remove("oculto");
 
-      const ehEquipe = (perfil === 'master' || perfil === 'admin');
+      const ehEquipe = (perfil === 'master' || perfil === 'admin' || perfil === 'super');
       document.getElementById("nomeUsuarioLogado").textContent = usuario;
-      document.getElementById("badgePerfilLogado").textContent = perfil === 'tecnico' ? 'Técnico' : (perfil === 'master' ? 'Master' : 'Admin');
+      const badgeTxt = perfil === 'tecnico' ? 'Técnico'
+        : (perfil === 'super' ? 'Super' : (perfil === 'master' ? 'Master' : 'Admin'));
+      document.getElementById("badgePerfilLogado").textContent = badgeTxt;
       const av = document.getElementById("topoAvatar");
       if (av) av.textContent = (usuario || "?").trim().charAt(0).toUpperCase();
       document.getElementById("topoUsuarioBox").style.display = "flex";
       document.getElementById("btnConfigTecnicos").style.display = ehEquipe ? "flex" : "none";
+      const btnSuper = document.getElementById("btnSuperAdmin");
+      if (btnSuper) btnSuper.style.display = (perfil === 'super') ? "inline-flex" : "none";
       const btnSair = document.querySelector(".btn-sair");
       if (btnSair) btnSair.style.display = "inline-flex";
       const btnMenu = document.getElementById("btnMenuTecnico");
@@ -3419,6 +3503,433 @@ Contato: (11) 99347-3587"></textarea>
       setTimeout(() => overlay.style.display = "none", 300);
     }
 
+    // ===== Super Admin: admins dinâmicos + exclusão de registros =====
+    let cacheExclusaoSuper = []; // lista atual no painel de exclusão
+    let tipoExclusaoSuper = null; // 'instalacoes' | 'os'
+
+    async function carregarAdminsDaApi(dadosOpcionais) {
+      try {
+        let dados = dadosOpcionais;
+        if (!dados) {
+          const resp = await fetch(API_URL);
+          if (!resp.ok) throw new Error("fetch");
+          dados = await resp.json();
+        }
+        const reg = (dados || []).find(d => d.tecnico === REGISTRO_ADMINS_KEY);
+        registroAdminsId = reg ? reg.id : null;
+        listaAdminsDinamicos = [];
+        if (reg) {
+          // Prefer field admins; fallback agenda as JSON storage
+          let raw = reg.admins != null ? reg.admins : (reg.agenda || "[]");
+          if (typeof raw === "string") {
+            try { listaAdminsDinamicos = JSON.parse(raw || "[]"); } catch (e) { listaAdminsDinamicos = []; }
+          } else if (Array.isArray(raw)) {
+            listaAdminsDinamicos = raw;
+          }
+          if (!Array.isArray(listaAdminsDinamicos)) listaAdminsDinamicos = [];
+        }
+      } catch (e) {
+        console.warn("Não foi possível carregar admins dinâmicos:", e);
+        listaAdminsDinamicos = listaAdminsDinamicos || [];
+      }
+    }
+
+    async function salvarAdminsNaApi() {
+      const payload = {
+        tecnico: REGISTRO_ADMINS_KEY,
+        agenda: JSON.stringify(listaAdminsDinamicos || []),
+        admins: JSON.stringify(listaAdminsDinamicos || []),
+        senha: "__sistema__",
+        status: JSON.stringify({})
+      };
+      if (registroAdminsId) {
+        await fetch(`${API_URL}/${registroAdminsId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+      } else {
+        const resp = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const criado = await resp.json();
+        registroAdminsId = criado.id;
+      }
+    }
+
+    function abrirModalSuperAdmin() {
+      if (!ehSuperAdmin()) {
+        alert("Acesso restrito ao Super Admin.");
+        return;
+      }
+      const overlay = document.getElementById("modalSuperAdminOverlay");
+      overlay.style.display = "flex";
+      setTimeout(() => overlay.classList.add("aberto"), 10);
+      document.getElementById("superExclusaoPainel").style.display = "none";
+      tipoExclusaoSuper = null;
+      cacheExclusaoSuper = [];
+      carregarAdminsDaApi().then(() => renderizarListaAdminsSuper());
+    }
+
+    function fecharModalSuperAdmin() {
+      const overlay = document.getElementById("modalSuperAdminOverlay");
+      overlay.classList.remove("aberto");
+      setTimeout(() => overlay.style.display = "none", 300);
+    }
+
+    function renderizarListaAdminsSuper() {
+      const box = document.getElementById("listaAdminsSuper");
+      if (!box) return;
+      const fixos = [
+        { login: SUPER_LOGIN, tipo: "Super (fixo)", fixo: true },
+        { login: MASTER_LOGIN, tipo: "Master (fixo)", fixo: true },
+        { login: ADMIN_LOGIN, tipo: "Admin (fixo)", fixo: true }
+      ];
+      let html = fixos.map(a => `
+        <div class="item-gerenciar">
+          <span class="item-gerenciar-nome">${ic("lock","icon-sm")} ${escapeHtml(a.login)}
+            <span class="badge-perfil" style="margin-left:6px;">${escapeHtml(a.tipo)}</span>
+          </span>
+          <div style="font-size:11.5px;color:#64748b;">Não pode ser removido por aqui</div>
+        </div>`).join("");
+
+      if (!(listaAdminsDinamicos || []).length) {
+        html += `<div class="sem-atividade" style="margin-top:8px;">Nenhum admin dinâmico cadastrado.</div>`;
+      } else {
+        html += listaAdminsDinamicos.map((a, idx) => {
+          const loginEsc = String(a.login || "").replace(/'/g, "\\'");
+          return `
+          <div class="item-gerenciar">
+            <span class="item-gerenciar-nome">${ic("user","icon-sm")} ${escapeHtml(a.login)}
+              <span class="badge-perfil" style="margin-left:6px;background:rgba(59,130,246,0.18);color:#93c5fd;">Admin</span>
+            </span>
+            <div class="acoes-gerenciar-tec" style="grid-template-columns:1fr 1fr;">
+              <button class="btn-editar-tec-lista" onclick="alterarSenhaAdminDinamico(${idx})" style="background:rgba(251,191,36,0.12);border-color:rgba(251,191,36,0.25);color:#fbbf24;">${ic("key","icon-sm")} Senha</button>
+              <button class="btn-deletar-tec" onclick="removerAdminDinamico(${idx})">${ic("trash-2","icon-sm")} Excluir</button>
+            </div>
+          </div>`;
+        }).join("");
+      }
+      box.innerHTML = html;
+    }
+
+    async function adicionarAdminDinamico() {
+      if (!ehSuperAdmin()) return;
+      const login = (document.getElementById("superNovoAdminLogin").value || "").trim();
+      const senha = (document.getElementById("superNovoAdminSenha").value || "").trim();
+      if (!login || !senha) {
+        alert("Informe login e senha do admin.");
+        return;
+      }
+      const reserved = [SUPER_LOGIN, MASTER_LOGIN, ADMIN_LOGIN].map(x => x.toLowerCase());
+      if (reserved.includes(login.toLowerCase())) {
+        alert("Este login é reservado do sistema.");
+        return;
+      }
+      if ((listaTecnicos || []).some(t => (t || "").toLowerCase() === login.toLowerCase())) {
+        alert("Este login coincide com o nome de um técnico. Use outro.");
+        return;
+      }
+      if ((listaAdminsDinamicos || []).some(a => (a.login || "").toLowerCase() === login.toLowerCase())) {
+        alert("Já existe um admin com este login.");
+        return;
+      }
+      toggleLoading(true, "Salvando admin...");
+      try {
+        await carregarAdminsDaApi();
+        listaAdminsDinamicos.push({ login, senha });
+        await salvarAdminsNaApi();
+        document.getElementById("superNovoAdminLogin").value = "";
+        document.getElementById("superNovoAdminSenha").value = "";
+        renderizarListaAdminsSuper();
+        mostrarToast(ic("check-circle") + " Admin criado!");
+      } catch (e) {
+        console.error(e);
+        mostrarErro("Erro ao salvar admin.");
+      } finally {
+        toggleLoading(false);
+      }
+    }
+
+    async function alterarSenhaAdminDinamico(idx) {
+      if (!ehSuperAdmin()) return;
+      const a = listaAdminsDinamicos[idx];
+      if (!a) return;
+      const nova = prompt(`Nova senha para o admin "${a.login}":`);
+      if (nova === null) return;
+      const s = nova.trim();
+      if (!s) { alert("Senha não pode ficar em branco."); return; }
+      toggleLoading(true, "Atualizando senha...");
+      try {
+        listaAdminsDinamicos[idx].senha = s;
+        await salvarAdminsNaApi();
+        renderizarListaAdminsSuper();
+        mostrarToast(ic("key") + " Senha atualizada!");
+      } catch (e) {
+        mostrarErro("Erro ao atualizar senha.");
+      } finally {
+        toggleLoading(false);
+      }
+    }
+
+    async function removerAdminDinamico(idx) {
+      if (!ehSuperAdmin()) return;
+      const a = listaAdminsDinamicos[idx];
+      if (!a) return;
+      if (!confirm(`Excluir o login de admin "${a.login}"?`)) return;
+      toggleLoading(true, "Removendo admin...");
+      try {
+        listaAdminsDinamicos.splice(idx, 1);
+        await salvarAdminsNaApi();
+        renderizarListaAdminsSuper();
+        mostrarToast(ic("trash-2") + " Admin removido!");
+      } catch (e) {
+        mostrarErro("Erro ao remover admin.");
+      } finally {
+        toggleLoading(false);
+      }
+    }
+
+    async function carregarPainelExclusaoSuper(tipo) {
+      if (!ehSuperAdmin()) return;
+      tipoExclusaoSuper = tipo;
+      const painel = document.getElementById("superExclusaoPainel");
+      painel.style.display = "block";
+      document.getElementById("superExclusaoTitulo").textContent =
+        tipo === "instalacoes" ? "Instalações (todas)" : "O.S. / Manutenções (todas as agendas)";
+      document.getElementById("superExclusaoFiltro").value = "";
+      toggleLoading(true, "Carregando registros...");
+      try {
+        const resp = await fetch(API_URL);
+        const dados = await resp.json();
+        cacheExclusaoSuper = [];
+
+        if (tipo === "instalacoes") {
+          (dados || []).forEach(reg => {
+            if (!reg || ehRegistroSistema(reg.tecnico)) return;
+            let lista = [];
+            try { lista = JSON.parse(reg.instalacoes || "[]"); } catch (e) {}
+            (lista || []).forEach((item, i) => {
+              cacheExclusaoSuper.push({
+                tipo: "instalacao",
+                registroId: reg.id,
+                tecnico: reg.tecnico,
+                index: i,
+                data: item.data || "",
+                cliente: item.cliente || "",
+                cto: item.cto || "",
+                porta: item.porta || "",
+                osId: item.osId || "",
+                item
+              });
+            });
+          });
+          cacheExclusaoSuper.sort((a, b) => String(b.data).localeCompare(String(a.data)));
+        } else {
+          (dados || []).forEach(reg => {
+            if (!reg || ehRegistroSistema(reg.tecnico)) return;
+            const fontes = [];
+            if (reg.agenda) fontes.push({ origem: "hoje", texto: reg.agenda, data: reg.agendaData || dataISOLocal() });
+            try {
+              const hist = parseAgendasHistorico(reg);
+              Object.keys(hist || {}).forEach(d => {
+                if (hist[d] && hist[d].agenda) fontes.push({ origem: "hist", texto: hist[d].agenda, data: d });
+              });
+            } catch (e) {}
+            try {
+              const fut = parseAgendasFuturas(reg);
+              Object.keys(fut || {}).forEach(d => {
+                if (fut[d] && fut[d].agenda) fontes.push({ origem: "fut", texto: fut[d].agenda, data: d });
+              });
+            } catch (e) {}
+
+            fontes.forEach(f => {
+              let oss = [];
+              try { oss = parsearAgenda(f.texto); } catch (e) {}
+              oss.forEach(os => {
+                cacheExclusaoSuper.push({
+                  tipo: "os",
+                  registroId: reg.id,
+                  tecnico: reg.tecnico,
+                  origem: f.origem,
+                  dataAgenda: f.data,
+                  osId: os.id,
+                  cliente: os.cliente || "",
+                  assunto: os.assunto || "",
+                  horario: os.horario || "",
+                  os
+                });
+              });
+            });
+          });
+          cacheExclusaoSuper.sort((a, b) => String(b.dataAgenda || "").localeCompare(String(a.dataAgenda || "")));
+        }
+
+        filtrarPainelExclusaoSuper();
+      } catch (e) {
+        console.error(e);
+        mostrarErro("Erro ao carregar registros.");
+      } finally {
+        toggleLoading(false);
+      }
+    }
+
+    function filtrarPainelExclusaoSuper() {
+      const q = ((document.getElementById("superExclusaoFiltro") || {}).value || "").trim().toLowerCase();
+      const lista = document.getElementById("superExclusaoLista");
+      if (!lista) return;
+      const filtrados = !q ? cacheExclusaoSuper : cacheExclusaoSuper.filter(r => {
+        const blob = [
+          r.cliente, r.cto, r.tecnico, r.osId, r.assunto, r.porta, r.data, r.dataAgenda
+        ].map(x => String(x || "").toLowerCase()).join(" ");
+        return blob.includes(q);
+      });
+
+      if (!filtrados.length) {
+        lista.innerHTML = `<div class="sem-atividade">Nenhum registro encontrado.</div>`;
+        return;
+      }
+
+      lista.innerHTML = filtrados.slice(0, 200).map((r, visualIdx) => {
+        // index in cacheExclusaoSuper
+        const realIdx = cacheExclusaoSuper.indexOf(r);
+        if (r.tipo === "instalacao") {
+          const dataFmt = r.data ? new Date(r.data).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—";
+          return `
+            <div class="item-gerenciar">
+              <span class="item-gerenciar-nome">${ic("router","icon-sm")} ${escapeHtml(r.cliente || "—")}</span>
+              <div style="font-size:12px;color:#94a3b8;">${escapeHtml(r.tecnico)} · ${escapeHtml(r.cto || "sem CTO")} · ${escapeHtml(dataFmt)}</div>
+              <button class="btn-deletar-tec" style="width:100%;margin-top:6px;" onclick="superApagarRegistro(${realIdx})">${ic("trash-2","icon-sm")} Apagar instalação</button>
+            </div>`;
+        }
+        return `
+          <div class="item-gerenciar">
+            <span class="item-gerenciar-nome">${ic("clipboard-list","icon-sm")} #${escapeHtml(String(r.osId))} · ${escapeHtml(r.cliente || "—")}</span>
+            <div style="font-size:12px;color:#94a3b8;">${escapeHtml(r.tecnico)} · ${escapeHtml(r.dataAgenda || "")} · ${escapeHtml(r.assunto || "")}</div>
+            <button class="btn-deletar-tec" style="width:100%;margin-top:6px;" onclick="superApagarRegistro(${realIdx})">${ic("trash-2","icon-sm")} Apagar O.S.</button>
+          </div>`;
+      }).join("");
+      if (filtrados.length > 200) {
+        lista.innerHTML += `<div class="sem-atividade">Mostrando 200 de ${filtrados.length}. Use o filtro para refinar.</div>`;
+      }
+    }
+
+    async function superApagarRegistro(idx) {
+      if (!ehSuperAdmin()) return;
+      const r = cacheExclusaoSuper[idx];
+      if (!r) return;
+
+      if (r.tipo === "instalacao") {
+        if (!confirm(`Apagar instalação de "${r.cliente}" (${r.cto || "sem CTO"}) do técnico ${r.tecnico}?`)) return;
+        toggleLoading(true, "Apagando instalação...");
+        try {
+          const resp = await fetch(API_URL);
+          const dados = await resp.json();
+          const reg = dados.find(d => String(d.id) === String(r.registroId));
+          if (!reg) throw new Error("Registro não encontrado");
+          let lista = [];
+          try { lista = JSON.parse(reg.instalacoes || "[]"); } catch (e) {}
+          // Remove by matching content (index may shift)
+          const antes = lista.length;
+          lista = lista.filter((item, i) => {
+            if (i === r.index) return false;
+            // fallback match
+            return !(item.data === r.item.data && item.cliente === r.item.cliente && item.cto === r.item.cto && item.porta === r.item.porta);
+          });
+          // If filter kept same length, force splice by index
+          if (lista.length === antes && r.index >= 0 && r.index < antes) {
+            lista = JSON.parse(reg.instalacoes || "[]");
+            lista.splice(r.index, 1);
+          }
+          await fetch(`${API_URL}/${reg.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ instalacoes: JSON.stringify(lista) })
+          });
+          mostrarToast(ic("trash-2") + " Instalação apagada!");
+          await carregarPainelExclusaoSuper("instalacoes");
+        } catch (e) {
+          console.error(e);
+          mostrarErro("Erro ao apagar instalação.");
+          toggleLoading(false);
+        }
+        return;
+      }
+
+      // Apagar O.S. da agenda correspondente
+      if (!confirm(`Apagar O.S. #${r.osId} (${r.cliente}) do técnico ${r.tecnico}?`)) return;
+      toggleLoading(true, "Apagando O.S...");
+      try {
+        const resp = await fetch(API_URL);
+        const dados = await resp.json();
+        const reg = dados.find(d => String(d.id) === String(r.registroId));
+        if (!reg) throw new Error("Registro não encontrado");
+
+        const hoje = dataISOLocal();
+        const payload = {};
+
+        if (r.origem === "hoje" || r.dataAgenda === (reg.agendaData || hoje)) {
+          let lista = reg.agenda ? parsearAgenda(reg.agenda) : [];
+          lista = lista.filter(os => String(os.id) !== String(r.osId));
+          payload.agenda = serializarAgenda(lista);
+          // limpa status dessa OS
+          let st = {};
+          try { st = JSON.parse(reg.status || "{}"); } catch (e) {}
+          delete st[r.osId];
+          payload.status = JSON.stringify(st);
+        } else if (r.origem === "hist") {
+          const hist = parseAgendasHistorico(reg);
+          const snap = hist[r.dataAgenda] || {};
+          let lista = snap.agenda ? parsearAgenda(snap.agenda) : [];
+          lista = lista.filter(os => String(os.id) !== String(r.osId));
+          if (snap.status && typeof snap.status === "object") delete snap.status[r.osId];
+          hist[r.dataAgenda] = { ...snap, agenda: serializarAgenda(lista) };
+          payload.agendasHistorico = JSON.stringify(hist);
+        } else if (r.origem === "fut") {
+          const fut = parseAgendasFuturas(reg);
+          const snap = fut[r.dataAgenda] || {};
+          let lista = snap.agenda ? parsearAgenda(snap.agenda) : [];
+          lista = lista.filter(os => String(os.id) !== String(r.osId));
+          const novoTexto = serializarAgenda(lista);
+          if (!novoTexto.trim()) delete fut[r.dataAgenda];
+          else fut[r.dataAgenda] = { ...snap, agenda: novoTexto };
+          payload.agendasFuturas = JSON.stringify(fut);
+        }
+
+        // Também remove do statusHistorico entradas dessa OS (opcional)
+        try {
+          let histSt = parseStatusHistorico(reg);
+          histSt = histSt.filter(h => String(h.osId) !== String(r.osId));
+          payload.statusHistorico = JSON.stringify(histSt);
+        } catch (e) {}
+
+        await fetch(`${API_URL}/${reg.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        // limpa localStorage
+        try {
+          localStorage.removeItem(`status_${r.tecnico}_${r.osId}`);
+          localStorage.removeItem(`obs_${r.tecnico}_${r.osId}`);
+          ["rota", "concluido", "nao-concluido"].forEach(st =>
+            localStorage.removeItem(`timestamp_${r.tecnico}_${r.osId}_${st}`)
+          );
+        } catch (e) {}
+
+        mostrarToast(ic("trash-2") + " O.S. apagada!");
+        await carregarPainelExclusaoSuper("os");
+      } catch (e) {
+        console.error(e);
+        mostrarErro("Erro ao apagar O.S.");
+        toggleLoading(false);
+      }
+    }
+
+
     // Menu Rápido do técnico: agrupa agenda inteligente, OS avulsa, relatório e instalações do mês
     async function abrirModalMenuTecnico() {
       try {
@@ -3460,6 +3971,7 @@ Contato: (11) 99347-3587"></textarea>
     document.getElementById("modalCtoClientesOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalCtoClientes(); });
     document.getElementById("modalHistoricoClienteOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalHistoricoCliente(); });
     document.getElementById("modalMapaCtosOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalMapaCTOs(); });
+    document.getElementById("modalSuperAdminOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalSuperAdmin(); });
 
     function toggleDropdown(tec, event) {
       if (event) event.stopPropagation();
@@ -3613,6 +4125,10 @@ Contato: (11) 99347-3587"></textarea>
       const nome = input.value.trim().replace(/[^a-zA-Z0-9 ]/g, "");
       const senha = inputSenha.value.trim();
       if(!nome) return;
+      if (ehRegistroSistema(nome) || [SUPER_LOGIN, MASTER_LOGIN, ADMIN_LOGIN].map(x => x.toLowerCase()).includes(nome.toLowerCase())) {
+        alert("Nome reservado do sistema. Escolha outro.");
+        return;
+      }
 
       if(!senha) {
         alert("Defina uma senha de acesso para o técnico fazer login.");
@@ -6746,7 +7262,7 @@ ${placemarks}
         } else {
           // Sem O.S.: admin/master pode ir direto colar a agenda; técnico usa o Menu Rápido
           const tecJs = String(tec).replace(/'/g, "\\'");
-          if (perfilAtual === 'master' || perfilAtual === 'admin') {
+          if (ehEquipeGestao()) {
             conteudoFinal = `
               <div class="sem-atividade" style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:16px 8px;">
                 <span>Nenhuma O.S. configurada no sistema.</span>
@@ -8262,7 +8778,8 @@ ${placemarks}
           document.getElementById("modalMigrarOSOverlay").classList.contains("aberto") ||
           document.getElementById("modalMenuTecnicoOverlay").classList.contains("aberto") ||
           document.getElementById("modalHistoricoClienteOverlay").classList.contains("aberto") ||
-          document.getElementById("modalMapaCtosOverlay").classList.contains("aberto")) {
+          document.getElementById("modalMapaCtosOverlay").classList.contains("aberto") ||
+          document.getElementById("modalSuperAdminOverlay").classList.contains("aberto")) {
          return; 
       }
       
@@ -8336,7 +8853,7 @@ ${placemarks}
           let dados = await resp.json();
           if (dados && dados.length > 0) {
             dados = await garantirAgendaDoDiaTodos(dados);
-            const nomesApi = dados.map(d => d.tecnico).filter(t => t);
+            const nomesApi = dados.map(d => d.tecnico).filter(t => t && !ehRegistroSistema(t));
             if(nomesApi.length > 0) {
               listaTecnicos = nomesApi;
               localStorage.setItem('lista_tecnicos_smart', JSON.stringify(listaTecnicos));
