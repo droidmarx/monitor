@@ -2445,6 +2445,129 @@
       .busca-cliente-wrap { max-width: 720px; }
     }
 
+    /* ===== Mapa de CTOs ===== */
+    .modal-mapa-cto {
+      max-width: min(720px, 100%);
+      width: 100%;
+    }
+    @media (min-width: 520px) {
+      .modal-mapa-cto {
+        max-width: min(820px, 96vw);
+      }
+    }
+    #mapaCtosCanvas {
+      width: 100%;
+      height: min(52vh, 420px);
+      min-height: 280px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: #0b1220;
+      overflow: hidden;
+    }
+    .mapa-cto-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .mapa-cto-toolbar .btn-mapa-acao {
+      flex: 1;
+      min-width: 120px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text-2);
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 11px 12px;
+      min-height: 42px;
+      border-radius: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .mapa-cto-toolbar .btn-mapa-acao.primario {
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      border: none;
+      color: white;
+    }
+    .mapa-cto-toolbar .btn-mapa-acao.kml {
+      background: rgba(251, 191, 36, 0.12);
+      border-color: rgba(251, 191, 36, 0.3);
+      color: #fbbf24;
+    }
+    .mapa-cto-stats {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .mapa-cto-stat {
+      flex: 1;
+      min-width: 90px;
+      text-align: center;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 8px;
+    }
+    .mapa-cto-stat strong {
+      display: block;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--cyan-2);
+    }
+    .mapa-cto-stat span {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .mapa-cto-lista {
+      max-height: 160px;
+      overflow-y: auto;
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .mapa-cto-item {
+      appearance: none;
+      -webkit-appearance: none;
+      font-family: inherit;
+      text-align: left;
+      width: 100%;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-2);
+      border-radius: 10px;
+      padding: 10px 12px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .mapa-cto-item:hover {
+      border-color: rgba(34, 211, 238, 0.35);
+      background: rgba(34, 211, 238, 0.06);
+    }
+    .mapa-cto-item .sem-loc { color: var(--muted-2); font-size: 11px; font-weight: 600; }
+    .mapa-aviso-key {
+      font-size: 12.5px;
+      color: #fbbf24;
+      background: rgba(251, 191, 36, 0.08);
+      border: 1px solid rgba(251, 191, 36, 0.22);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      display: none;
+    }
+    .mapa-aviso-key.visivel { display: block; }
+
   </style>
 </head>
 
@@ -2601,6 +2724,8 @@
       <button class="btn-salvar-modal" onclick="gerarRelatorioDiario()" style="margin-top: 0; background: linear-gradient(135deg, #10b981, #059669);"><svg class="icon"><use href="#i-file-text"></use></svg> Gerar Relatório do Dia</button>
       <button class="btn-salvar-modal" onclick="abrirModalInstalacoesMes()" style="margin-top: 10px; background: linear-gradient(135deg, #8b5cf6, #6366f1);"><svg class="icon"><use href="#i-router"></use></svg> Ver Instalações (mês atual e anterior)</button>
       <button class="btn-salvar-modal" onclick="abrirModalHistoricoData()" style="margin-top: 10px; background: linear-gradient(135deg, #0ea5e9, #2563eb);"><svg class="icon"><use href="#i-clock"></use></svg> Histórico Geral</button>
+      <button class="btn-salvar-modal" onclick="fecharModalConfig(); abrirModalMapaCTOs();" style="margin-top: 10px; background: linear-gradient(135deg, #f43f5e, #fb923c);"><svg class="icon"><use href="#i-map-pin"></use></svg> Mapa de CTOs</button>
+      <button class="btn-salvar-modal" onclick="exportarKMLCTOs()" style="margin-top: 10px; background: linear-gradient(135deg, #eab308, #ca8a04); color:#0f172a;"><svg class="icon"><use href="#i-globe"></use></svg> Exportar CTOs (KML)</button>
     </div>
   </div>
 
@@ -2968,12 +3093,45 @@ Contato: (11) 99347-3587"></textarea>
   </div> <!-- /#appConteudo -->
 
 
+  <!-- Modal Mapa de CTOs (Google Maps JS + exportação KML) -->
+  <div class="modal-overlay" id="modalMapaCtosOverlay">
+    <div class="modal modal-mapa-cto">
+      <button class="modal-fechar" onclick="fecharModalMapaCTOs()" aria-label="Fechar"><svg class="icon"><use href="#i-x"></use></svg></button>
+      <div class="modal-titulo"><svg class="icon icon-lg"><use href="#i-map-pin"></use></svg> Mapa de CTOs</div>
+      <p style="font-size:12.5px; color:#94a3b8; margin:-8px 0 12px;">Pontos gerados a partir das instalações com GPS. Exportar KML importa no seu Google My Maps.</p>
+
+      <div class="mapa-aviso-key" id="mapaAvisoKey">
+        Configure a chave <strong>GOOGLE_MAPS_API_KEY</strong> no código (Google Cloud → Maps JavaScript API) para ver o mapa interativo. A exportação KML funciona sem a chave.
+      </div>
+
+      <div class="mapa-cto-stats">
+        <div class="mapa-cto-stat"><strong id="mapaStatCtos">0</strong><span>CTOs</span></div>
+        <div class="mapa-cto-stat"><strong id="mapaStatComLoc" style="color:#4ade80">0</strong><span>Com GPS</span></div>
+        <div class="mapa-cto-stat"><strong id="mapaStatSemLoc" style="color:#f87171">0</strong><span>Sem GPS</span></div>
+      </div>
+
+      <div class="mapa-cto-toolbar">
+        <button type="button" class="btn-mapa-acao kml" onclick="exportarKMLCTOs()"><svg class="icon icon-sm"><use href="#i-globe"></use></svg> Baixar KML</button>
+        <button type="button" class="btn-mapa-acao" onclick="copiarLinkMyMapsCTOs()"><svg class="icon icon-sm"><use href="#i-external-link"></use></svg> Abrir My Maps</button>
+        <button type="button" class="btn-mapa-acao primario" onclick="recentrarMapaCTOs()"><svg class="icon icon-sm"><use href="#i-crosshair"></use></svg> Recentrar</button>
+      </div>
+
+      <div id="mapaCtosCanvas" aria-label="Mapa das CTOs"></div>
+      <div class="mapa-cto-lista" id="mapaCtosLista"></div>
+      <p style="font-size:11.5px; color:#64748b; margin-top:12px;">KML: no My Maps → camada → Importar → escolha o arquivo. Mapa oficial: <span style="color:#67e8f9;">maps/d/…</span></p>
+    </div>
+  </div>
+
   <!-- Modal Clientes da mesma CTO -->
   <div class="modal-overlay" id="modalCtoClientesOverlay">
     <div class="modal">
       <button class="modal-fechar" onclick="fecharModalCtoClientes()" aria-label="Fechar"><svg class="icon"><use href="#i-x"></use></svg></button>
       <div class="modal-titulo"><svg class="icon icon-lg"><use href="#i-router"></use></svg> <span id="ctoClientesTitulo">Clientes da CTO</span></div>
       <p id="ctoClientesSub" style="font-size:13px; color:#94a3b8; margin:-8px 0 14px;">Instalações registradas com esta CTO</p>
+      <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+        <button type="button" class="btn-mostrar" style="flex:1;margin:0;display:flex;background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.3);color:#fbbf24;" onclick="exportarKMLCTOs()"><svg class="icon icon-sm"><use href="#i-globe"></use></svg> Exportar KML</button>
+        <button type="button" class="btn-mostrar" style="flex:1;margin:0;display:flex;background:rgba(244,63,94,0.12);border:1px solid rgba(244,63,94,0.28);color:#fb7185;" onclick="fecharModalCtoClientes(); abrirModalMapaCTOs();"><svg class="icon icon-sm"><use href="#i-map-pin"></use></svg> Ver no mapa</button>
+      </div>
       <div id="ctoClientesLista"></div>
     </div>
   </div>
@@ -3013,6 +3171,13 @@ Contato: (11) 99347-3587"></textarea>
 
   <script>
     const API_URL = "https://68f458d8b16eb6f46834542c.mockapi.io/Rexord/Galeria";
+
+    // Google Maps JavaScript API — cole sua chave do Google Cloud (Maps JavaScript API habilitada).
+    // Sem chave: mapa interativo fica desabilitado; exportação KML continua funcionando.
+    const GOOGLE_MAPS_API_KEY = "";
+    // Seu Google My Maps (somente referência / atalho — a API oficial NÃO grava nele)
+    const MY_MAPS_EDIT_URL = "https://www.google.com/maps/d/edit?mid=1l_ch6qupuXz0Dnw6h9Vhom1Y1g3ibaY";
+    const MY_MAPS_VIEW_URL = "https://www.google.com/maps/d/u/0/viewer?mid=1l_ch6qupuXz0Dnw6h9Vhom1Y1g3ibaY";
 
     // Credenciais fixas de equipe (master e admin têm o mesmo nível de acesso — visão completa do sistema)
     const MASTER_LOGIN = "master";
@@ -3294,6 +3459,7 @@ Contato: (11) 99347-3587"></textarea>
     document.getElementById("modalMigrarOSOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalMigrarOS(); });
     document.getElementById("modalCtoClientesOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalCtoClientes(); });
     document.getElementById("modalHistoricoClienteOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalHistoricoCliente(); });
+    document.getElementById("modalMapaCtosOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalMapaCTOs(); });
 
     function toggleDropdown(tec, event) {
       if (event) event.stopPropagation();
@@ -5535,6 +5701,357 @@ Contato: (11) 99347-3587"></textarea>
     }
 
     // Chip clicável de CTO (evita propagar clique em listas expansíveis)
+
+    // ===== CTOs: agregação, KML e Google Maps JS =====
+    let mapaCtosInstance = null;
+    let mapaCtosMarkers = [];
+    let mapaCtosInfoWindow = null;
+    let mapaCtosDados = [];
+    let googleMapsScriptPromise = null;
+
+    function escapeXml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&apos;");
+    }
+
+    // Agrega CTOs a partir das instalações de todos os técnicos (média das coordenadas quando houver GPS)
+    async function coletarCTOsAgregadas() {
+      const resp = await fetch(API_URL);
+      if (!resp.ok) throw new Error("Falha ao buscar dados");
+      const dados = await resp.json();
+      const mapa = new Map(); // chave normalizada -> { nome, latSum, lngSum, nLoc, clientes, tecnicos, instalacoes }
+
+      (dados || []).forEach(reg => {
+        if (!reg) return;
+        const tec = reg.tecnico || "";
+        let lista = [];
+        try { lista = JSON.parse(reg.instalacoes || "[]"); } catch (e) { lista = []; }
+        (lista || []).forEach(item => {
+          const raw = (item.cto || "").trim();
+          if (!raw) return;
+          const key = normalizarCTO(raw) || raw.toLowerCase();
+          if (!mapa.has(key)) {
+            mapa.set(key, {
+              key,
+              nome: raw,
+              latSum: 0,
+              lngSum: 0,
+              nLoc: 0,
+              clientes: [],
+              tecnicos: [],
+              instalacoes: 0,
+              ultimoData: null
+            });
+          }
+          const b = mapa.get(key);
+          // Preferir nome "mais completo" (com prefixo CTO)
+          if (raw.length > b.nome.length) b.nome = raw;
+          b.instalacoes++;
+          if (item.cliente && !b.clientes.includes(item.cliente)) b.clientes.push(item.cliente);
+          if (tec && !b.tecnicos.includes(tec)) b.tecnicos.push(tec);
+          if (item.data) {
+            if (!b.ultimoData || String(item.data) > String(b.ultimoData)) b.ultimoData = item.data;
+          }
+          const lat = item.lat != null ? Number(item.lat) : NaN;
+          const lng = item.lng != null ? Number(item.lng) : NaN;
+          if (!Number.isNaN(lat) && !Number.isNaN(lng) && Math.abs(lat) <= 90 && Math.abs(lng) <= 180) {
+            b.latSum += lat;
+            b.lngSum += lng;
+            b.nLoc++;
+          }
+        });
+      });
+
+      return Array.from(mapa.values()).map(b => ({
+        key: b.key,
+        nome: b.nome,
+        lat: b.nLoc ? (b.latSum / b.nLoc) : null,
+        lng: b.nLoc ? (b.lngSum / b.nLoc) : null,
+        comGps: b.nLoc > 0,
+        amostrasGps: b.nLoc,
+        clientes: b.clientes,
+        tecnicos: b.tecnicos,
+        instalacoes: b.instalacoes,
+        ultimoData: b.ultimoData
+      })).sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
+    }
+
+    function gerarKMLCTOs(listaCtos) {
+      const comCoord = (listaCtos || []).filter(c => c.comGps && c.lat != null && c.lng != null);
+      const placemarks = comCoord.map(c => {
+        const descParts = [
+          c.instalacoes ? `${c.instalacoes} instalação(ões)` : null,
+          c.clientes && c.clientes.length ? `Clientes: ${c.clientes.slice(0, 8).join(", ")}${c.clientes.length > 8 ? "…" : ""}` : null,
+          c.tecnicos && c.tecnicos.length ? `Técnicos: ${c.tecnicos.join(", ")}` : null,
+          `Coordenadas: ${c.lat.toFixed(6)}, ${c.lng.toFixed(6)}`,
+          c.amostrasGps > 1 ? `Média de ${c.amostrasGps} pontos GPS` : null
+        ].filter(Boolean);
+        const desc = escapeXml(descParts.join("\\n"));
+        // KML: longitude,latitude,altitude
+        return `    <Placemark>
+      <name>${escapeXml(c.nome)}</name>
+      <description>${desc}</description>
+      <styleUrl>#ctoStyle</styleUrl>
+      <Point>
+        <coordinates>${c.lng},${c.lat},0</coordinates>
+      </Point>
+    </Placemark>`;
+      }).join("\\n");
+
+      const agora = new Date().toISOString();
+      return `<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>CTOs — Agenda Técnico</name>
+    <description>Exportado em ${escapeXml(agora)} — ${comCoord.length} CTO(s) com GPS</description>
+    <Style id="ctoStyle">
+      <IconStyle>
+        <scale>1.1</scale>
+        <Icon>
+          <href>http://maps.google.com/mapfiles/kml/paddle/red-circle.png</href>
+        </Icon>
+      </IconStyle>
+      <LabelStyle>
+        <scale>0.9</scale>
+      </LabelStyle>
+    </Style>
+${placemarks}
+  </Document>
+</kml>
+`;
+    }
+
+    async function exportarKMLCTOs() {
+      toggleLoading(true, "Gerando KML das CTOs...");
+      try {
+        const lista = await coletarCTOsAgregadas();
+        const comGps = lista.filter(c => c.comGps);
+        if (!comGps.length) {
+          mostrarErro("Nenhuma CTO com GPS nas instalações. Capture localização ao registrar instalações.");
+          return;
+        }
+        const kml = gerarKMLCTOs(lista);
+        const blob = new Blob([kml], { type: "application/vnd.google-earth.kml+xml;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        const data = dataISOLocal();
+        a.href = url;
+        a.download = `CTOs-AgendaTecnico-${data}.kml`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+        mostrarToast(ic("check-circle") + ` KML baixado (${comGps.length} CTO${comGps.length > 1 ? "s" : ""})`);
+      } catch (e) {
+        console.error(e);
+        mostrarErro("Erro ao exportar KML.");
+      } finally {
+        toggleLoading(false);
+      }
+    }
+
+    function copiarLinkMyMapsCTOs() {
+      try {
+        window.open(MY_MAPS_EDIT_URL || MY_MAPS_VIEW_URL, "_blank");
+        mostrarToast(ic("external-link") + " My Maps aberto — use Importar na camada");
+      } catch (e) {
+        mostrarErro("Não foi possível abrir o My Maps.");
+      }
+    }
+
+    function carregarGoogleMapsScript() {
+      if (window.google && window.google.maps) return Promise.resolve(true);
+      if (!GOOGLE_MAPS_API_KEY || !String(GOOGLE_MAPS_API_KEY).trim()) {
+        return Promise.resolve(false);
+      }
+      if (googleMapsScriptPromise) return googleMapsScriptPromise;
+      googleMapsScriptPromise = new Promise((resolve) => {
+        const existing = document.getElementById("googleMapsJsApi");
+        if (existing) {
+          existing.addEventListener("load", () => resolve(true));
+          existing.addEventListener("error", () => resolve(false));
+          return;
+        }
+        const s = document.createElement("script");
+        s.id = "googleMapsJsApi";
+        s.async = true;
+        s.defer = true;
+        s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(GOOGLE_MAPS_API_KEY)}&libraries=marker`;
+        s.onload = () => resolve(true);
+        s.onerror = () => resolve(false);
+        document.head.appendChild(s);
+      });
+      return googleMapsScriptPromise;
+    }
+
+    async function abrirModalMapaCTOs() {
+      const overlay = document.getElementById("modalMapaCtosOverlay");
+      if (!overlay) return;
+      overlay.style.display = "flex";
+      setTimeout(() => overlay.classList.add("aberto"), 10);
+
+      toggleLoading(true, "Carregando CTOs...");
+      try {
+        mapaCtosDados = await coletarCTOsAgregadas();
+        const com = mapaCtosDados.filter(c => c.comGps).length;
+        const sem = mapaCtosDados.length - com;
+        document.getElementById("mapaStatCtos").textContent = String(mapaCtosDados.length);
+        document.getElementById("mapaStatComLoc").textContent = String(com);
+        document.getElementById("mapaStatSemLoc").textContent = String(sem);
+
+        const listaEl = document.getElementById("mapaCtosLista");
+        listaEl.innerHTML = mapaCtosDados.length
+          ? mapaCtosDados.map((c, idx) => `
+            <button type="button" class="mapa-cto-item" onclick="focarCTONoMapa(${idx})">
+              <span>${escapeHtml(c.nome)} · ${c.instalacoes} inst.</span>
+              ${c.comGps
+                ? `<span style="color:#67e8f9;font-size:11px;">${c.lat.toFixed(5)}, ${c.lng.toFixed(5)}</span>`
+                : `<span class="sem-loc">Sem GPS</span>`}
+            </button>`).join("")
+          : `<div class="hist-cliente-vazio">Nenhuma CTO encontrada nas instalações.</div>`;
+
+        const okMaps = await carregarGoogleMapsScript();
+        const aviso = document.getElementById("mapaAvisoKey");
+        if (aviso) aviso.classList.toggle("visivel", !okMaps);
+
+        if (okMaps) {
+          await renderizarMapaCTOs(mapaCtosDados.filter(c => c.comGps));
+        } else {
+          const canvas = document.getElementById("mapaCtosCanvas");
+          if (canvas) {
+            canvas.innerHTML = `<div style="height:100%;display:flex;align-items:center;justify-content:center;padding:20px;text-align:center;color:#94a3b8;font-size:13.5px;line-height:1.5;">
+              Mapa interativo indisponível sem <strong style="color:#fbbf24">GOOGLE_MAPS_API_KEY</strong>.<br>
+              Use <strong>Baixar KML</strong> e importe no My Maps.
+            </div>`;
+          }
+          mapaCtosInstance = null;
+          mapaCtosMarkers = [];
+        }
+      } catch (e) {
+        console.error(e);
+        mostrarErro("Erro ao carregar mapa de CTOs.");
+      } finally {
+        toggleLoading(false);
+      }
+    }
+
+    function fecharModalMapaCTOs() {
+      const overlay = document.getElementById("modalMapaCtosOverlay");
+      if (!overlay) return;
+      overlay.classList.remove("aberto");
+      setTimeout(() => { overlay.style.display = "none"; }, 300);
+    }
+
+    async function renderizarMapaCTOs(ctosComGps) {
+      const canvas = document.getElementById("mapaCtosCanvas");
+      if (!canvas || !window.google || !google.maps) return;
+
+      // Limpa placeholder HTML se houver
+      if (!mapaCtosInstance) {
+        canvas.innerHTML = "";
+      }
+
+      const centerDefault = { lat: -23.0903, lng: -47.2181 }; // Indaiatuba aprox.
+      let center = centerDefault;
+      if (ctosComGps.length) {
+        center = {
+          lat: ctosComGps.reduce((s, c) => s + c.lat, 0) / ctosComGps.length,
+          lng: ctosComGps.reduce((s, c) => s + c.lng, 0) / ctosComGps.length
+        };
+      }
+
+      if (!mapaCtosInstance) {
+        mapaCtosInstance = new google.maps.Map(canvas, {
+          center,
+          zoom: ctosComGps.length ? 13 : 12,
+          mapTypeControl: true,
+          streetViewControl: false,
+          fullscreenControl: true,
+          mapTypeId: "hybrid"
+        });
+        mapaCtosInfoWindow = new google.maps.InfoWindow();
+      } else {
+        mapaCtosInstance.setCenter(center);
+      }
+
+      // Remove markers antigos
+      mapaCtosMarkers.forEach(m => m.setMap(null));
+      mapaCtosMarkers = [];
+
+      const bounds = new google.maps.LatLngBounds();
+      ctosComGps.forEach((c, i) => {
+        const pos = { lat: c.lat, lng: c.lng };
+        const marker = new google.maps.Marker({
+          position: pos,
+          map: mapaCtosInstance,
+          title: c.nome,
+          label: {
+            text: String(Math.min(i + 1, 99)),
+            color: "#0f172a",
+            fontWeight: "700",
+            fontSize: "11px"
+          }
+        });
+        marker.addListener("click", () => {
+          const html = `<div style="color:#0f172a;max-width:220px;font-family:system-ui,sans-serif">
+            <strong style="font-size:14px">${escapeHtml(c.nome)}</strong><br>
+            <span style="font-size:12px">${c.instalacoes} instalação(ões)</span><br>
+            <span style="font-size:12px">${c.clientes.length} cliente(s)</span><br>
+            <a href="https://maps.google.com/?q=${c.lat},${c.lng}" target="_blank" rel="noopener">Abrir no Google Maps</a>
+          </div>`;
+          mapaCtosInfoWindow.setContent(html);
+          mapaCtosInfoWindow.open(mapaCtosInstance, marker);
+        });
+        mapaCtosMarkers.push(marker);
+        bounds.extend(pos);
+      });
+
+      if (ctosComGps.length > 1) {
+        mapaCtosInstance.fitBounds(bounds, 48);
+      } else if (ctosComGps.length === 1) {
+        mapaCtosInstance.setCenter({ lat: ctosComGps[0].lat, lng: ctosComGps[0].lng });
+        mapaCtosInstance.setZoom(16);
+      }
+    }
+
+    function focarCTONoMapa(idx) {
+      const c = mapaCtosDados[idx];
+      if (!c) return;
+      if (!c.comGps) {
+        mostrarToast(ic("alert-triangle") + " Esta CTO ainda não tem GPS");
+        return;
+      }
+      if (!mapaCtosInstance) {
+        window.open(`https://maps.google.com/?q=${c.lat},${c.lng}`, "_blank");
+        return;
+      }
+      mapaCtosInstance.panTo({ lat: c.lat, lng: c.lng });
+      mapaCtosInstance.setZoom(17);
+      const marker = mapaCtosMarkers.find(m => m.getTitle() === c.nome);
+      if (marker && mapaCtosInfoWindow) {
+        google.maps.event.trigger(marker, "click");
+      }
+    }
+
+    function recentrarMapaCTOs() {
+      if (!mapaCtosInstance) return;
+      const com = (mapaCtosDados || []).filter(c => c.comGps);
+      if (!com.length) return;
+      if (com.length === 1) {
+        mapaCtosInstance.setCenter({ lat: com[0].lat, lng: com[0].lng });
+        mapaCtosInstance.setZoom(16);
+        return;
+      }
+      const bounds = new google.maps.LatLngBounds();
+      com.forEach(c => bounds.extend({ lat: c.lat, lng: c.lng }));
+      mapaCtosInstance.fitBounds(bounds, 48);
+    }
+
+
     function htmlCtoClicavel(cto) {
       const raw = String(cto || "").trim();
       if (!raw) return "—";
@@ -7744,7 +8261,8 @@ Contato: (11) 99347-3587"></textarea>
           document.getElementById("modalNovaOSAvulsaOverlay").classList.contains("aberto") ||
           document.getElementById("modalMigrarOSOverlay").classList.contains("aberto") ||
           document.getElementById("modalMenuTecnicoOverlay").classList.contains("aberto") ||
-          document.getElementById("modalHistoricoClienteOverlay").classList.contains("aberto")) {
+          document.getElementById("modalHistoricoClienteOverlay").classList.contains("aberto") ||
+          document.getElementById("modalMapaCtosOverlay").classList.contains("aberto")) {
          return; 
       }
       
