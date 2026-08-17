@@ -988,6 +988,104 @@
       letter-spacing: -0.02em;
       line-height: 1.25;
       color: var(--text);
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .badge-hist-cliente {
+      appearance: none;
+      -webkit-appearance: none;
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      min-width: 28px;
+      height: 26px;
+      padding: 0 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(167, 139, 250, 0.4);
+      background: rgba(167, 139, 250, 0.16);
+      color: #c4b5fd;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      flex-shrink: 0;
+      line-height: 1;
+      transition: background 0.15s, border-color 0.15s, transform 0.12s, box-shadow 0.15s;
+      vertical-align: middle;
+    }
+    .badge-hist-cliente:hover {
+      background: rgba(167, 139, 250, 0.28);
+      border-color: rgba(167, 139, 250, 0.55);
+      box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.12);
+    }
+    .badge-hist-cliente:active { transform: scale(0.94); }
+    .badge-hist-cliente .badge-hist-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #a78bfa;
+      box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.25);
+    }
+
+    .log-info .badge-hist-cliente {
+      margin-left: 4px;
+      height: 22px;
+      min-width: 24px;
+      font-size: 11px;
+      padding: 0 7px;
+    }
+
+    .hist-cliente-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 8px;
+    }
+    .hist-cliente-item-topo {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+    .hist-cliente-meta {
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .hist-cliente-assunto {
+      font-size: 13.5px;
+      color: var(--text-2);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+    .hist-cliente-obs {
+      font-size: 12.5px;
+      color: var(--muted);
+      margin-top: 8px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.2);
+      border-left: 3px solid rgba(167, 139, 250, 0.4);
+      font-style: italic;
+    }
+    .hist-cliente-obs.ok { border-left-color: var(--green-2); color: #86efac; }
+    .hist-cliente-obs.falha { border-left-color: var(--red-2); color: #fca5a5; }
+    .hist-cliente-vazio {
+      text-align: center;
+      color: var(--muted-2);
+      font-size: 14px;
+      padding: 20px 12px;
+      font-style: italic;
     }
     .info {
       color: var(--text-2);
@@ -2675,6 +2773,32 @@ Contato: (11) 99347-3587"></textarea>
     </div>
   </div>
 
+  <!-- Modal Histórico do Cliente -->
+  <div class="modal-overlay" id="modalHistoricoClienteOverlay">
+    <div class="modal">
+      <button class="modal-fechar" onclick="fecharModalHistoricoCliente()" aria-label="Fechar"><svg class="icon"><use href="#i-x"></use></svg></button>
+      <div class="modal-titulo"><svg class="icon icon-lg"><use href="#i-user"></use></svg> <span id="histClienteTitulo">Histórico do Cliente</span></div>
+      <p id="histClienteSub" style="font-size:13px; color:#94a3b8; margin:-8px 0 6px;"></p>
+      <div id="histClienteChaves" style="font-size:11.5px; color:#64748b; margin-bottom:14px; display:flex; flex-wrap:wrap; gap:6px;"></div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;">
+        <div style="flex:1; min-width:90px; text-align:center; background:rgba(167,139,250,0.08); border:1px solid rgba(167,139,250,0.2); border-radius:14px; padding:10px 8px;">
+          <div style="font-size:22px; font-weight:800; color:#c4b5fd;" id="histClienteTotal">0</div>
+          <div style="font-size:10px; color:#94a3b8; font-weight:700; text-transform:uppercase; margin-top:3px;">Atendimentos</div>
+        </div>
+        <div style="flex:1; min-width:90px; text-align:center; background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.2); border-radius:14px; padding:10px 8px;">
+          <div style="font-size:22px; font-weight:800; color:#4ade80;" id="histClienteOk">0</div>
+          <div style="font-size:10px; color:#94a3b8; font-weight:700; text-transform:uppercase; margin-top:3px;">Concluídos</div>
+        </div>
+        <div style="flex:1; min-width:90px; text-align:center; background:rgba(248,113,113,0.08); border:1px solid rgba(248,113,113,0.2); border-radius:14px; padding:10px 8px;">
+          <div style="font-size:22px; font-weight:800; color:#f87171;" id="histClienteNao">0</div>
+          <div style="font-size:10px; color:#94a3b8; font-weight:700; text-transform:uppercase; margin-top:3px;">Não concluídos</div>
+        </div>
+      </div>
+      <div class="modal-secao">Linha do tempo</div>
+      <div id="histClienteLista"></div>
+    </div>
+  </div>
+
   <div class="loading-overlay" id="loadingOverlay">
     <div class="spinner"></div>
     <div class="loading-texto" id="loadingTexto">Sincronizando...</div>
@@ -2964,6 +3088,7 @@ Contato: (11) 99347-3587"></textarea>
     document.getElementById("modalHistoricoDataOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalHistoricoData(); });
     document.getElementById("modalMigrarOSOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalMigrarOS(); });
     document.getElementById("modalCtoClientesOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalCtoClientes(); });
+    document.getElementById("modalHistoricoClienteOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModalHistoricoCliente(); });
 
     function toggleDropdown(tec, event) {
       if (event) event.stopPropagation();
@@ -3523,7 +3648,9 @@ Contato: (11) 99347-3587"></textarea>
         data: dataISOLocal(),
         cliente: (extra && extra.cliente) || "",
         assunto: (extra && extra.assunto) || "",
-        horario: (extra && extra.horario) || ""
+        horario: (extra && extra.horario) || "",
+        login: (extra && extra.login) || "",
+        contato: (extra && extra.contato) || ""
       };
     }
 
@@ -3535,6 +3662,452 @@ Contato: (11) 99347-3587"></textarea>
       });
       return base;
     }
+
+    // ===== Vínculo de atendimentos por cliente (chave robusta) =====
+    // Prioridade da chave: login PPPoE > telefone (dígitos) > nome normalizado
+    // Mantém aliases (nome/login/tel) para unificar o mesmo cliente sob uma chave canônica.
+    let indiceHistoricoCliente = {}; // chaveCanonica -> { chave, nomes, logins, contatos, eventos[] }
+    let aliasesCliente = {};         // qualquer alias -> chaveCanonica
+    let cacheHistoricoClienteDados = null;
+
+    function normalizarTextoCliente(str) {
+      return String(str || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function normalizarLoginCliente(login) {
+      const s = String(login || "").trim().toLowerCase();
+      if (!s || s === "-" || s === "n/a" || s === "na" || s === "sem login") return "";
+      return s.replace(/\s+/g, "");
+    }
+
+    function normalizarTelefoneCliente(contato) {
+      const digitos = String(contato || "").replace(/\D/g, "");
+      if (digitos.length < 8) return "";
+      // Usa os últimos 11 (ou 8-10) para tolerar DDI/DDD
+      return digitos.slice(-11);
+    }
+
+    function extrairTelefonesCliente(contato) {
+      const texto = String(contato || "");
+      const encontrados = texto.match(/\d[\d\s().-]{6,}\d/g) || [];
+      const set = new Set();
+      encontrados.forEach(p => {
+        const n = normalizarTelefoneCliente(p);
+        if (n) set.add(n);
+      });
+      const unico = normalizarTelefoneCliente(texto);
+      if (unico) set.add(unico);
+      return Array.from(set);
+    }
+
+    // Gera chave canônica a partir de campos disponíveis
+    function gerarChaveCliente({ cliente, login, contato } = {}) {
+      const log = normalizarLoginCliente(login);
+      if (log) return "login:" + log;
+      const tels = extrairTelefonesCliente(contato);
+      if (tels.length) return "tel:" + tels[0];
+      const nome = normalizarTextoCliente(cliente);
+      if (nome && nome !== "cliente nao informado" && nome !== "sem cliente") return "nome:" + nome;
+      return "";
+    }
+
+    function coletarAliasesCliente({ cliente, login, contato } = {}) {
+      const aliases = [];
+      const log = normalizarLoginCliente(login);
+      if (log) aliases.push("login:" + log);
+      extrairTelefonesCliente(contato).forEach(t => aliases.push("tel:" + t));
+      const nome = normalizarTextoCliente(cliente);
+      if (nome && nome !== "cliente nao informado" && nome !== "sem cliente") aliases.push("nome:" + nome);
+      return aliases;
+    }
+
+    function resolverChaveCliente(campos) {
+      const aliases = coletarAliasesCliente(campos);
+      for (const a of aliases) {
+        if (aliasesCliente[a]) return aliasesCliente[a];
+      }
+      return gerarChaveCliente(campos);
+    }
+
+    function garantirBucketCliente(chave, campos) {
+      if (!chave) return null;
+      if (!indiceHistoricoCliente[chave]) {
+        indiceHistoricoCliente[chave] = {
+          chave,
+          nomes: [],
+          logins: [],
+          contatos: [],
+          eventos: [],
+          _dedupe: new Set()
+        };
+      }
+      const b = indiceHistoricoCliente[chave];
+      const aliases = coletarAliasesCliente(campos || {});
+      aliases.forEach(a => { aliasesCliente[a] = chave; });
+      // Preferir login como canônica: se chegar um login e a chave atual for nome/tel, unificar
+      const log = normalizarLoginCliente(campos && campos.login);
+      if (log) {
+        const prefer = "login:" + log;
+        if (prefer !== chave && !indiceHistoricoCliente[prefer]) {
+          // Move bucket para chave de login
+          indiceHistoricoCliente[prefer] = b;
+          b.chave = prefer;
+          delete indiceHistoricoCliente[chave];
+          Object.keys(aliasesCliente).forEach(k => {
+            if (aliasesCliente[k] === chave) aliasesCliente[k] = prefer;
+          });
+          aliasesCliente[prefer] = prefer;
+          chave = prefer;
+        }
+      }
+      const nome = (campos && campos.cliente) || "";
+      if (nome && !b.nomes.includes(nome)) b.nomes.push(nome);
+      if (log && !b.logins.includes(log)) b.logins.push(log);
+      extrairTelefonesCliente(campos && campos.contato).forEach(t => {
+        if (!b.contatos.includes(t)) b.contatos.push(t);
+      });
+      return b;
+    }
+
+    function adicionarEventoHistoricoCliente(campos, evento) {
+      const chave = resolverChaveCliente(campos) || gerarChaveCliente(campos);
+      if (!chave) return;
+      const bucket = garantirBucketCliente(chave, campos);
+      if (!bucket) return;
+      const osId = String(evento.osId || "");
+      const data = String(evento.data || "").slice(0, 10);
+      const tipo = evento.tipo || "os";
+      const dedupeKey = `${tipo}|${osId}|${data}|${evento.status || ""}|${evento.timestamp || ""}`;
+      if (bucket._dedupe.has(dedupeKey)) return;
+      bucket._dedupe.add(dedupeKey);
+      bucket.eventos.push({
+        tipo,
+        osId,
+        data,
+        timestamp: evento.timestamp || "",
+        status: evento.status || "",
+        obs: evento.obs || "",
+        assunto: evento.assunto || "",
+        horario: evento.horario || "",
+        tecnico: evento.tecnico || "",
+        cliente: evento.cliente || (campos && campos.cliente) || "",
+        extra: evento.extra || null
+      });
+    }
+
+    function reconstruirIndiceHistoricoCliente(todosDados) {
+      indiceHistoricoCliente = {};
+      aliasesCliente = {};
+      cacheHistoricoClienteDados = todosDados || [];
+
+      (todosDados || []).forEach(registro => {
+        if (!registro) return;
+        const tec = registro.tecnico || "";
+
+        // Mapa auxiliar osId -> dados da OS (login/contato) a partir de agendas deste técnico
+        const mapaOsTec = {};
+        try {
+          if (registro.agenda) {
+            parsearAgenda(registro.agenda).forEach(os => { mapaOsTec[String(os.id)] = os; });
+          }
+          const histAgPre = parseAgendasHistorico(registro);
+          Object.keys(histAgPre || {}).forEach(dataDia => {
+            const snap = histAgPre[dataDia] || {};
+            if (snap.agenda) parsearAgenda(snap.agenda).forEach(os => {
+              if (!mapaOsTec[String(os.id)]) mapaOsTec[String(os.id)] = os;
+            });
+          });
+        } catch (e) {}
+
+        // 1) statusHistorico (fonte principal de atendimentos finalizados)
+        const hist = parseStatusHistorico(registro);
+        hist.forEach(h => {
+          if (!h) return;
+          const osRef = mapaOsTec[String(h.osId)] || {};
+          const campos = {
+            cliente: h.cliente || osRef.cliente || "",
+            login: h.login || osRef.login || "",
+            contato: h.contato || osRef.contato || ""
+          };
+          adicionarEventoHistoricoCliente(campos, {
+            tipo: "os",
+            osId: h.osId,
+            data: (h.data && String(h.data).slice(0, 10)) || "",
+            timestamp: h.timestamp || "",
+            status: h.status || "",
+            obs: h.obs || "",
+            assunto: h.assunto || osRef.assunto || "",
+            horario: h.horario || osRef.horario || "",
+            tecnico: tec,
+            cliente: h.cliente || osRef.cliente || ""
+          });
+        });
+
+        // 2) Agenda corrente + status do dia
+        try {
+          const listaHoje = registro.agenda ? parsearAgenda(registro.agenda) : [];
+          let statusHoje = {};
+          try { statusHoje = JSON.parse(registro.status || "{}"); } catch (e) {}
+          const dataAgenda = (registro.agendaData && String(registro.agendaData).slice(0, 10)) || dataISOLocal();
+          listaHoje.forEach(os => {
+            const campos = { cliente: os.cliente, login: os.login, contato: os.contato };
+            // Garante aliases mesmo sem status (ajuda unificar)
+            const chave = gerarChaveCliente(campos);
+            if (chave) garantirBucketCliente(chave, campos);
+
+            const st = statusHoje[os.id];
+            if (!st) return;
+            let status = "", obs = "", timestamp = "", dataSt = dataAgenda;
+            if (typeof st === "object") {
+              status = st.status || "";
+              obs = st.obs || "";
+              timestamp = st.timestamp || "";
+              dataSt = (st.data && String(st.data).slice(0, 10)) || dataAgenda;
+            } else {
+              status = st;
+            }
+            if (!status) return;
+            adicionarEventoHistoricoCliente(campos, {
+              tipo: "os",
+              osId: os.id,
+              data: dataSt,
+              timestamp,
+              status,
+              obs,
+              assunto: os.assunto || "",
+              horario: os.horario || "",
+              tecnico: tec,
+              cliente: os.cliente || ""
+            });
+          });
+        } catch (e) {}
+
+        // 3) Agendas históricas (dias passados)
+        try {
+          const histAg = parseAgendasHistorico(registro);
+          Object.keys(histAg || {}).forEach(dataDia => {
+            const snap = histAg[dataDia] || {};
+            const lista = snap.agenda ? parsearAgenda(snap.agenda) : [];
+            let statusSnap = snap.status || {};
+            if (typeof statusSnap === "string") {
+              try { statusSnap = JSON.parse(statusSnap); } catch (e) { statusSnap = {}; }
+            }
+            lista.forEach(os => {
+              const campos = { cliente: os.cliente, login: os.login, contato: os.contato };
+              const chave = gerarChaveCliente(campos);
+              if (chave) garantirBucketCliente(chave, campos);
+              const st = statusSnap[os.id];
+              if (!st) return;
+              let status = "", obs = "", timestamp = "", dataSt = dataDia;
+              if (typeof st === "object") {
+                status = st.status || "";
+                obs = st.obs || "";
+                timestamp = st.timestamp || "";
+                dataSt = (st.data && String(st.data).slice(0, 10)) || dataDia;
+              } else {
+                status = st;
+              }
+              if (!status) return;
+              adicionarEventoHistoricoCliente(campos, {
+                tipo: "os",
+                osId: os.id,
+                data: dataSt,
+                timestamp,
+                status,
+                obs,
+                assunto: os.assunto || "",
+                horario: os.horario || "",
+                tecnico: tec,
+                cliente: os.cliente || ""
+              });
+            });
+          });
+        } catch (e) {}
+
+        // 4) Instalações
+        try {
+          let instalacoes = [];
+          try { instalacoes = JSON.parse(registro.instalacoes || "[]"); } catch (e) {}
+          (instalacoes || []).forEach(item => {
+            if (!item) return;
+            const campos = {
+              cliente: item.cliente || "",
+              login: item.login || "",
+              contato: item.contato || item.telefone || ""
+            };
+            const dataInst = item.data ? String(item.data).slice(0, 10) : "";
+            adicionarEventoHistoricoCliente(campos, {
+              tipo: "instalacao",
+              osId: item.osId || item.id || "",
+              data: dataInst,
+              timestamp: item.data ? new Date(item.data).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : "",
+              status: "instalacao",
+              obs: [item.cto ? "CTO " + item.cto : null, item.porta ? "Porta " + item.porta : null, item.equipamento || null].filter(Boolean).join(" · "),
+              assunto: "Instalação",
+              horario: "",
+              tecnico: tec,
+              cliente: item.cliente || "",
+              extra: item
+            });
+          });
+        } catch (e) {}
+      });
+
+      // Ordena eventos de cada bucket (mais recente primeiro)
+      Object.values(indiceHistoricoCliente).forEach(b => {
+        b.eventos.sort((a, b2) => {
+          const da = String(a.data || "");
+          const db = String(b2.data || "");
+          if (da !== db) return db.localeCompare(da);
+          return String(b2.timestamp || "").localeCompare(String(a.timestamp || ""));
+        });
+      });
+    }
+
+    function obterBucketCliente(campos) {
+      const chave = resolverChaveCliente(campos);
+      if (!chave) return null;
+      return indiceHistoricoCliente[chave] || null;
+    }
+
+    // Conta atendimentos anteriores (exclui a OS atual). Conta OS distintas + instalações.
+    function contarAtendimentosAnteriores(campos, osIdAtual) {
+      const bucket = obterBucketCliente(campos);
+      if (!bucket) return 0;
+      const osAtual = osIdAtual != null ? String(osIdAtual) : null;
+      const vistos = new Set();
+      let count = 0;
+      bucket.eventos.forEach(ev => {
+        if (osAtual && String(ev.osId) === osAtual && ev.tipo === "os") return;
+        // dedupe por tipo+osId+data
+        const k = `${ev.tipo}|${ev.osId}|${ev.data}`;
+        if (vistos.has(k)) return;
+        vistos.add(k);
+        // Só conta se houve status relevante ou instalação
+        if (ev.tipo === "instalacao" || ev.status === "concluido" || ev.status === "nao-concluido" || ev.status === "rota") {
+          count++;
+        }
+      });
+      return count;
+    }
+
+    function htmlBadgeHistoricoCliente(campos, osIdAtual) {
+      const qtd = contarAtendimentosAnteriores(campos, osIdAtual);
+      if (qtd <= 0) return "";
+      const clienteJs = String(campos.cliente || "").replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+      const loginJs = String(campos.login || "").replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+      const contatoJs = String(campos.contato || "").replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+      const osJs = String(osIdAtual || "").replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+      return `<button type="button" class="badge-hist-cliente" title="Ver histórico deste cliente (${qtd} atendimento${qtd > 1 ? "s" : ""} anterior${qtd > 1 ? "es" : ""})" onclick="event.stopPropagation(); abrirModalHistoricoCliente('${clienteJs}', '${loginJs}', '${contatoJs}', '${osJs}')"><span class="badge-hist-dot"></span>${qtd}</button>`;
+    }
+
+    function rotuloStatusHistCliente(status) {
+      if (status === "concluido") return { txt: "Concluído", cls: "concluido" };
+      if (status === "nao-concluido") return { txt: "Não concluído", cls: "nao-concluido" };
+      if (status === "rota") return { txt: "Em rota", cls: "rota" };
+      if (status === "instalacao") return { txt: "Instalação", cls: "concluido" };
+      return { txt: status || "—", cls: "aguardando" };
+    }
+
+    function formatarDataHistCliente(dataISO) {
+      if (!dataISO) return "—";
+      const p = String(dataISO).slice(0, 10).split("-");
+      if (p.length !== 3) return dataISO;
+      return `${p[2]}/${p[1]}/${p[0]}`;
+    }
+
+    function abrirModalHistoricoCliente(cliente, login, contato, osIdAtual) {
+      const campos = { cliente: cliente || "", login: login || "", contato: contato || "" };
+      const bucket = obterBucketCliente(campos);
+
+      const nomeExib = (bucket && bucket.nomes[0]) || cliente || "Cliente";
+      document.getElementById("histClienteTitulo").textContent = nomeExib;
+      document.getElementById("histClienteSub").textContent = "Atendimentos vinculados a este cliente (login, telefone ou nome)";
+
+      const chips = [];
+      if (bucket) {
+        bucket.logins.forEach(l => chips.push(`<span style="background:rgba(34,211,238,0.1);border:1px solid rgba(34,211,238,0.25);color:#67e8f9;padding:3px 8px;border-radius:999px;font-weight:600;">Login: ${escapeHtml(l)}</span>`));
+        bucket.contatos.forEach(t => chips.push(`<span style="background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.25);color:#93c5fd;padding:3px 8px;border-radius:999px;font-weight:600;">Tel: ${escapeHtml(t)}</span>`));
+      } else if (login) {
+        chips.push(`<span style="background:rgba(34,211,238,0.1);border:1px solid rgba(34,211,238,0.25);color:#67e8f9;padding:3px 8px;border-radius:999px;font-weight:600;">Login: ${escapeHtml(login)}</span>`);
+      }
+      document.getElementById("histClienteChaves").innerHTML = chips.join("") || `<span style="color:#64748b">Vínculo por nome</span>`;
+
+      const osAtual = osIdAtual != null ? String(osIdAtual) : null;
+      const eventos = bucket ? bucket.eventos.filter(ev => {
+        // Mostra todos, inclusive a OS atual (marcada visualmente)
+        return true;
+      }) : [];
+
+      // Dedup visual por tipo|osId|data (mantém o status mais "final")
+      const prioridade = { concluido: 3, "nao-concluido": 3, instalacao: 3, rota: 2, "": 1 };
+      const mapa = new Map();
+      eventos.forEach(ev => {
+        const k = `${ev.tipo}|${ev.osId}|${ev.data}`;
+        const prev = mapa.get(k);
+        if (!prev || (prioridade[ev.status] || 0) >= (prioridade[prev.status] || 0)) {
+          mapa.set(k, ev);
+        }
+      });
+      const lista = Array.from(mapa.values()).sort((a, b) => {
+        const da = String(a.data || "");
+        const db = String(b.data || "");
+        if (da !== db) return db.localeCompare(da);
+        return String(b.timestamp || "").localeCompare(String(a.timestamp || ""));
+      });
+
+      let ok = 0, nao = 0;
+      lista.forEach(ev => {
+        if (ev.status === "concluido" || ev.status === "instalacao") ok++;
+        else if (ev.status === "nao-concluido") nao++;
+      });
+      document.getElementById("histClienteTotal").textContent = String(lista.length);
+      document.getElementById("histClienteOk").textContent = String(ok);
+      document.getElementById("histClienteNao").textContent = String(nao);
+
+      const container = document.getElementById("histClienteLista");
+      if (!lista.length) {
+        container.innerHTML = `<div class="hist-cliente-vazio">Nenhum atendimento anterior encontrado para este cliente.</div>`;
+      } else {
+        container.innerHTML = lista.map(ev => {
+          const st = rotuloStatusHistCliente(ev.status);
+          const atual = osAtual && String(ev.osId) === osAtual && ev.tipo === "os";
+          const badgeCls = st.cls === "concluido" ? "concluido" : st.cls === "nao-concluido" ? "nao-concluido" : st.cls === "rota" ? "rota" : "aguardando";
+          const obsCls = ev.status === "concluido" || ev.status === "instalacao" ? "ok" : (ev.status === "nao-concluido" ? "falha" : "");
+          return `
+            <div class="hist-cliente-item" style="${atual ? "border-color:rgba(34,211,238,0.35);box-shadow:0 0 0 1px rgba(34,211,238,0.12);" : ""}">
+              <div class="hist-cliente-item-topo">
+                <span class="log-badge ${badgeCls}">${escapeHtml(st.txt)}</span>
+                <span class="hist-cliente-meta">
+                  <span>${ic("clock", "icon-sm")} ${formatarDataHistCliente(ev.data)}${ev.timestamp ? " · " + escapeHtml(ev.timestamp) : ""}</span>
+                  ${ev.tecnico ? `<span>${ic("user", "icon-sm")} ${escapeHtml(ev.tecnico)}</span>` : ""}
+                  ${atual ? `<span style="color:#67e8f9;font-weight:700;">OS atual</span>` : ""}
+                </span>
+              </div>
+              <div class="hist-cliente-assunto">${ev.tipo === "instalacao" ? ic("router", "icon-sm") : ic("tag", "icon-sm")} ${escapeHtml(ev.assunto || "Sem assunto")}${ev.osId ? ` · <span class="os-number" style="font-size:11px;">#${escapeHtml(String(ev.osId))}</span>` : ""}</div>
+              ${ev.horario ? `<div class="hist-cliente-meta" style="margin-top:4px;">${ic("clock", "icon-sm")} Janela: ${escapeHtml(ev.horario)}</div>` : ""}
+              ${ev.obs ? `<div class="hist-cliente-obs ${obsCls}">${escapeHtml(ev.obs)}</div>` : ""}
+            </div>`;
+        }).join("");
+      }
+
+      const overlay = document.getElementById("modalHistoricoClienteOverlay");
+      overlay.style.display = "flex";
+      setTimeout(() => overlay.classList.add("aberto"), 10);
+    }
+
+    function fecharModalHistoricoCliente() {
+      const overlay = document.getElementById("modalHistoricoClienteOverlay");
+      overlay.classList.remove("aberto");
+      setTimeout(() => { overlay.style.display = "none"; }, 300);
+    }
+
 
     // Última mudança de status de cada OS em uma data específica
     function ultimaMudancaPorOSNoDia(historico, dataSel) {
@@ -4992,7 +5565,7 @@ Contato: (11) 99347-3587"></textarea>
               <span class="log-badge ${cfg.badgeClass}">${cfg.badgeHtml()}</span>
               <div class="log-hora">${cfg.horaHtml(tec, itemOS.id)} ${horarioOs} <span class="log-chevron" id="chevron-${idSeguro}">${ic('chevron-down')}</span></div>
             </div>
-            <div class="log-info"><strong>${escapeHtml(itemOS.cliente)}</strong> <span class="tipo-servico">${ic('tag', 'icon-sm')} ${escapeHtml(itemOS.assunto)}</span>${cfg.obsHtml(osSalva)}</div>
+            <div class="log-info"><strong>${escapeHtml(itemOS.cliente)}</strong>${htmlBadgeHistoricoCliente({ cliente: itemOS.cliente, login: itemOS.login, contato: itemOS.contato }, itemOS.id)} <span class="tipo-servico">${ic('tag', 'icon-sm')} ${escapeHtml(itemOS.assunto)}</span>${cfg.obsHtml(osSalva)}</div>
           </div>
           ${detalhesHtml}
         </div>
@@ -5001,6 +5574,7 @@ Contato: (11) 99347-3587"></textarea>
 
     function atualizarDashboardGeralComDados(todosDados) {
       ultimoDashboardDados = todosDados;
+      reconstruirIndiceHistoricoCliente(todosDados);
       if (!dataRotaSelecionada) dataRotaSelecionada = dataISOLocal();
       atualizarTituloRotaTecnico(todosDados);
       const tecnicosParaExibir = listaTecnicosVisiveis();
@@ -5324,6 +5898,8 @@ Contato: (11) 99347-3587"></textarea>
         if(!resp.ok) throw new Error();
         let dados = await resp.json();
         dados = await garantirAgendaDoDiaTodos(dados);
+        ultimoDashboardDados = dados;
+        reconstruirIndiceHistoricoCliente(dados);
 
         let registro = dados.find(d => d.tecnico === tecnicoAtual);
         
@@ -5435,7 +6011,9 @@ Contato: (11) 99347-3587"></textarea>
                 novasEntradasHist.push(montarEntradaHistoricoStatus(osId, statusVal, obsVal, timeVal, {
                   cliente: osInfo.cliente || "",
                   assunto: osInfo.assunto || "",
-                  horario: osInfo.horario || ""
+                  horario: osInfo.horario || "",
+                  login: osInfo.login || "",
+                  contato: osInfo.contato || ""
                 }));
               }
             }
@@ -5752,6 +6330,7 @@ Contato: (11) 99347-3587"></textarea>
 
     function criarCards(texto) {
       dadosOS = parsearAgenda(texto);
+      if (ultimoDashboardDados) reconstruirIndiceHistoricoCliente(ultimoDashboardDados);
       const cardsContainer = document.getElementById("cards");
       cardsContainer.innerHTML = "";
 
@@ -5795,7 +6374,7 @@ Contato: (11) 99347-3587"></textarea>
               <div class="card-status-topo ${statusClass}" id="topo-status-badge-${os.id}">${statusTxt}</div>
             </div>
 
-            <div class="cliente">${escapeHtml(os.cliente)}</div>
+            <div class="cliente">${escapeHtml(os.cliente)}${htmlBadgeHistoricoCliente({ cliente: os.cliente, login: os.login, contato: os.contato }, os.id)}</div>
             <div class="info"><strong>${ic('hash','icon-sm')} O.S:</strong> <span class="os-number">${os.id}</span></div>
             <div class="assunto">${ic('tag','icon-sm')} ${escapeHtml(os.assunto)}</div>
             <div class="info"><strong>${ic('map-pin','icon-sm')} Endereço:</strong><br>${escapeHtml(enderecoLimpo)}</div>
@@ -6057,7 +6636,9 @@ Contato: (11) 99347-3587"></textarea>
           montarEntradaHistoricoStatus(osId, statusAtual, obsAtual, timeAtual, {
             cliente: os.cliente || "",
             assunto: os.assunto || "",
-            horario: os.horario || ""
+            horario: os.horario || "",
+            login: os.login || "",
+            contato: os.contato || ""
           })
         ]);
       }
@@ -6243,7 +6824,9 @@ Contato: (11) 99347-3587"></textarea>
                   montarEntradaHistoricoStatus(os.id, novoStatus, novaObs, horaMig, {
                     cliente: os.cliente || "",
                     assunto: os.assunto || "",
-                    horario: os.horario || ""
+                    horario: os.horario || "",
+                    login: os.login || "",
+                    contato: os.contato || ""
                   })
                 ]);
               }
@@ -6588,7 +7171,8 @@ Contato: (11) 99347-3587"></textarea>
           document.getElementById("modalCtoClientesOverlay").classList.contains("aberto") ||
           document.getElementById("modalNovaOSAvulsaOverlay").classList.contains("aberto") ||
           document.getElementById("modalMigrarOSOverlay").classList.contains("aberto") ||
-          document.getElementById("modalMenuTecnicoOverlay").classList.contains("aberto")) {
+          document.getElementById("modalMenuTecnicoOverlay").classList.contains("aberto") ||
+          document.getElementById("modalHistoricoClienteOverlay").classList.contains("aberto")) {
          return; 
       }
       
